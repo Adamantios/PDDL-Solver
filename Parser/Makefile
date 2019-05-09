@@ -1,8 +1,11 @@
 CC=g++
 CXXFLAGS=-Wall -Wextra -pedantic -std=c++11 -O2
 
-FLEX=/usr/bin/flex
-BISON=/usr/bin/bison
+FLEXPATH=/usr
+BISONPATH=/usr
+
+FLEX=$(FLEXPATH)/bin/flex
+BISON=$(BISONPATH)/bin/bison
 
 INCLUDE=-Iinclude/ -Isrc/
 OBJ=$(addprefix bin/, parser.o scanner.o driver.o action.o predicate.o domain.o problem.o main.o)

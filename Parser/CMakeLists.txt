@@ -16,7 +16,7 @@ set(SOURCE_FILES
 add_compile_options(-Wall -Wextra -pedantic -std=c++11 -O2 -Isrc -Iinclude)
 add_definitions(-D_DEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS)
 
-#Generate parser.
+# Generate parser.
 find_package(BISON REQUIRED)
 bison_target(parser src/pddlparser.yy ${CMAKE_SOURCE_DIR}/src/pddlparser.tab.cc)
 FILE(GLOB ParserFiles ${CMAKE_SOURCE_DIR}/src/*.hh)
