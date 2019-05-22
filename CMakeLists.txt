@@ -5,7 +5,7 @@ add_compile_options(-Wall -Wextra)
 set(CMAKE_CXX_STANDARD 11)
 
 add_subdirectory(Parser)
-add_subdirectory(Planner/Planner)
+add_subdirectory(Planner)
 
 add_library(parser
   STATIC
