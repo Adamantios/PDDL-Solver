@@ -365,3 +365,14 @@ healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
+
+# Ignore Makefiles
+CMakeCache.txt
+CMakeFiles/
+Makefile
+Parser/CMakeFiles/
+Parser/cmake_install.cmake
+Parser/libPDDLParser.a
+Planner/Planner/CMakeFiles/
+Planner/Planner/cmake_install.cmake
+cmake_install.cmake
