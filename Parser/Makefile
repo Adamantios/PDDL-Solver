@@ -1,5 +1,5 @@
 CC=g++
-CXXFLAGS=-Wall -Wextra -pedantic -std=c++11 -O2
+CXXFLAGS=-Wall -Wextra -pedantic -c -fPIC -std=c++11 -O2
 
 FLEXPATH=/usr
 BISONPATH=/usr

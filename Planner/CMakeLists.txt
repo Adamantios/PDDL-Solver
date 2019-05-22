@@ -5,7 +5,7 @@ add_compile_options(-Wall -Wextra)
 
 file(GLOB SOURCE_FILES *.cpp)
 file(GLOB HEADER_FILES *.h)
-set(PARSER_HEADER_DIR ../../Parser/include)
+set(PARSER_HEADER_DIR ../Parser/include)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${PARSER_HEADER_DIR})
