@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "pddldriver.hh"
+#include "ParserController.h"
 
 using namespace std;
 
@@ -16,16 +17,17 @@ int main (int argc, char *argv[])
 
     int result = 0;
 
-    PDDLDriver driver;
+    PDDLDriver *driver = new PDDLDriver();
+    ParserController parserController;
 
     for (int i = 1; i < argc; ++i) {
         if (argv[i] == string ("-p")) {
-            driver.trace_parsing = true;
+            driver->trace_parsing = true;
         }
         else if (argv[i] == string ("-s")) {
-            driver.trace_scanning = true;
+            driver->trace_scanning = true;
         }
-        else if (!driver.parse(argv[i])) {
+        else if (!driver->parse(argv[i])) {
             cout << "Parsing " << argv[i] << "... ";
             if (!result) cout << "ok!" << endl;
             else cout << "Error!" << endl;
@@ -35,10 +37,12 @@ int main (int argc, char *argv[])
             break;
         }
     }
+    parserController = ParserController(driver);
+    // Test with print function
+    parserController.Print();
+    parserController.PrintPredicates();
 
-    cout << endl;
-    cout << *(driver.domain)  << endl;
-    cout << *(driver.problem) << endl;
+    if (driver) delete(driver);
 
     return result;
 }

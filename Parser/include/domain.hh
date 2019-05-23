@@ -12,14 +12,14 @@ class Domain {
 public:
 	Domain(const std::string &name);
 	virtual ~Domain();
-
 	void set_requirements(std::vector<std::string>* requirements);
 	void set_predicates(std::vector<Predicate*>* predicates);
 	void set_actions(std::vector<Action*>* actions);
 
 	friend std::ostream &operator<<(std::ostream &os, const Domain &domain);
 
-private:
+	// TODO Make the variables private again and add getters
+public:
 	std::string               _name;
 	std::vector<std::string> *_requirements;
 	std::vector<Predicate*>  *_predicates;
