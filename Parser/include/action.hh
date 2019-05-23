@@ -30,7 +30,8 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& out, const Action& action);
 
-private:
+    // TODO Make the variables private again and add getters
+public:
 	std::string             _name;
 	const StringList       *_params;
 	const TypeDict         *_types;

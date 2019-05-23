@@ -4,6 +4,9 @@
 #include "pddldriver.hh"
 #include "predicate.hh"
 #include "domain.hh"
+#include <iostream>
+
+using namespace std;
 
 class ParserController {
 
@@ -21,6 +24,8 @@ public:
     void Print();
     void PrintPredicates();
 
+    vector<Predicate*> GetPredicates();
+    vector<Action*> GetActions();
 
 };
 

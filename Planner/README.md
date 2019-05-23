@@ -1,7 +1,7 @@
 # Build parser
 make clean && make
 
-# Build shared library - unix
+# Build shared library
 g++ -shared bin/*.o -o libPDDLParser.so
 
 # Copy shared library into Libs folder in Planner
