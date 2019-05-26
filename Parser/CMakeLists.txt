@@ -17,7 +17,8 @@ set(HEADER_FILES
         ${HEADER_DIR}/problem.hh
         ${HEADER_DIR}/stack.hh)
 set(SOURCE_FILES
-        ${SOURCE_DIR}/main.cc
+        ${SOURCE_DIR}/pddlparser.tab.cc
+        ${SOURCE_DIR}/pddllex.yy.cc
         ${SOURCE_DIR}/domain.cc
         ${SOURCE_DIR}/problem.cc
         ${SOURCE_DIR}/action.cc
@@ -25,37 +26,11 @@ set(SOURCE_FILES
         ${SOURCE_DIR}/pddldriver.cc)
 
 include_directories(${HEADER_DIR})
-
-# Generate parser.
-#find_package(BISON REQUIRED)
-#bison_target(parser ${SOURCE_DIR}/pddlparser.yy ${CMAKE_SOURCE_DIR}/${SOURCE_DIR}/pddlparser.tab.cc)
-
-# Copy parser generated header files from SOURCE_DIR to HEADER_DIR.
-#FILE(GLOB ParserFiles ${CMAKE_SOURCE_DIR}/${SOURCE_DIR}/*.hh)
-#FILE(COPY ${ParserFiles} DESTINATION ${CMAKE_SOURCE_DIR}/${HEADER_DIR})
-
-# Generate scanner.
-#find_package(FLEX REQUIRED)
-#flex_target(scanner ${SOURCE_DIR}/pddlscanner.ll ${CMAKE_SOURCE_DIR}/${SOURCE_DIR}/pddllex.yy.cc)
-
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 #Add parser library.
 add_library(
         PDDLParser
         ${SOURCE_FILES}
-        #        ${BISON_parser_OUTPUTS}
-        #        ${FLEX_scanner_OUTPUTS}
+        ${HEADER_FILES}
 )
-
-target_include_directories(PDDLParser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-#Add executable.
-#set(PDDLParserExec PDDLParser)
-#add_executable(
-#        ${PDDLParserExec} WIN32
-#        ${SOURCE_FILES}
-#        ${HEADER_FILES}
-#        ${BISON_parser_OUTPUTS}
-#        ${FLEX_scanner_OUTPUTS}
-#)

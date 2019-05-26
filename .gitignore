@@ -7,8 +7,6 @@ Parser/*.tab.hh
 Parser/location.hh
 Parser/position.hh
 Parser/stack.hh
-Parser/src/*.yy.cc
-Parser/src/*.tab.cc
 Parser/src/*.output
 
 .idea/

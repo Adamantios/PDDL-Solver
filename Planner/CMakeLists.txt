@@ -17,6 +17,5 @@ add_executable(
 
 target_link_libraries(
         ${CMAKE_PROJECT_NAME}
-        LINK_PUBLIC
         PDDLParser
 )
