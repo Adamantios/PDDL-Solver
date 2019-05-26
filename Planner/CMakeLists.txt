@@ -3,10 +3,14 @@ project(pddl_planner)
 set(CMAKE_CXX_STANDARD 11)
 add_compile_options(-Wall -Wextra)
 
-file(GLOB SOURCE_FILES src/*)
-file(GLOB HEADER_FILES include/*)
+set(HEADER_DIR include)
+set(SOURCE_DIR src)
 set(PARSER_HEADER_DIR ../Parser/include)
 
+file(GLOB SOURCE_FILES ${SOURCE_DIR}/*)
+file(GLOB HEADER_FILES ${HEADER_DIR}/*)
+
+include_directories(${HEADER_DIR})
 include_directories(${PARSER_HEADER_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
