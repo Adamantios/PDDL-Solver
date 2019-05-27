@@ -1,18 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 project(pddl_solver)
 add_compile_options(-Wall -Wextra)
-
 set(CMAKE_CXX_STANDARD 11)
-
 add_subdirectory(Parser)
 add_subdirectory(Planner)
-
-add_library(parser
-  STATIC
-  IMPORTED GLOBAL)
-
-set_target_properties(
-    parser
-    PROPERTIES IMPORTED_LOCATION
-    "${CMAKE_CURRENT_LIST_DIR}/Parser/libPDDLParser.a"
-    )

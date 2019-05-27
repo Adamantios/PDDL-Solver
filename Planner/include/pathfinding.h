@@ -1,0 +1,10 @@
+#ifndef PDDL_SOLVER_PATHFINDING_H
+#define PDDL_SOLVER_PATHFINDING_H
+
+
+class pathfinding {
+
+};
+
+
+#endif //PDDL_SOLVER_PATHFINDING_H
