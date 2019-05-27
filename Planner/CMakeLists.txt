@@ -11,6 +11,7 @@ file(GLOB SOURCE_FILES ${SOURCE_DIR}/*)
 file(GLOB HEADER_FILES ${HEADER_DIR}/*)
 
 include_directories(${HEADER_DIR})
+include_directories(${SOURCE_DIR})
 include_directories(${PARSER_HEADER_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
