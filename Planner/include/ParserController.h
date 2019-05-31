@@ -24,6 +24,14 @@ public:
     void Print();
     void PrintPredicates();
 
+    // TODO private bool is_applicable(LiteralList state, Action action) -> return if the action can be applied to the state.
+
+    // TODO public vector<Actions> applicable_actions(LiteralList state) -> use GetActions and is_applicable
+    //  to return all the actions which can be applied to the state.
+
+    // TODO public LiteralList get_goal() -> return the goal.
+    //  see problem.hh for "LiteralList".
+
     vector<Predicate*> GetPredicates();
     vector<Action*> GetActions();
 
