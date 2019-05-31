@@ -17,7 +17,7 @@ int main (int argc, char *argv[])
 
     int result = 0;
 
-    PDDLDriver *driver = new PDDLDriver();
+    auto *driver = new PDDLDriver();
     ParserController parserController;
 
     for (int i = 1; i < argc; ++i) {
@@ -37,10 +37,25 @@ int main (int argc, char *argv[])
             break;
         }
     }
-    parserController = ParserController(driver);
+
+
     // Test with print function
-    parserController.Print();
-    parserController.PrintPredicates();
+//    parserController.Print();
+//    parserController.PrintPredicates();
+
+    /* Kostas Tsampazis
+     * Demonstration of ParserController functionality of ApplicableActions utility method
+     */
+    parserController = ParserController(driver);
+    LiteralList * currentState = driver->problem->getInit();
+    vector<Action*> applicableActions = parserController.ApplicableActions(currentState);
+    if (applicableActions.empty()) cout << "No applicable actions on this state";
+    else {
+        cout << "Applicable action(s): " << endl;
+        for (unsigned int i = 0; i < applicableActions.size(); i++)
+            cout << applicableActions.at(i)->_name << ", ";
+    }
+    cout << endl;
 
     if (driver) delete(driver);
 
