@@ -1,6 +1,5 @@
 #include "ParserController.h"
 
-
 ParserController::ParserController() {
 }
 
@@ -61,6 +60,221 @@ vector<Action *> ParserController::GetActions() {
     return actions;
 }
 
+/**
+ *
+ * @return LiteralList (=vector<Literal*>, Literal=pair<Predicate*,bool>) with the goal state
+ */
+LiteralList* ParserController::GetGoal(){
+    return driver->problem->getGoal();
+}
+
+// UTILITIES
+
+/**
+ *
+ * @return bool true if the action can be applied to the state, false otherwise
+ */
+bool ParserController::IsApplicable(LiteralList* state, Action action) {
+
+    // Keep action parameters on a local vector of pair<paramName, value>
+    vector<pair<string, string>> actionParams;
+    for (unsigned int j = 0; j < action._params->size(); j++) {
+        pair<string,string> n;
+        n.first = action._params->at(j); // parameter name
+        n.second = ""; // parameter value (not set)
+        actionParams.push_back(n);
+    }
+    // Local list of this action's preconditions
+    PreconditionList preconditions;
+    for (unsigned int j = 0; j < action._precond->size(); j++) {
+
+        // Creating a new pair of Predicate*, bool, to perform a deep-copy
+        auto* newPredicatePair = new pair<Predicate*, bool>;
+        auto* newArgList = new ArgumentList;
+        auto* newArgStrList = new StringList;
+//        TypeDict* newTypeDict; // TODO TypeDict is not deep copied over (not needed?)
+        // Assign primitive values of this action precondition to arguments string list
+        for (unsigned int i = 0; i < action._precond->at(j)->first->_args->size(); i++) {
+            newArgStrList->push_back(action._precond->at(j)->first->_args->at(i));
+        }
+        // Assign arguments string list to ArgumentList which is used in predicates ctor
+        newArgList->first = newArgStrList;
+
+        // Call ctor of Predicate on first of predicate pair
+        newPredicatePair->first = new Predicate(action._precond->at(j)->first->_name, newArgList);
+
+        // Assign primitive bool value of this action's precondition to the new predicate pair's second
+        newPredicatePair->second = action._precond->at(j)->second;
+
+        // Add the new predicate pair that is a deep copy of this action's precondition to the local preconditions list
+        preconditions.push_back(newPredicatePair);
+
+    }
+
+    /*------------------------------------------------------------------------------------------------------------------
+     * The following variables (n, i[n+1], etc.) plus the while loop and the nested while loop at the end
+     * enables us to perform a dynamic number of nested loops.
+     * It is used to try all the possible combinations of object assignment to variables.
+     * The original comments are left as-they-were to help with readability (readability!? xD).
+     * (found on https://stackoverflow.com/questions/9555864/variable-nested-for-loops)
+    ------------------------------------------------------------------------------------------------------------------*/
+    const int n = actionParams.size(); // Insert N here: how many loops do you need?
+    int i[n+1]; // if "n" is not known before hand, then this array will need to be created dynamically.
+    //Note: there is an extra element at the end of the array, in order to keep track of whether to exit the array.
+
+    for (int a=0; a<n+1; a++) {
+        i[a]=0;
+    }
+
+    int MAX = driver->problem->getObjects()->size(); //That's just an example, if all of the loops are
+                                                     // identical: e.g. "for(int i=0; i<79; i++)". If the value of MAX
+                                                     // changes for each loop, then make MAX an array instead: (new)
+                                                     // int MAX [n]; MAX[0]=10; MAX[1]=20;...;MAX[n-1]=whatever.
+
+    int p = 0; //Used to increment all of the indices correctly, at the end of each loop.
+    while (i[n]==0) { //Remember, you're only using indices i[0], ..., i[n-1]. The (n+1)th index, i[n],
+                      // is just to check whether to the nested loop stuff has finished.
+
+        //DO STUFF HERE. Pretend you're inside your nested for loops.
+        // The more usual i,j,k,... have been replaced here with i[0], i[1], ..., i[n-1].
+
+//        cout << "testing params:" << endl;
+        for(unsigned int lvl = 0; lvl < actionParams.size(); lvl++) {
+            actionParams.at(lvl).second = driver->problem->getObjects()->at(i[lvl]);
+//            cout << actionParams.at(lvl).second << ", ";
+        }
+//        cout << endl;
+
+        // Applying parameters to local preconditions
+        for (unsigned int j = 0; j < preconditions.size(); j++) {
+            for (unsigned int i = 0; i < preconditions.at(j)->first->_args->size(); i++) {
+                for (unsigned int z = 0; z < actionParams.size(); z++) {
+                    if (preconditions.at(j)->first->_args->at(i) == actionParams.at(z).first){
+                        preconditions.at(j)->first->_args->at(i) = actionParams.at(z).second;
+                    }
+                }
+            }
+        }
+
+        bool applicable = true;
+        // Checking state for preconditions
+        for (unsigned int j = 0; j < preconditions.size(); j++) {
+            // Check for equality precondition
+            if (preconditions.at(j)->first->_name == "=") {
+                if (preconditions.at(j)->second == 1) { // Equality true
+                    bool allArgsEq = true;
+                    for (unsigned int z = 0; z < preconditions.at(j)->first->_args->size(); z++) {
+                        for (unsigned int k = 0; k < preconditions.at(j)->first->_args->size(); k++) {
+                            if (z != k && preconditions.at(j)->first->_args->at(z) !=
+                                          preconditions.at(j)->first->_args ->at(k)) {
+                                allArgsEq = false;
+                            }
+                        }
+                    }
+                    if (!allArgsEq) {
+                        applicable = false;
+//                        cout << "not applicable equality true failed" << endl;
+                        break; // this breaks outer for
+                    }
+                }
+                else { // Equality false
+                    bool allArgsNotEq = true;
+                    for (unsigned int z = 0; z < preconditions.at(j)->first->_args->size(); z++) {
+                        for (unsigned int k = 0; k < preconditions.at(j)->first->_args->size(); k++) {
+                            if (z != k && preconditions.at(j)->first->_args->at(z) ==
+                                          preconditions.at(j)->first->_args ->at(k)) {
+                                allArgsNotEq = false;
+                            }
+                        }
+                    }
+                    if (!allArgsNotEq) {
+                        applicable = false;
+//                        cout << "not applicable equality false failed" << endl;
+                        break; // this breaks outer for
+                    }
+                }
+            }
+
+            bool foundThisPrecond = false;
+            for (unsigned int i = 0; i < state->size(); i++) {
+                if (state->at(i)->first->_name == preconditions.at(j)->first->_name) {
+                    bool sameParams = true;
+                    for (unsigned int p = 0; p < state->at(i)->first->_args->size(); p++) {
+                        bool foundParam = false;
+                        for (unsigned int z = 0; z < preconditions.at(j)->first->_args->size(); z++) {
+                            if (state->at(i)->first->_args->at(p) == preconditions.at(j)->first->_args->at(z)){
+                                foundParam = true;
+                            }
+                        }
+                        if (!foundParam) sameParams = false;
+
+                    }
+                    if (sameParams) {
+                        foundThisPrecond = true;
+                        break; // Move on to next precondition
+                    }
+                }
+            }
+            // foundThisPrecond never turned true, which means we exhausted the state without finding this
+            // precondition with the same arguments. Action is not applicable because the predicates bool is 1 (true)
+            if (!foundThisPrecond && preconditions.at(j)->second == 1) {
+                applicable = false;
+//                cout << "not applicable didnt find precondition in state for these arguments" << endl;
+                break;
+            }
+                // foundThisPrecond turned true, which means we found this precondition in the state with the same arguments.
+                // Action is not applicable because the predicates bool is 0 (false, NOT)
+            else if (foundThisPrecond && preconditions.at(j)->second == 0) {
+                applicable = false;
+//                cout << "not applicable found precondition in state for these arguments" << endl;
+                break;
+            }
+
+        }
+
+        // Reset applied objects to precondition parameters
+        for (unsigned int j = 0; j < preconditions.size(); j++) {
+            for (unsigned int i = 0; i < preconditions.at(j)->first->_args->size(); i++) {
+                preconditions.at(j)->first->_args->at(i) = action._precond->at(j)->first->_args->at(i);
+            }
+        }
+
+        //Now, after you've done your stuff, we need to increment all of the indices correctly.
+        i[0]++;
+        // p = 0;//Commented out, because it's replaced by a more efficient alternative below.
+        while(i[p]==MAX) { //(or "MAX[p]" if each "for" loop is different. Note that from an English point
+                           // of view, this is more like "if(i[p]==MAX". (Initially i[0]) If this is true, then i[p]
+                           // is reset to 0, and i[p+1] is incremented.
+            i[p]=0;
+            i[++p]++; //increase p by 1, and increase the next (p+1)th index
+            if(i[p]!=MAX)
+                p=0; //Alternatively, "p=0" can be inserted above (currently commented-out). This one's more
+                     // efficient though, since it only resets p when it actually needs to be reset!
+        }
+
+        if (applicable) return true;
+        else continue;
+    }
+
+    return false;
+}
+
+/**
+ *
+ * @return vector containing applicable actions on the state supplied
+ */
+vector<Action *> ParserController::ApplicableActions(LiteralList* state) {
+
+    vector<Action*> actions = this->GetActions();
+    vector<Action*> applicableActions;
+    for (unsigned int i = 0; i < actions.size(); i++) {
+        if (this->IsApplicable(state, *actions.at(i))) {
+            applicableActions.push_back(actions.at(i));
+        }
+    }
+
+    return applicableActions;
+}
 
 
 
