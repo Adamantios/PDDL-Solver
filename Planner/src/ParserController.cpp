@@ -29,7 +29,7 @@ void ParserController::Print() {
  */
 void ParserController::PrintPredicates() {
     cout << "Predicates:" <<endl;
-    vector<Predicate*> *predicates = driver->domain->_predicates;
+    vector<Predicate*> *predicates = driver->domain->getPredicates();
     for (auto it = predicates->begin(); it != predicates->end(); ++it)
         cout << *(*it) << endl;
 }
@@ -42,8 +42,8 @@ void ParserController::PrintPredicates() {
  */
 vector<Predicate *> ParserController::GetPredicates() {
     vector<Predicate*> predicates;
-    for (unsigned int i=0; i< driver->domain->_predicates->size(); i++) {
-        predicates.push_back(driver->domain->_predicates->at(i));
+    for (unsigned int i=0; i< driver->domain->getPredicates()->size(); i++) {
+        predicates.push_back(driver->domain->getPredicates()->at(i));
     }
     return predicates;
 }
@@ -54,8 +54,8 @@ vector<Predicate *> ParserController::GetPredicates() {
  */
 vector<Action *> ParserController::GetActions() {
     vector<Action*> actions;
-    for (unsigned int i=0; i< driver->domain->_actions->size(); i++) {
-        actions.push_back(driver->domain->_actions->at(i));
+    for (unsigned int i=0; i< driver->domain->getActions()->size(); i++) {
+        actions.push_back(driver->domain->getActions()->at(i));
     }
     return actions;
 }
@@ -78,15 +78,15 @@ bool ParserController::IsApplicable(LiteralList* state, Action action) {
 
     // Keep action parameters on a local vector of pair<paramName, value>
     vector<pair<string, string>> actionParams;
-    for (unsigned int j = 0; j < action._params->size(); j++) {
+    for (unsigned int j = 0; j < action.getParams()->size(); j++) {
         pair<string,string> n;
-        n.first = action._params->at(j); // parameter name
+        n.first = action.getParams()->at(j); // parameter name
         n.second = ""; // parameter value (not set)
         actionParams.push_back(n);
     }
     // Local list of this action's preconditions
     PreconditionList preconditions;
-    for (unsigned int j = 0; j < action._precond->size(); j++) {
+    for (unsigned int j = 0; j < action.getPrecond()->size(); j++) {
 
         // Creating a new pair of Predicate*, bool, to perform a deep-copy
         auto* newPredicatePair = new pair<Predicate*, bool>;
@@ -94,17 +94,17 @@ bool ParserController::IsApplicable(LiteralList* state, Action action) {
         auto* newArgStrList = new StringList;
 //        TypeDict* newTypeDict; // TODO TypeDict is not deep copied over (not needed?)
         // Assign primitive values of this action precondition to arguments string list
-        for (unsigned int i = 0; i < action._precond->at(j)->first->_args->size(); i++) {
-            newArgStrList->push_back(action._precond->at(j)->first->_args->at(i));
+        for (unsigned int i = 0; i < action.getPrecond()->at(j)->first->getArgs()->size(); i++) {
+            newArgStrList->push_back(action.getPrecond()->at(j)->first->getArgs()->at(i));
         }
         // Assign arguments string list to ArgumentList which is used in predicates ctor
         newArgList->first = newArgStrList;
 
         // Call ctor of Predicate on first of predicate pair
-        newPredicatePair->first = new Predicate(action._precond->at(j)->first->_name, newArgList);
+        newPredicatePair->first = new Predicate(action.getPrecond()->at(j)->first->getName(), newArgList);
 
         // Assign primitive bool value of this action's precondition to the new predicate pair's second
-        newPredicatePair->second = action._precond->at(j)->second;
+        newPredicatePair->second = action.getPrecond()->at(j)->second;
 
         // Add the new predicate pair that is a deep copy of this action's precondition to the local preconditions list
         preconditions.push_back(newPredicatePair);
@@ -147,10 +147,10 @@ bool ParserController::IsApplicable(LiteralList* state, Action action) {
 
         // Applying parameters to local preconditions
         for (unsigned int j = 0; j < preconditions.size(); j++) {
-            for (unsigned int i = 0; i < preconditions.at(j)->first->_args->size(); i++) {
+            for (unsigned int i = 0; i < preconditions.at(j)->first->getArgs()->size(); i++) {
                 for (unsigned int z = 0; z < actionParams.size(); z++) {
-                    if (preconditions.at(j)->first->_args->at(i) == actionParams.at(z).first){
-                        preconditions.at(j)->first->_args->at(i) = actionParams.at(z).second;
+                    if (preconditions.at(j)->first->getArgs()->at(i) == actionParams.at(z).first){
+                        preconditions.at(j)->first->getArgs()->at(i) = actionParams.at(z).second;
                     }
                 }
             }
@@ -160,13 +160,13 @@ bool ParserController::IsApplicable(LiteralList* state, Action action) {
         // Checking state for preconditions
         for (unsigned int j = 0; j < preconditions.size(); j++) {
             // Check for equality precondition
-            if (preconditions.at(j)->first->_name == "=") {
+            if (preconditions.at(j)->first->getName() == "=") {
                 if (preconditions.at(j)->second == 1) { // Equality true
                     bool allArgsEq = true;
-                    for (unsigned int z = 0; z < preconditions.at(j)->first->_args->size(); z++) {
-                        for (unsigned int k = 0; k < preconditions.at(j)->first->_args->size(); k++) {
-                            if (z != k && preconditions.at(j)->first->_args->at(z) !=
-                                          preconditions.at(j)->first->_args ->at(k)) {
+                    for (unsigned int z = 0; z < preconditions.at(j)->first->getArgs()->size(); z++) {
+                        for (unsigned int k = 0; k < preconditions.at(j)->first->getArgs()->size(); k++) {
+                            if (z != k && preconditions.at(j)->first->getArgs()->at(z) !=
+                                          preconditions.at(j)->first->getArgs() ->at(k)) {
                                 allArgsEq = false;
                             }
                         }
@@ -179,10 +179,10 @@ bool ParserController::IsApplicable(LiteralList* state, Action action) {
                 }
                 else { // Equality false
                     bool allArgsNotEq = true;
-                    for (unsigned int z = 0; z < preconditions.at(j)->first->_args->size(); z++) {
-                        for (unsigned int k = 0; k < preconditions.at(j)->first->_args->size(); k++) {
-                            if (z != k && preconditions.at(j)->first->_args->at(z) ==
-                                          preconditions.at(j)->first->_args ->at(k)) {
+                    for (unsigned int z = 0; z < preconditions.at(j)->first->getArgs()->size(); z++) {
+                        for (unsigned int k = 0; k < preconditions.at(j)->first->getArgs()->size(); k++) {
+                            if (z != k && preconditions.at(j)->first->getArgs()->at(z) ==
+                                          preconditions.at(j)->first->getArgs() ->at(k)) {
                                 allArgsNotEq = false;
                             }
                         }
@@ -197,12 +197,12 @@ bool ParserController::IsApplicable(LiteralList* state, Action action) {
 
             bool foundThisPrecond = false;
             for (unsigned int i = 0; i < state->size(); i++) {
-                if (state->at(i)->first->_name == preconditions.at(j)->first->_name) {
+                if (state->at(i)->first->getName() == preconditions.at(j)->first->getName()) {
                     bool sameParams = true;
-                    for (unsigned int p = 0; p < state->at(i)->first->_args->size(); p++) {
+                    for (unsigned int p = 0; p < state->at(i)->first->getArgs()->size(); p++) {
                         bool foundParam = false;
-                        for (unsigned int z = 0; z < preconditions.at(j)->first->_args->size(); z++) {
-                            if (state->at(i)->first->_args->at(p) == preconditions.at(j)->first->_args->at(z)){
+                        for (unsigned int z = 0; z < preconditions.at(j)->first->getArgs()->size(); z++) {
+                            if (state->at(i)->first->getArgs()->at(p) == preconditions.at(j)->first->getArgs()->at(z)){
                                 foundParam = true;
                             }
                         }
@@ -234,8 +234,8 @@ bool ParserController::IsApplicable(LiteralList* state, Action action) {
 
         // Reset applied objects to precondition parameters
         for (unsigned int j = 0; j < preconditions.size(); j++) {
-            for (unsigned int i = 0; i < preconditions.at(j)->first->_args->size(); i++) {
-                preconditions.at(j)->first->_args->at(i) = action._precond->at(j)->first->_args->at(i);
+            for (unsigned int i = 0; i < preconditions.at(j)->first->getArgs()->size(); i++) {
+                preconditions.at(j)->first->getArgs()->at(i) = action.getPrecond()->at(j)->first->getArgs()->at(i);
             }
         }
 

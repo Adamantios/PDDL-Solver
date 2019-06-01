@@ -54,7 +54,7 @@ int main (int argc, char *argv[])
     else {
         cout << "Applicable action(s): " << endl;
         for (unsigned int i = 0; i < applicableActions.size(); i++)
-            cout << applicableActions.at(i)->_name << ", ";
+            cout << applicableActions.at(i)->getName() << ", ";
     }
     cout << endl;
 
