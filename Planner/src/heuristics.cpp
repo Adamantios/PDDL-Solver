@@ -1,9 +1,10 @@
 #include "heuristics.h"
 
-Heuristics::Heuristics(LiteralList *goal) : _goal(goal) {}
+Heuristics::Heuristics(ParserController *controller) : _controller(controller) {}
 
 DeltaMap Heuristics::init_delta_values(LiteralList *current_state) {
     DeltaMap delta_map;
+    LiteralList *goal = _controller->GetGoal();
 
     // Iterate through state literals.
     for (Literal *state_literal : *current_state) {
@@ -13,7 +14,7 @@ DeltaMap Heuristics::init_delta_values(LiteralList *current_state) {
         std::cout << "Current: " << *state_literal->first << std::endl;
 
         // Create iterator, to define if any of the goal's literals matches the state_literal.
-        auto iterator = find_if(_goal->begin(), _goal->end(),
+        auto iterator = find_if(goal->begin(), goal->end(),
                                 [&](const Literal *literal) -> bool {
                                     // No need to compare types. Two identical PDDL objects cannot have different types.
                                     return literal->first->getName() == state_predicate->getName() &&
@@ -22,7 +23,7 @@ DeltaMap Heuristics::init_delta_values(LiteralList *current_state) {
                                 });
 
         // Insert zero if goal exists at the current state, otherwise infinity.
-        delta_map.insert({state_predicate, (iterator != _goal->end() ? 0 : std::numeric_limits<double>::infinity())});
+        delta_map.insert({state_predicate, (iterator != goal->end() ? 0 : std::numeric_limits<double>::infinity())});
     }
 
     return delta_map;

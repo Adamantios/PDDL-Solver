@@ -60,7 +60,7 @@ int main (int argc, char *argv[])
     // cout << endl;
 
     // Heuristics demo.
-    Heuristics heuristics = Heuristics(parserController.GetGoal());
+    Heuristics heuristics = Heuristics(&parserController);
     DeltaMap estimations = heuristics.delta_max(currentState);
 
     std::cout << "Delta map estimations contain:" << std::endl;

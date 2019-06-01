@@ -8,16 +8,17 @@
 #include <problem.hh>
 #include "predicate.hh"
 #include "action.hh"
+#include "ParserController.h"
 
 // Predicates mapped with their costs.
 typedef std::unordered_map<Predicate *, int> DeltaMap;
 
 class Heuristics {
 private:
-    LiteralList *_goal;
+    ParserController *_controller;
 
 public:
-    explicit Heuristics(LiteralList *goal);
+    explicit Heuristics(ParserController *controller);
 
     DeltaMap init_delta_values(LiteralList *current_state);
 
