@@ -16,8 +16,8 @@ DeltaMap Heuristics::init_delta_values(LiteralList *current_state) {
         auto iterator = find_if(_goal->begin(), _goal->end(),
                                 [&](const Literal *literal) -> bool {
                                     // No need to compare types. Two identical PDDL objects cannot have different types.
-                                    return literal->first->_name == state_predicate->_name &&
-                                           *literal->first->_args == *state_predicate->_args &&
+                                    return literal->first->getName() == state_predicate->getName() &&
+                                           *literal->first->getArgs() == *state_predicate->getArgs() &&
                                            literal->second == state_logical_part;
                                 });
 

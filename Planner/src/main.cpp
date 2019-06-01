@@ -65,10 +65,10 @@ int main (int argc, char *argv[])
 
     std::cout << "Delta map estimations contain:" << std::endl;
     for (auto &estimation : estimations) {
-        std::cout << estimation.first->_name << "(";
-        for (auto & arg : *estimation.first->_args) {
+        std::cout << estimation.first->getName() << "(";
+        for (auto & arg : *estimation.first->getArgs()) {
             std::cout << arg;
-            if (arg != estimation.first->_args->back()) printf(", ");
+            if (arg != estimation.first->getArgs()->back()) printf(", ");
         }
 
         std::cout << ")" << ": " << estimation.second << std::endl;
