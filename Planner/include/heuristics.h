@@ -8,20 +8,39 @@
 #include <problem.hh>
 #include "predicate.hh"
 #include "action.hh"
+#include "ParserController.h"
 
-// Predicates mapped with their costs.
-typedef std::unordered_map<Predicate *, int> DeltaMap;
+// Literals mapped with their costs.
+typedef std::unordered_map<Literal *, double> DeltaMap;
+typedef vector<double> DeltaValues;
+
+enum Method {
+    MAX_COST, ADDITIVE_COST
+};
 
 class Heuristics {
 private:
-    LiteralList *_goal;
+    ParserController *_controller;
+
+    DeltaMap *_delta_map{};
+
+    static LiteralList::iterator FindLiteral(LiteralList *state, Literal *literal);
+
+    void InitDeltaValues(LiteralList *current_state);
+
+    DeltaValues GetPreconditionsDeltas(Action *action);
+
+    static double MaxCost(DeltaValues *preconditions_deltas);
+
+    static double AdditiveCost(DeltaValues *preconditions_deltas);
 
 public:
-    explicit Heuristics(LiteralList *goal);
 
-    DeltaMap init_delta_values(LiteralList *current_state);
+    explicit Heuristics(ParserController *controller);
 
-    std::unordered_map<Predicate *, int> delta_max(LiteralList *current_state);
+    double GetDelta(Literal *literal);
+
+    DeltaMap *EstimateDeltaValues(LiteralList *current_state, Method method = MAX_COST);
 };
 
 
