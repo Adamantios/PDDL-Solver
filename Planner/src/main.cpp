@@ -18,7 +18,6 @@ int main (int argc, char *argv[])
     int result = 0;
 
     auto *driver = new PDDLDriver();
-    ParserController parserController;
 
     for (int i = 1; i < argc; ++i) {
         if (argv[i] == string ("-p")) {
@@ -38,15 +37,17 @@ int main (int argc, char *argv[])
         }
     }
 
+    // Init Controller.
+    ParserController parserController;
+    parserController = ParserController(driver);
 
     // Test with print function
-//    parserController.Print();
-//    parserController.PrintPredicates();
+    // parserController.Print();
+    // parserController.PrintPredicates();
 
     /* Kostas Tsampazis
      * Demonstration of ParserController functionality of ApplicableActions utility method
      */
-    parserController = ParserController(driver);
     LiteralList * currentState = driver->problem->getInit();
     vector<Action*> applicableActions = parserController.ApplicableActions(currentState);
     if (applicableActions.empty()) cout << "No applicable actions on this state";
