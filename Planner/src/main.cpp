@@ -1,6 +1,7 @@
 // main.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
 #include <iostream>
+#include <heuristics.h>
 #include "pddldriver.hh"
 #include "ParserController.h"
 
@@ -48,15 +49,30 @@ int main (int argc, char *argv[])
     /* Kostas Tsampazis
      * Demonstration of ParserController functionality of ApplicableActions utility method
      */
-    LiteralList * currentState = driver->problem->getInit();
-    vector<Action*> applicableActions = parserController.ApplicableActions(currentState);
-    if (applicableActions.empty()) cout << "No applicable actions on this state";
-    else {
-        cout << "Applicable action(s): " << endl;
-        for (unsigned int i = 0; i < applicableActions.size(); i++)
-            cout << applicableActions.at(i)->_name << ", ";
+    LiteralList *currentState = driver->problem->getInit();
+    // vector<Action*> applicableActions = parserController.ApplicableActions(currentState);
+    // if (applicableActions.empty()) cout << "No applicable actions on this state";
+    // else {
+    //     cout << "Applicable action(s): " << endl;
+    //     for (unsigned int i = 0; i < applicableActions.size(); i++)
+    //         cout << applicableActions.at(i)->_name << ", ";
+    // }
+    // cout << endl;
+
+    // Heuristics demo.
+    Heuristics heuristics = Heuristics(parserController.GetGoal());
+    DeltaMap estimations = heuristics.delta_max(currentState);
+
+    std::cout << "Delta map estimations contain:" << std::endl;
+    for (auto &estimation : estimations) {
+        std::cout << estimation.first->_name << "(";
+        for (auto & arg : *estimation.first->_args) {
+            std::cout << arg;
+            if (arg != estimation.first->_args->back()) printf(", ");
+        }
+
+        std::cout << ")" << ": " << estimation.second << std::endl;
     }
-    cout << endl;
 
     if (driver) delete(driver);
 
