@@ -20,9 +20,9 @@ private:
 public:
     explicit Heuristics(ParserController *controller);
 
-    DeltaMap init_delta_values(LiteralList *current_state);
+    DeltaMap InitDeltaValues(LiteralList *current_state);
 
-    std::unordered_map<Predicate *, int> delta_max(LiteralList *current_state);
+    std::unordered_map<Predicate *, int> DeltaMax(LiteralList *current_state);
 };
 
 

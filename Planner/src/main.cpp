@@ -61,7 +61,7 @@ int main (int argc, char *argv[])
 
     // Heuristics demo.
     Heuristics heuristics = Heuristics(&parserController);
-    DeltaMap estimations = heuristics.delta_max(currentState);
+    DeltaMap estimations = heuristics.DeltaMax(currentState);
 
     std::cout << "Delta map estimations contain:" << std::endl;
     for (auto &estimation : estimations) {

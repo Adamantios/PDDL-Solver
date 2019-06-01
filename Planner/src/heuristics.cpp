@@ -2,7 +2,7 @@
 
 Heuristics::Heuristics(ParserController *controller) : _controller(controller) {}
 
-DeltaMap Heuristics::init_delta_values(LiteralList *current_state) {
+DeltaMap Heuristics::InitDeltaValues(LiteralList *current_state) {
     DeltaMap delta_map;
     LiteralList *goal = _controller->GetGoal();
 
@@ -29,9 +29,9 @@ DeltaMap Heuristics::init_delta_values(LiteralList *current_state) {
     return delta_map;
 }
 
-DeltaMap Heuristics::delta_max(LiteralList *current_state) {
+DeltaMap Heuristics::DeltaMax(LiteralList *current_state) {
     // Initialize Delta values.
-    DeltaMap delta_map = init_delta_values(current_state);
+    DeltaMap delta_map = InitDeltaValues(current_state);
 
     // // Define a relaxed set and a flag which marks changes in it.
     // LiteralList relaxed_set;
