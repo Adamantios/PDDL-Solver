@@ -23,7 +23,7 @@ DeltaMap Heuristics::InitDeltaValues(LiteralList *current_state) {
                                 });
 
         // Insert zero if goal exists at the current state, otherwise infinity.
-        delta_map.insert({state_predicate, (iterator != goal->end() ? 0 : std::numeric_limits<double>::infinity())});
+        delta_map.insert({state_literal, (iterator != goal->end() ? 0 : std::numeric_limits<double>::infinity())});
     }
 
     return delta_map;

@@ -10,8 +10,8 @@
 #include "action.hh"
 #include "ParserController.h"
 
-// Predicates mapped with their costs.
-typedef std::unordered_map<Predicate *, int> DeltaMap;
+// Literals mapped with their costs.
+typedef std::unordered_map<Literal *, int> DeltaMap;
 
 class Heuristics {
 private:
@@ -22,7 +22,7 @@ public:
 
     DeltaMap InitDeltaValues(LiteralList *current_state);
 
-    std::unordered_map<Predicate *, int> DeltaMax(LiteralList *current_state);
+    DeltaMap DeltaMax(LiteralList *current_state);
 };
 
 
