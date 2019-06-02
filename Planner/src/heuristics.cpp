@@ -11,7 +11,6 @@ DeltaMap Heuristics::InitDeltaValues(LiteralList *current_state) {
         // Get current state_literal's predicate and logical part.
         Predicate *state_predicate = state_literal->first;
         bool state_logical_part = state_literal->second;
-        std::cout << "Current: " << *state_literal->first << std::endl;
 
         // Create iterator, to define if any of the goal's literals matches the state_literal.
         auto iterator = find_if(goal->begin(), goal->end(),
