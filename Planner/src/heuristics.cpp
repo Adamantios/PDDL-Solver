@@ -29,7 +29,7 @@ DeltaMap Heuristics::InitDeltaValues(LiteralList *current_state) {
     return delta_map;
 }
 
-DeltaMap Heuristics::DeltaMax(LiteralList *current_state) {
+DeltaMap Heuristics::EstimateDeltaValues(LiteralList *current_state, Method method) {
     // Initialize Delta values.
     DeltaMap delta_map = InitDeltaValues(current_state);
 

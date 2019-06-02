@@ -17,12 +17,12 @@ class Heuristics {
 private:
     ParserController *_controller;
 
+    DeltaMap InitDeltaValues(LiteralList *current_state);
+
 public:
     explicit Heuristics(ParserController *controller);
 
-    DeltaMap InitDeltaValues(LiteralList *current_state);
-
-    DeltaMap DeltaMax(LiteralList *current_state);
+    DeltaMap EstimateDeltaValues(LiteralList *current_state, Method method = MAX_COST);
 };
 
 
