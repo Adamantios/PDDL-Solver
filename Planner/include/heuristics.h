@@ -24,6 +24,8 @@ private:
 
     DeltaMap *_delta_map{};
 
+    static LiteralList::iterator FindLiteral(LiteralList *state, Literal *literal);
+
     void InitDeltaValues(LiteralList *current_state);
 
     DeltaValues GetPreconditionsDeltas(Action *action);

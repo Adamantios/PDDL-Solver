@@ -2,24 +2,44 @@
 
 Heuristics::Heuristics(ParserController *controller) : _controller(controller) {}
 
+/**
+ *
+ * @param state
+ * @param literal
+ * @return
+ */
+LiteralList::iterator Heuristics::FindLiteral(LiteralList *state, Literal *literal) {
+    // TODO move function to ParserController maybe?
+
+    // Get literal's predicate and logical part.
+    Predicate *predicate = literal->first;
+    bool logical_part = literal->second;
+
+    auto iterator = find_if(state->begin(), state->end(),
+                            [&](const Literal *literal) -> bool {
+                                /*
+                                 * Lambda compares two literals.
+                                 * No need to compare types since identical PDDL objects cannot have different types.
+                                 */
+                                return literal->first->getName() == predicate->getName() &&
+                                       *literal->first->getArgs() == *predicate->getArgs() &&
+                                       literal->second == logical_part;
+                            });
+
+    return iterator;
+}
+
+/**
+ * Initializes the Delta Values of the current state.
+ * @param current_state the current state.
+ */
 void Heuristics::InitDeltaValues(LiteralList *current_state) {
     LiteralList *goal = _controller->GetGoal();
 
     // Iterate through state literals.
     for (Literal *state_literal : *current_state) {
-        // Get current state_literal's predicate and logical part.
-        Predicate *state_predicate = state_literal->first;
-        bool state_logical_part = state_literal->second;
-
-        // Create iterator, to define if any of the goal's literals matches the state_literal.
-        auto iterator = find_if(goal->begin(), goal->end(),
-                                [&](const Literal *literal) -> bool {
-                                    // No need to compare types. Two identical PDDL objects cannot have different types.
-                                    return literal->first->getName() == state_predicate->getName() &&
-                                           *literal->first->getArgs() == *state_predicate->getArgs() &&
-                                           literal->second == state_logical_part;
-                                });
-
+        // Search if any of the goal's literals matches the state_literal.
+        auto iterator = FindLiteral(goal, state_literal);
         // Insert zero if goal exists at the current state, otherwise infinity.
         _delta_map->insert({state_literal, (iterator != goal->end() ? 0 : std::numeric_limits<double>::infinity())});
     }
@@ -85,11 +105,15 @@ DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method met
             int action_cost = 1;
 
             for (Literal *effect : *action->getEffects()) {
-                // Relaxed state hasn't leveled off since an effect can be added.
-                leveled_off = false;
-                // Add the current effect to the relaxed state.
-                relaxed_state.push_back(effect);
-                // Get effect's delta value, if it exists. Otherwise set it with infinity.
+                // If the effect is not in the relaxed state.
+                if (FindLiteral(&relaxed_state, effect) != relaxed_state.end()) {
+                    // Relaxed state hasn't leveled off since an effect can be added.
+                    leveled_off = false;
+                    // Add the current effect to the relaxed state.
+                    relaxed_state.push_back(effect);
+                }
+
+                // Get effect's delta value.
                 double effect_delta = GetDelta(effect);
                 // Estimate the current action's cost, based on the method.
                 double cost = method == MAX_COST ? MaxCost(&preconditions_deltas) : AdditiveCost(&preconditions_deltas);
