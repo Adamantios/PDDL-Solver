@@ -38,7 +38,7 @@ public:
 
     DeltaMap *EstimateDeltaValues(LiteralList *current_state, Method method = MAX_COST);
 
-    double GetLiteralDelta(Literal *literal);
+    double GetDelta(Literal *literal);
 };
 
 

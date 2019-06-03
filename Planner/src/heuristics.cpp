@@ -65,7 +65,7 @@ DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method met
                 // Add the current effect to the relaxed state.
                 relaxed_state.push_back(effect);
                 // Get effect's delta value, if it exists. Otherwise set it with infinity.
-                double effect_delta = GetLiteralDelta(effect);
+                double effect_delta = GetDelta(effect);
                 // Estimate the current action's cost, based on the method.
                 double cost = method == MAX_COST ? MaxCost(&preconditions_deltas) : AdditiveCost(&preconditions_deltas);
                 // Calculate the current effect's delta value.
@@ -96,7 +96,7 @@ DeltaValues Heuristics::GetPreconditionsDeltas(Action *action) {
     return preconditions_deltas;
 }
 
-double Heuristics::GetLiteralDelta(Literal *literal) {
+double Heuristics::GetDelta(Literal *literal) {
     double effect_delta;
 
     // Search delta.
