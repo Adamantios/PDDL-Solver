@@ -3,10 +3,10 @@
 Heuristics::Heuristics(ParserController *controller) : _controller(controller) {}
 
 /**
- *
- * @param state
- * @param literal
- * @return
+ * Finds a literal in a state.
+ * @param state the state to be searched.
+ * @param literal the literal to search for.
+ * @return iterator.
  */
 LiteralList::iterator Heuristics::FindLiteral(LiteralList *state, Literal *literal) {
     // TODO move function to ParserController maybe?
@@ -45,6 +45,11 @@ void Heuristics::InitDeltaValues(LiteralList *current_state) {
     }
 }
 
+/**
+ * Gets the delta value of a literal.
+ * @param literal the literal to get the value from.
+ * @return the delta value.
+ */
 double Heuristics::GetDelta(Literal *literal) {
     double effect_delta;
 
@@ -60,6 +65,11 @@ double Heuristics::GetDelta(Literal *literal) {
     return effect_delta;
 }
 
+/**
+ * Gets the delta values of an action's preconditions.
+ * @param action the action for which the preconditions delta values will be retrieved.
+ * @return the delta values.
+ */
 DeltaValues Heuristics::GetPreconditionsDeltas(Action *action) {
     DeltaValues preconditions_deltas = DeltaValues();
 
@@ -70,10 +80,20 @@ DeltaValues Heuristics::GetPreconditionsDeltas(Action *action) {
     return preconditions_deltas;
 }
 
+/**
+ * Applies the Max-Cost rule.
+ * @param preconditions_deltas the preconditions deltas.
+ * @return the cost.
+ */
 double Heuristics::MaxCost(DeltaValues *preconditions_deltas) {
     return *max_element(preconditions_deltas->begin(), preconditions_deltas->end());
 }
 
+/**
+ * Applies the Additive-Cost rule.
+ * @param preconditions_deltas the preconditions deltas.
+ * @return the cost.
+ */
 double Heuristics::AdditiveCost(DeltaValues *preconditions_deltas) {
     double deltas_sum = 0;
     for (auto &delta : *preconditions_deltas)
@@ -82,6 +102,12 @@ double Heuristics::AdditiveCost(DeltaValues *preconditions_deltas) {
     return deltas_sum;
 }
 
+/**
+ * Estimates the delta values.
+ * @param current_state the state for which the delta values will be estimated.
+ * @param method the method to be used.
+ * @return the delta values mapped with the corresponding literals.
+ */
 DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method method) {
     // Initialize Delta values.
     InitDeltaValues(current_state);
