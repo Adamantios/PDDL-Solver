@@ -1,7 +1,7 @@
 // main.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
 #include <iostream>
-#include <heuristics.h>
+#include "heuristics_demo.h"
 #include "pddldriver.hh"
 #include "ParserController.h"
 
@@ -59,20 +59,8 @@ int main (int argc, char *argv[])
     // }
     // cout << endl;
 
-    // Heuristics demo.
-    Heuristics heuristics = Heuristics(&parserController);
-    DeltaMap estimations = heuristics.EstimateDeltaValues(currentState);
-
-    std::cout << "Delta map estimations contain:" << std::endl;
-    for (auto &estimation : estimations) {
-        std::cout << estimation.first->first->getName() << "(";
-        for (auto & arg : *estimation.first->first->getArgs()) {
-            std::cout << arg;
-            if (arg != estimation.first->first->getArgs()->back()) printf(", ");
-        }
-
-        std::cout << ")" << ": " << estimation.second << std::endl;
-    }
+    // Run heuristics demo.
+    HeuristicsDemo(parserController, currentState);
 
     if (driver) delete(driver);
 
