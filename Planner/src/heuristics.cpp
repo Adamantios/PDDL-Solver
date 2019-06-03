@@ -85,11 +85,14 @@ DeltaMap Heuristics::EstimateDeltaValues(LiteralList *current_state, Method meth
 DeltaValues Heuristics::GetPreconditionsDeltas(Action *action, DeltaMap *delta_map) {
     DeltaValues preconditions_deltas = DeltaValues();
 
+    // Search delta for each precondition.
     for (Literal *literal : *action->getPrecond()) {
         auto iterator = delta_map->find(literal);
         if (iterator != delta_map->end())
+            // If found store it.
             preconditions_deltas.push_back(iterator->second);
         else
+            // If not set it with infinity.
             preconditions_deltas.push_back(std::numeric_limits<double>::infinity());
     }
 
@@ -98,11 +101,14 @@ DeltaValues Heuristics::GetPreconditionsDeltas(Action *action, DeltaMap *delta_m
 
 double Heuristics::GetLiteralDelta(Literal *literal, DeltaMap *delta_map) {
     double effect_delta;
-    auto iterator = delta_map->find(literal);
 
+    // Search delta.
+    auto iterator = delta_map->find(literal);
     if (iterator != delta_map->end())
+        // If found store it.
         effect_delta = iterator->second;
     else
+        // If not set it with infinity.
         effect_delta = std::numeric_limits<double>::infinity();
 
     return effect_delta;
