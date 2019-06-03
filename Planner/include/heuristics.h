@@ -22,21 +22,23 @@ class Heuristics {
 private:
     ParserController *_controller;
 
-    DeltaMap InitDeltaValues(LiteralList *current_state);
+    DeltaMap *_delta_map{};
+
+    void InitDeltaValues(LiteralList *current_state);
 
     static double MaxCost(DeltaValues *preconditions_deltas);
 
     static double AdditiveCost(DeltaValues *preconditions_deltas);
 
-    static DeltaValues GetPreconditionsDeltas(Action *action, DeltaMap *delta_map);
-// TODO create _delta_map.
+    DeltaValues GetPreconditionsDeltas(Action *action);
+
 public:
 
     explicit Heuristics(ParserController *controller);
 
-    DeltaMap EstimateDeltaValues(LiteralList *current_state, Method method = MAX_COST);
+    DeltaMap *EstimateDeltaValues(LiteralList *current_state, Method method = MAX_COST);
 
-    static double GetLiteralDelta(Literal *literal, DeltaMap *delta_map);
+    double GetLiteralDelta(Literal *literal);
 };
 
 

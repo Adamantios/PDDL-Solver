@@ -2,8 +2,7 @@
 
 Heuristics::Heuristics(ParserController *controller) : _controller(controller) {}
 
-DeltaMap Heuristics::InitDeltaValues(LiteralList *current_state) {
-    DeltaMap delta_map;
+void Heuristics::InitDeltaValues(LiteralList *current_state) {
     LiteralList *goal = _controller->GetGoal();
 
     // Iterate through state literals.
@@ -22,10 +21,8 @@ DeltaMap Heuristics::InitDeltaValues(LiteralList *current_state) {
                                 });
 
         // Insert zero if goal exists at the current state, otherwise infinity.
-        delta_map.insert({state_literal, (iterator != goal->end() ? 0 : std::numeric_limits<double>::infinity())});
+        _delta_map->insert({state_literal, (iterator != goal->end() ? 0 : std::numeric_limits<double>::infinity())});
     }
-
-    return delta_map;
 }
 
 double Heuristics::MaxCost(DeltaValues *preconditions_deltas) {
@@ -40,9 +37,9 @@ double Heuristics::AdditiveCost(DeltaValues *preconditions_deltas) {
     return deltas_sum;
 }
 
-DeltaMap Heuristics::EstimateDeltaValues(LiteralList *current_state, Method method) {
+DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method method) {
     // Initialize Delta values.
-    DeltaMap delta_map = InitDeltaValues(current_state);
+    InitDeltaValues(current_state);
 
     // Initialize a relaxed state, using the current state and a flag which marks if it has leveled off.
     LiteralList relaxed_state(*current_state);
@@ -58,7 +55,7 @@ DeltaMap Heuristics::EstimateDeltaValues(LiteralList *current_state, Method meth
         // For each action's effect.
         for (Action *action : applicable_actions) {
             // Get action's preconditions delta values.
-            DeltaValues preconditions_deltas = GetPreconditionsDeltas(action, &delta_map);
+            DeltaValues preconditions_deltas = GetPreconditionsDeltas(action);
             // Set action's cost to 1.
             int action_cost = 1;
 
@@ -68,27 +65,27 @@ DeltaMap Heuristics::EstimateDeltaValues(LiteralList *current_state, Method meth
                 // Add the current effect to the relaxed state.
                 relaxed_state.push_back(effect);
                 // Get effect's delta value, if it exists. Otherwise set it with infinity.
-                double effect_delta = GetLiteralDelta(effect, &delta_map);
+                double effect_delta = GetLiteralDelta(effect);
                 // Estimate the current action's cost, based on the method.
                 double cost = method == MAX_COST ? MaxCost(&preconditions_deltas) : AdditiveCost(&preconditions_deltas);
                 // Calculate the current effect's delta value.
                 double delta_value = min(effect_delta, action_cost + cost);
                 // Store the delta value.
-                delta_map.insert({effect, delta_value});
+                _delta_map->insert({effect, delta_value});
             }
         }
     } while (!leveled_off);
 
-    return delta_map;
+    return _delta_map;
 }
 
-DeltaValues Heuristics::GetPreconditionsDeltas(Action *action, DeltaMap *delta_map) {
+DeltaValues Heuristics::GetPreconditionsDeltas(Action *action) {
     DeltaValues preconditions_deltas = DeltaValues();
 
     // Search delta for each precondition.
     for (Literal *literal : *action->getPrecond()) {
-        auto iterator = delta_map->find(literal);
-        if (iterator != delta_map->end())
+        auto iterator = _delta_map->find(literal);
+        if (iterator != _delta_map->end())
             // If found store it.
             preconditions_deltas.push_back(iterator->second);
         else
@@ -99,12 +96,12 @@ DeltaValues Heuristics::GetPreconditionsDeltas(Action *action, DeltaMap *delta_m
     return preconditions_deltas;
 }
 
-double Heuristics::GetLiteralDelta(Literal *literal, DeltaMap *delta_map) {
+double Heuristics::GetLiteralDelta(Literal *literal) {
     double effect_delta;
 
     // Search delta.
-    auto iterator = delta_map->find(literal);
-    if (iterator != delta_map->end())
+    auto iterator = _delta_map->find(literal);
+    if (iterator != _delta_map->end())
         // If found store it.
         effect_delta = iterator->second;
     else
