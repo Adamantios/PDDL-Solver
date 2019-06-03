@@ -33,11 +33,11 @@ int Heuristics::MaxCost(DeltaValues *preconditions_deltas) {
 }
 
 int Heuristics::AdditiveCost(DeltaValues *preconditions_deltas) {
-    int sum = 0;
-    for (auto &n : *preconditions_deltas)
-        sum += n;
+    int deltas_sum = 0;
+    for (auto &delta : *preconditions_deltas)
+        deltas_sum += delta;
 
-    return sum;
+    return deltas_sum;
 }
 
 DeltaMap Heuristics::EstimateDeltaValues(LiteralList *current_state, Method method) {
