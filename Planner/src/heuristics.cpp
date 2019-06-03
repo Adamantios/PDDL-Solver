@@ -25,6 +25,38 @@ void Heuristics::InitDeltaValues(LiteralList *current_state) {
     }
 }
 
+DeltaValues Heuristics::GetPreconditionsDeltas(Action *action) {
+    DeltaValues preconditions_deltas = DeltaValues();
+
+    // Search delta for each precondition.
+    for (Literal *literal : *action->getPrecond()) {
+        auto iterator = _delta_map->find(literal);
+        if (iterator != _delta_map->end())
+            // If found store it.
+            preconditions_deltas.push_back(iterator->second);
+        else
+            // If not set it with infinity.
+            preconditions_deltas.push_back(std::numeric_limits<double>::infinity());
+    }
+
+    return preconditions_deltas;
+}
+
+double Heuristics::GetDelta(Literal *literal) {
+    double effect_delta;
+
+    // Search delta.
+    auto iterator = _delta_map->find(literal);
+    if (iterator != _delta_map->end())
+        // If found store it.
+        effect_delta = iterator->second;
+    else
+        // If not set it with infinity.
+        effect_delta = std::numeric_limits<double>::infinity();
+
+    return effect_delta;
+}
+
 double Heuristics::MaxCost(DeltaValues *preconditions_deltas) {
     return *max_element(preconditions_deltas->begin(), preconditions_deltas->end());
 }
@@ -77,36 +109,4 @@ DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method met
     } while (!leveled_off);
 
     return _delta_map;
-}
-
-DeltaValues Heuristics::GetPreconditionsDeltas(Action *action) {
-    DeltaValues preconditions_deltas = DeltaValues();
-
-    // Search delta for each precondition.
-    for (Literal *literal : *action->getPrecond()) {
-        auto iterator = _delta_map->find(literal);
-        if (iterator != _delta_map->end())
-            // If found store it.
-            preconditions_deltas.push_back(iterator->second);
-        else
-            // If not set it with infinity.
-            preconditions_deltas.push_back(std::numeric_limits<double>::infinity());
-    }
-
-    return preconditions_deltas;
-}
-
-double Heuristics::GetDelta(Literal *literal) {
-    double effect_delta;
-
-    // Search delta.
-    auto iterator = _delta_map->find(literal);
-    if (iterator != _delta_map->end())
-        // If found store it.
-        effect_delta = iterator->second;
-    else
-        // If not set it with infinity.
-        effect_delta = std::numeric_limits<double>::infinity();
-
-    return effect_delta;
 }
