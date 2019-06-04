@@ -11,8 +11,8 @@
 #include "ParserController.h"
 
 // Literals mapped with their costs.
-typedef std::unordered_map<Literal *, double> DeltaMap;
-typedef vector<double> DeltaValues;
+typedef std::unordered_map<Literal *, int> DeltaMap;
+typedef vector<int> DeltaValues;
 
 enum Method {
     MAX_COST, ADDITIVE_COST
@@ -30,15 +30,15 @@ private:
 
     DeltaValues GetPreconditionsDeltas(Action *action);
 
-    static double MaxCost(DeltaValues *preconditions_deltas);
+    static int MaxCost(DeltaValues *preconditions_deltas);
 
-    static double AdditiveCost(DeltaValues *preconditions_deltas);
+    static int AdditiveCost(DeltaValues *preconditions_deltas);
 
 public:
 
     explicit Heuristics(ParserController *controller);
 
-    double GetDelta(Literal *literal);
+    int GetDelta(Literal *literal);
 
     DeltaMap *EstimateDeltaValues(LiteralList *current_state, Method method = MAX_COST);
 };
