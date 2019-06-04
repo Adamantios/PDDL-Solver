@@ -41,7 +41,7 @@ void Heuristics::InitDeltaValues(LiteralList *current_state) {
         // Search if any of the goal's literals matches the state_literal.
         auto iterator = FindLiteral(goal, state_literal);
         // Insert zero if goal exists at the current state, otherwise infinity.
-        _delta_map->insert({state_literal, (iterator != goal->end() ? 0 : std::numeric_limits<int>::infinity())});
+        _delta_map.insert({state_literal, (iterator != goal->end() ? 0 : std::numeric_limits<int>::infinity())});
     }
 }
 
@@ -54,8 +54,8 @@ int Heuristics::GetDelta(Literal *literal) {
     int effect_delta;
 
     // Search delta.
-    auto iterator = _delta_map->find(literal);
-    if (iterator != _delta_map->end())
+    auto iterator = _delta_map.find(literal);
+    if (iterator != _delta_map.end())
         // If found store it.
         effect_delta = iterator->second;
     else
@@ -146,10 +146,10 @@ DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method met
                 // Calculate the current effect's delta value.
                 int delta_value = min(effect_delta, action_cost + cost);
                 // Store the delta value.
-                _delta_map->insert({effect, delta_value});
+                _delta_map.insert({effect, delta_value});
             }
         }
     } while (!leveled_off);
 
-    return _delta_map;
+    return &_delta_map;
 }

@@ -22,7 +22,7 @@ class Heuristics {
 private:
     ParserController *_controller;
 
-    DeltaMap *_delta_map{};
+    DeltaMap _delta_map{};
 
     static LiteralList::iterator FindLiteral(LiteralList *state, Literal *literal);
 
