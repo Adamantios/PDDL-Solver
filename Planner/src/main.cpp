@@ -64,24 +64,28 @@ int main (int argc, char *argv[])
     parserController = ParserController(driver);
 
     // Test with print function
-    parserController.Print();
-    parserController.PrintPredicates();
+    // parserController.Print();
+    // parserController.PrintPredicates();
 
     /* Kostas Tsampazis
      * Demonstration of ParserController functionality of ApplicableActions utility method
      */
-    // LiteralList *currentState = driver->problem->getInit();
+    LiteralList * currentState = driver->problem->getInit();
     // vector<Action*> applicableActions = parserController.ApplicableActions(currentState);
     // if (applicableActions.empty()) cout << "No applicable actions on this state";
     // else {
     //     cout << "Applicable action(s): " << endl;
-    //     for (unsigned int i = 0; i < applicableActions.size(); i++)
-    //         cout << applicableActions.at(i)->_name << ", ";
+    //     for (unsigned int i = 0; i < applicableActions.size(); i++) {
+    //         cout << applicableActions.at(i)->getName() << ":";
+    //         for (unsigned int j = 0; j < applicableActions.at(i)->getParams()->size(); j++) {
+    //             cout << applicableActions.at(i)->getParams()->at(j) << ",";
+    //         }
+    //         cout << endl;
+    //     }
     // }
-    // cout << endl;
 
     // Run heuristics demo.
-    // HeuristicsDemo(parserController, currentState);
+    HeuristicsDemo(parserController, currentState);
 
     if (driver) delete(driver);
 
