@@ -52,7 +52,7 @@ vector<Predicate *> ParserController::GetPredicates() {
  *
  * @return vector with the domain actions
  */
-vector<Action *> ParserController::GetActions() {
+vector<Action*> ParserController::GetActions() {
     vector<Action*> actions;
     for (unsigned int i=0; i< driver->domain->getActions()->size(); i++) {
         actions.push_back(driver->domain->getActions()->at(i));
@@ -74,19 +74,19 @@ LiteralList* ParserController::GetGoal(){
  *
  * @return bool true if the action can be applied to the state, false otherwise
  */
-bool ParserController::IsApplicable(LiteralList* state, Action action) {
+bool ParserController::IsApplicable(LiteralList* state, Action* action) {
 
     // Keep action parameters on a local vector of pair<paramName, value>
     vector<pair<string, string>> actionParams;
-    for (unsigned int j = 0; j < action.getParams()->size(); j++) {
+    for (unsigned int j = 0; j < action->getParams()->size(); j++) {
         pair<string,string> n;
-        n.first = action.getParams()->at(j); // parameter name
+        n.first = action->getParams()->at(j); // parameter name
         n.second = ""; // parameter value (not set)
         actionParams.push_back(n);
     }
     // Local list of this action's preconditions
     PreconditionList preconditions;
-    for (unsigned int j = 0; j < action.getPrecond()->size(); j++) {
+    for (unsigned int j = 0; j < action->getPrecond()->size(); j++) {
 
         // Creating a new pair of Predicate*, bool, to perform a deep-copy
         auto* newPredicatePair = new pair<Predicate*, bool>;
@@ -94,17 +94,17 @@ bool ParserController::IsApplicable(LiteralList* state, Action action) {
         auto* newArgStrList = new StringList;
 //        TypeDict* newTypeDict; // TODO TypeDict is not deep copied over (not needed?)
         // Assign primitive values of this action precondition to arguments string list
-        for (unsigned int i = 0; i < action.getPrecond()->at(j)->first->getArgs()->size(); i++) {
-            newArgStrList->push_back(action.getPrecond()->at(j)->first->getArgs()->at(i));
+        for (unsigned int i = 0; i < action->getPrecond()->at(j)->first->getArgs()->size(); i++) {
+            newArgStrList->push_back(action->getPrecond()->at(j)->first->getArgs()->at(i));
         }
         // Assign arguments string list to ArgumentList which is used in predicates ctor
         newArgList->first = newArgStrList;
 
         // Call ctor of Predicate on first of predicate pair
-        newPredicatePair->first = new Predicate(action.getPrecond()->at(j)->first->getName(), newArgList);
+        newPredicatePair->first = new Predicate(action->getPrecond()->at(j)->first->getName(), newArgList);
 
         // Assign primitive bool value of this action's precondition to the new predicate pair's second
-        newPredicatePair->second = action.getPrecond()->at(j)->second;
+        newPredicatePair->second = action->getPrecond()->at(j)->second;
 
         // Add the new predicate pair that is a deep copy of this action's precondition to the local preconditions list
         preconditions.push_back(newPredicatePair);
@@ -235,7 +235,7 @@ bool ParserController::IsApplicable(LiteralList* state, Action action) {
         // Reset applied objects to precondition parameters
         for (unsigned int j = 0; j < preconditions.size(); j++) {
             for (unsigned int i = 0; i < preconditions.at(j)->first->getArgs()->size(); i++) {
-                preconditions.at(j)->first->getArgs()->at(i) = action.getPrecond()->at(j)->first->getArgs()->at(i);
+                preconditions.at(j)->first->getArgs()->at(i) = action->getPrecond()->at(j)->first->getArgs()->at(i);
             }
         }
 
@@ -263,16 +263,15 @@ bool ParserController::IsApplicable(LiteralList* state, Action action) {
  *
  * @return vector containing applicable actions on the state supplied
  */
-vector<Action *> ParserController::ApplicableActions(LiteralList* state) {
+vector<Action*> ParserController::ApplicableActions(LiteralList* state) {
 
     vector<Action*> actions = this->GetActions();
     vector<Action*> applicableActions;
     for (unsigned int i = 0; i < actions.size(); i++) {
-        if (this->IsApplicable(state, *actions.at(i))) {
+        if (this->IsApplicable(state, actions.at(i))) {
             applicableActions.push_back(actions.at(i));
         }
     }
-
     return applicableActions;
 }
 
