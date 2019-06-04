@@ -53,11 +53,14 @@ int main (int argc, char *argv[])
     if (applicableActions.empty()) cout << "No applicable actions on this state";
     else {
         cout << "Applicable action(s): " << endl;
-        for (unsigned int i = 0; i < applicableActions.size(); i++)
-            cout << applicableActions.at(i)->getName() << ", ";
+        for (unsigned int i = 0; i < applicableActions.size(); i++) {
+            cout << applicableActions.at(i)->getName() << ":";
+            for (unsigned int j = 0; j < applicableActions.at(i)->getParams()->size(); j++) {
+                cout << applicableActions.at(i)->getParams()->at(j) << ",";
+            }
+            cout << endl;
+        }
     }
-    cout << endl;
-
     if (driver) delete(driver);
 
     return result;
