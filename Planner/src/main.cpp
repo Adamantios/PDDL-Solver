@@ -9,7 +9,7 @@
 using namespace std;
 
 string APP_DESCRIPTION = "This application implements a pddl solver."; // Write More
-string AVAILABLE_AGLORITHMS = "You can choose an algorithm among the following ones:\nA_STAR";
+string AVAILABLE_ALGORITHMS = "You can choose an algorithm among the following ones:\nA_STAR";
 string AVAILABLE_HEURISTICS = "You can choose a heuristic among the following ones:\n";
 
 void usage(char *filename);
@@ -107,7 +107,7 @@ std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
 
   app->add_flag("-p", parsing_trace, "Tenable Parsing Trace");
 
-  app->add_option("-a", algorithm, AVAILABLE_AGLORITHMS)
+  app->add_option("-a", algorithm, AVAILABLE_ALGORITHMS)
     ->required();
 
   app->add_option("-r", heuristic, AVAILABLE_HEURISTICS)
