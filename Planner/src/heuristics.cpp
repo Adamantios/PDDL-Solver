@@ -22,7 +22,7 @@ LiteralList::iterator Heuristics::FindLiteral(LiteralList *state, Literal *liter
                                  * No need to compare types since identical PDDL objects cannot have different types.
                                  */
                                 return literal->first->getName() == predicate->getName() &&
-                                       *literal->first->getArgs() == *predicate->getArgs() &&
+                                       literal->first->getArgs() == predicate->getArgs() &&
                                        literal->second == logical_part;
                             });
 
