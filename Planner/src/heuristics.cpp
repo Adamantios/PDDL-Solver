@@ -66,37 +66,37 @@ double Heuristics::GetDelta(Literal *literal) {
 }
 
 /**
- * Gets the delta values of an action's preconditions.
- * @param action the action for which the preconditions delta values will be retrieved.
+ * Gets the delta values of a state.
+ * @param literal_list the state to get the values from.
  * @return the delta values.
  */
-DeltaValues Heuristics::GetPreconditionsDeltas(Action *action) {
-    DeltaValues preconditions_deltas = DeltaValues();
+DeltaValues Heuristics::GetDeltas(const LiteralList *literal_list) {
+    DeltaValues deltas = DeltaValues();
 
     // Get delta for each precondition.
-    for (Literal *literal : *action->getPrecond())
-        preconditions_deltas.push_back(GetDelta(literal));
+    for (Literal *literal : *literal_list)
+        deltas.push_back(GetDelta(literal));
 
-    return preconditions_deltas;
+    return deltas;
 }
 
 /**
  * Applies the Max-Cost rule.
- * @param preconditions_deltas the preconditions deltas.
- * @return the cost.
+ * @param deltas the deltas for which the rule will be applied.
+ * @return the resulting cost.
  */
-double Heuristics::MaxCost(DeltaValues *preconditions_deltas) {
-    return *max_element(preconditions_deltas->begin(), preconditions_deltas->end());
+double Heuristics::MaxCost(DeltaValues *deltas) {
+    return *max_element(deltas->begin(), deltas->end());
 }
 
 /**
  * Applies the Additive-Cost rule.
- * @param preconditions_deltas the preconditions deltas.
- * @return the cost.
+ * @param deltas the deltas for which the rule will be applied.
+ * @return the resulting cost.
  */
-double Heuristics::AdditiveCost(DeltaValues *preconditions_deltas) {
+double Heuristics::AdditiveCost(DeltaValues *deltas) {
     double deltas_sum = 0;
-    for (auto &delta : *preconditions_deltas)
+    for (auto &delta : *deltas)
         deltas_sum += delta;
 
     return deltas_sum;
@@ -108,7 +108,7 @@ double Heuristics::AdditiveCost(DeltaValues *preconditions_deltas) {
  * @param method the method to be used.
  * @return the delta values mapped with the corresponding literals.
  */
-DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method method) {
+void Heuristics::EstimateDeltaValues(LiteralList *current_state, Method method) {
     // Initialize Delta values.
     InitDeltaValues(current_state);
 
@@ -126,7 +126,7 @@ DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method met
         // For each action's effect.
         for (Action *action : applicable_actions) {
             // Get action's preconditions delta values.
-            DeltaValues preconditions_deltas = GetPreconditionsDeltas(action);
+            DeltaValues preconditions_deltas = GetDeltas(action->getPrecond());
             // Set action's cost to 1.
             double action_cost = 1;
 
@@ -150,6 +150,13 @@ DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method met
             }
         }
     } while (!leveled_off);
+}
 
-    return &_delta_map;
+double Heuristics::Estimate(LiteralList *current_state, Method method) {
+    EstimateDeltaValues(current_state, method);
+    // Get delta for each goal literal.
+    DeltaValues goal_deltas = GetDeltas(_controller->GetGoal());
+
+    // Estimate and return the goal's cost, based on the method.
+    return method == MAX_COST ? MaxCost(&goal_deltas) : AdditiveCost(&goal_deltas);
 }

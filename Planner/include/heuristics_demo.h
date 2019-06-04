@@ -7,9 +7,6 @@
 class HeuristicsDemo {
 public:
     HeuristicsDemo(ParserController parserController, LiteralList *currentState);
-
-private:
-    static void RevealEstimations(const DeltaMap &estimations);
 };
 
 

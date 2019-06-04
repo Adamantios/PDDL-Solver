@@ -28,19 +28,20 @@ private:
 
     void InitDeltaValues(LiteralList *current_state);
 
-    DeltaValues GetPreconditionsDeltas(Action *action);
+    static double MaxCost(DeltaValues *deltas);
 
-    static double MaxCost(DeltaValues *preconditions_deltas);
-
-    static double AdditiveCost(DeltaValues *preconditions_deltas);
-
-public:
-
-    explicit Heuristics(ParserController *controller);
+    static double AdditiveCost(DeltaValues *deltas);
 
     double GetDelta(Literal *literal);
 
-    DeltaMap *EstimateDeltaValues(LiteralList *current_state, Method method = MAX_COST);
+    DeltaValues GetDeltas(const LiteralList *literal_list);
+
+    void EstimateDeltaValues(LiteralList *current_state, Method method);
+
+public:
+    explicit Heuristics(ParserController *controller);
+
+    double Estimate(LiteralList *current_state, Method method = MAX_COST);
 };
 
 
