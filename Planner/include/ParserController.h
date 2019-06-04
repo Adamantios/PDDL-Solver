@@ -37,7 +37,7 @@ public:
 private:
     // FUNCTIONS
     // Utilities
-    bool IsApplicable(LiteralList* state, Action action);
+    bool IsApplicable(LiteralList* state, Action* action);
 
 };
 
