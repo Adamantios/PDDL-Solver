@@ -41,7 +41,7 @@ void Heuristics::InitDeltaValues(LiteralList *current_state) {
         // Search if any of the goal's literals matches the state_literal.
         auto iterator = FindLiteral(goal, state_literal);
         // Insert zero if goal exists at the current state, otherwise infinity.
-        _delta_map.insert({state_literal, (iterator != goal->end() ? 0 : std::numeric_limits<int>::infinity())});
+        _delta_map.insert({state_literal, (iterator != goal->end() ? 0 : std::numeric_limits<double>::infinity())});
     }
 }
 
@@ -50,8 +50,8 @@ void Heuristics::InitDeltaValues(LiteralList *current_state) {
  * @param literal the literal to get the value from.
  * @return the delta value.
  */
-int Heuristics::GetDelta(Literal *literal) {
-    int effect_delta;
+double Heuristics::GetDelta(Literal *literal) {
+    double effect_delta;
 
     // Search delta.
     auto iterator = _delta_map.find(literal);
@@ -60,7 +60,7 @@ int Heuristics::GetDelta(Literal *literal) {
         effect_delta = iterator->second;
     else
         // If not set it with infinity.
-        effect_delta = std::numeric_limits<int>::infinity();
+        effect_delta = std::numeric_limits<double>::infinity();
 
     return effect_delta;
 }
@@ -85,7 +85,7 @@ DeltaValues Heuristics::GetPreconditionsDeltas(Action *action) {
  * @param preconditions_deltas the preconditions deltas.
  * @return the cost.
  */
-int Heuristics::MaxCost(DeltaValues *preconditions_deltas) {
+double Heuristics::MaxCost(DeltaValues *preconditions_deltas) {
     return *max_element(preconditions_deltas->begin(), preconditions_deltas->end());
 }
 
@@ -94,8 +94,8 @@ int Heuristics::MaxCost(DeltaValues *preconditions_deltas) {
  * @param preconditions_deltas the preconditions deltas.
  * @return the cost.
  */
-int Heuristics::AdditiveCost(DeltaValues *preconditions_deltas) {
-    int deltas_sum = 0;
+double Heuristics::AdditiveCost(DeltaValues *preconditions_deltas) {
+    double deltas_sum = 0;
     for (auto &delta : *preconditions_deltas)
         deltas_sum += delta;
 
@@ -128,7 +128,7 @@ DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method met
             // Get action's preconditions delta values.
             DeltaValues preconditions_deltas = GetPreconditionsDeltas(action);
             // Set action's cost to 1.
-            int action_cost = 1;
+            double action_cost = 1;
 
             for (Literal *effect : *action->getEffects()) {
                 // If the effect is not in the relaxed state.
@@ -140,11 +140,11 @@ DeltaMap *Heuristics::EstimateDeltaValues(LiteralList *current_state, Method met
                 }
 
                 // Get effect's delta value.
-                int effect_delta = GetDelta(effect);
+                double effect_delta = GetDelta(effect);
                 // Estimate the current action's cost, based on the method.
-                int cost = method == MAX_COST ? MaxCost(&preconditions_deltas) : AdditiveCost(&preconditions_deltas);
+                double cost = method == MAX_COST ? MaxCost(&preconditions_deltas) : AdditiveCost(&preconditions_deltas);
                 // Calculate the current effect's delta value.
-                int delta_value = min(effect_delta, action_cost + cost);
+                double delta_value = min(effect_delta, action_cost + cost);
                 // Store the delta value.
                 _delta_map.insert({effect, delta_value});
             }
