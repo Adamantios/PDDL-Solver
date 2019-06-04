@@ -29,6 +29,7 @@ public:
     vector<Predicate*> GetPredicates();
     vector<Action*> GetActions();
     LiteralList* GetGoal();
+    LiteralList* GetInit();
 
     // Utilities
     vector<Action*> ApplicableActions(LiteralList* currentState);
