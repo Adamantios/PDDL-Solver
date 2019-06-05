@@ -1,7 +1,7 @@
 // main.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
 #include <iostream>
-#include "heuristics_demo.h"
+#include <heuristics_demo.h>
 #include "pddldriver.hh"
 #include "ParserController.h"
 #include "CLI11.hpp"
@@ -71,18 +71,22 @@ int main (int argc, char *argv[])
      * Demonstration of ParserController functionality of ApplicableActions utility method
      */
     LiteralList * currentState = driver->problem->getInit();
-    // vector<Action*> applicableActions = parserController.ApplicableActions(currentState);
-    // if (applicableActions.empty()) cout << "No applicable actions on this state";
-    // else {
-    //     cout << "Applicable action(s): " << endl;
-    //     for (unsigned int i = 0; i < applicableActions.size(); i++) {
-    //         cout << applicableActions.at(i)->getName() << ":";
-    //         for (unsigned int j = 0; j < applicableActions.at(i)->getParams()->size(); j++) {
-    //             cout << applicableActions.at(i)->getParams()->at(j) << ",";
-    //         }
-    //         cout << endl;
-    //     }
-    // }
+    vector<pair<Action*, vector<vector<string>>>> applicableActions = parserController.ApplicableActions(currentState);
+    if (applicableActions.empty()) cout << "No applicable actions on this state";
+    else {
+        cout << "Applicable action(s): " << endl;
+        for (unsigned int i = 0; i < applicableActions.size(); i++) {
+            cout << applicableActions.at(i).first->getName() << ":";
+            for (unsigned int j = 0; j < applicableActions.at(i).second.size(); j++) {
+                cout << "(";
+                for (unsigned int k = 0; k < applicableActions.at(i).second.at(j).size(); k++){
+                    cout << applicableActions.at(i).second.at(j).at(k) << ", ";
+                }
+                cout << ")" << endl;
+            }
+            cout << endl;
+        }
+    }
 
     // Run heuristics demo.
     HeuristicsDemo(parserController, currentState);

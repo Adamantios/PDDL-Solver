@@ -17,28 +17,39 @@ protected:
 public:
     // CONSTRUCTORS
     ParserController();
-    ParserController(PDDLDriver* driver);
+
+    ParserController(PDDLDriver *driver);
+
     virtual ~ParserController();
 
     // FUNCTIONS
     // Prints
     void Print();
+
     void PrintPredicates();
 
+    void PrintAction(Action action);
+
+    void PrintState(LiteralList state);
+
     // Gets
-    vector<Predicate*> GetPredicates();
-    vector<Action*> GetActions();
-    LiteralList* GetGoal();
-    LiteralList* GetInit();
+    vector<Predicate *> GetPredicates();
+
+    vector<Action *> GetActions();
+
+    LiteralList *GetGoal();
 
     // Utilities
-    vector<Action*> ApplicableActions(LiteralList* currentState);
+    vector<pair<Action *, vector<vector<string>>>> ApplicableActions(LiteralList *currentState);
+
+    LiteralList *NextState(LiteralList *state, Action action, vector<string> param_values);
+
+    vector<LiteralList *>NextStates(LiteralList *state, Action* action, vector<vector<string>> param_values);
 
 private:
     // FUNCTIONS
     // Utilities
-    bool IsApplicable(LiteralList* state, Action* action);
-
+    vector<vector<string>> IsApplicable(LiteralList *state, Action *action);
 };
 
 
