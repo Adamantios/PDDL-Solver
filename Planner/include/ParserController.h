@@ -24,6 +24,8 @@ public:
     // Prints
     void Print();
     void PrintPredicates();
+    void PrintAction(Action action);
+    void PrintState(LiteralList state);
 
     // Gets
     vector<Predicate*> GetPredicates();
@@ -32,12 +34,12 @@ public:
 
     // Utilities
     vector<pair<Action*, vector<vector<string>>>> ApplicableActions(LiteralList* currentState);
+    LiteralList* NextState(LiteralList* state, Action action, vector<string> param_values);
 
 private:
     // FUNCTIONS
     // Utilities
     vector<vector<string>> IsApplicable(LiteralList* state, Action* action);
-
 };
 
 

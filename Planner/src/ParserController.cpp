@@ -6,7 +6,7 @@ ParserController::ParserController() {
 ParserController::~ParserController() {
 }
 
-ParserController::ParserController(PDDLDriver* driver) {
+ParserController::ParserController(PDDLDriver *driver) {
     this->driver = driver;
 }
 
@@ -18,9 +18,9 @@ ParserController::ParserController(PDDLDriver* driver) {
 void ParserController::Print() {
 
     cout << endl;
-    cout << "Domain:" <<endl;
-    cout << *(driver->domain)  << endl;
-    cout << "Problem:" <<endl;
+    cout << "Domain:" << endl;
+    cout << *(driver->domain) << endl;
+    cout << "Problem:" << endl;
     cout << *(driver->problem) << endl;
 }
 
@@ -28,10 +28,54 @@ void ParserController::Print() {
  * Print the domain predicates
  */
 void ParserController::PrintPredicates() {
-    cout << "Predicates:" <<endl;
-    vector<Predicate*> *predicates = driver->domain->getPredicates();
+    cout << "Predicates:" << endl;
+    vector<Predicate *> *predicates = driver->domain->getPredicates();
     for (auto it = predicates->begin(); it != predicates->end(); ++it)
         cout << *(*it) << endl;
+    cout<<endl;
+}
+
+/**
+ * Print action
+ */
+void ParserController::PrintAction(Action action) {
+    Predicate *predicate;
+    cout << "Action: " << action.getName() << endl;
+    cout << "Params: ";
+    for (auto it = action.getParams()->begin(); it != action.getParams()->end(); ++it)
+        cout << *it << " ";
+    cout << endl << "Effects: " << endl;
+    for (unsigned int i = 0; i < action.getEffects()->size(); i++) {
+        predicate = action.getEffects()->at(i)->first;
+        cout << predicate->getName() << " ";
+        for (auto it = predicate->getArgs()->begin(); it != predicate->getArgs()->end(); ++it)
+            cout << *it << " ";
+        cout << action.getEffects()->at(i)->second << endl;
+    }
+    cout << "Preconditions: " << endl;
+    for (unsigned int i = 0; i < action.getPrecond()->size(); i++) {
+        predicate = action.getPrecond()->at(i)->first;
+        cout << predicate->getName() << " ";
+        for (auto it = predicate->getArgs()->begin(); it != predicate->getArgs()->end(); ++it)
+            cout << *it << " ";
+        cout << action.getPrecond()->at(i)->second << endl;
+    }
+    cout<<endl;
+}
+
+/**
+ * Print state
+ */
+void ParserController::PrintState(LiteralList state) {
+    Predicate *predicate;
+    for (unsigned int i = 0; i < state.size(); i++) {
+        predicate = state.at(i)->first;
+        cout << state.at(i)->first->getName() << " ";
+        for (auto it = predicate->getArgs()->begin(); it != predicate->getArgs()->end(); ++it)
+            cout << *it << " ";
+        cout << state.at(i)->second << endl;
+    }
+    cout << endl;
 }
 
 // GET FUNCTIONS
@@ -41,8 +85,8 @@ void ParserController::PrintPredicates() {
  * @return vector with the domain predicates
  */
 vector<Predicate *> ParserController::GetPredicates() {
-    vector<Predicate*> predicates;
-    for (unsigned int i=0; i< driver->domain->getPredicates()->size(); i++) {
+    vector<Predicate *> predicates;
+    for (unsigned int i = 0; i < driver->domain->getPredicates()->size(); i++) {
         predicates.push_back(driver->domain->getPredicates()->at(i));
     }
     return predicates;
@@ -52,9 +96,9 @@ vector<Predicate *> ParserController::GetPredicates() {
  *
  * @return vector with the domain actions
  */
-vector<Action*> ParserController::GetActions() {
-    vector<Action*> actions;
-    for (unsigned int i=0; i< driver->domain->getActions()->size(); i++) {
+vector<Action *> ParserController::GetActions() {
+    vector<Action *> actions;
+    for (unsigned int i = 0; i < driver->domain->getActions()->size(); i++) {
         actions.push_back(driver->domain->getActions()->at(i));
     }
     return actions;
@@ -64,7 +108,7 @@ vector<Action*> ParserController::GetActions() {
  *
  * @return LiteralList (=vector<Literal*>, Literal=pair<Predicate*,bool>) with the goal state
  */
-LiteralList* ParserController::GetGoal(){
+LiteralList *ParserController::GetGoal() {
     return driver->problem->getGoal();
 }
 
@@ -81,7 +125,7 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList* state, Action
     // Keep action parameters on a local vector of pair<paramName, value>
     vector<pair<string, string>> actionParams;
     for (unsigned int j = 0; j < action->getParams()->size(); j++) {
-        pair<string,string> n;
+        pair<string, string> n;
         n.first = action->getParams()->at(j); // parameter name
         n.second = ""; // parameter value (not set)
         actionParams.push_back(n);
@@ -91,9 +135,9 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList* state, Action
     for (unsigned int j = 0; j < action->getPrecond()->size(); j++) {
 
         // Creating a new pair of Predicate*, bool, to perform a deep-copy
-        auto* newPredicatePair = new pair<Predicate*, bool>;
-        auto* newArgList = new ArgumentList;
-        auto* newArgStrList = new StringList;
+        auto *newPredicatePair = new pair<Predicate *, bool>;
+        auto *newArgList = new ArgumentList;
+        auto *newArgStrList = new StringList;
 //        TypeDict* newTypeDict; // TODO TypeDict is not deep copied over (not needed?)
         // Assign primitive values of this action precondition to arguments string list
         for (unsigned int i = 0; i < action->getPrecond()->at(j)->first->getArgs()->size(); i++) {
@@ -121,27 +165,27 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList* state, Action
      * (found on https://stackoverflow.com/questions/9555864/variable-nested-for-loops)
     ------------------------------------------------------------------------------------------------------------------*/
     const int n = actionParams.size(); // Insert N here: how many loops do you need?
-    int i[n+1]; // if "n" is not known before hand, then this array will need to be created dynamically.
+    int i[n + 1]; // if "n" is not known before hand, then this array will need to be created dynamically.
     //Note: there is an extra element at the end of the array, in order to keep track of whether to exit the array.
 
-    for (int a=0; a<n+1; a++) {
-        i[a]=0;
+    for (int a = 0; a < n + 1; a++) {
+        i[a] = 0;
     }
 
     int MAX = driver->problem->getObjects()->size(); //That's just an example, if all of the loops are
-                                                     // identical: e.g. "for(int i=0; i<79; i++)". If the value of MAX
-                                                     // changes for each loop, then make MAX an array instead: (new)
-                                                     // int MAX [n]; MAX[0]=10; MAX[1]=20;...;MAX[n-1]=whatever.
+    // identical: e.g. "for(int i=0; i<79; i++)". If the value of MAX
+    // changes for each loop, then make MAX an array instead: (new)
+    // int MAX [n]; MAX[0]=10; MAX[1]=20;...;MAX[n-1]=whatever.
 
     int p = 0; //Used to increment all of the indices correctly, at the end of each loop.
-    while (i[n]==0) { //Remember, you're only using indices i[0], ..., i[n-1]. The (n+1)th index, i[n],
-                      // is just to check whether to the nested loop stuff has finished.
+    while (i[n] == 0) { //Remember, you're only using indices i[0], ..., i[n-1]. The (n+1)th index, i[n],
+        // is just to check whether to the nested loop stuff has finished.
 
         //DO STUFF HERE. Pretend you're inside your nested for loops.
         // The more usual i,j,k,... have been replaced here with i[0], i[1], ..., i[n-1].
 
 //        cout << "testing params:" << endl;
-        for(unsigned int lvl = 0; lvl < actionParams.size(); lvl++) {
+        for (unsigned int lvl = 0; lvl < actionParams.size(); lvl++) {
             actionParams.at(lvl).second = driver->problem->getObjects()->at(i[lvl]);
 //            cout << actionParams.at(lvl).second << ", ";
         }
@@ -151,7 +195,7 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList* state, Action
         for (unsigned int j = 0; j < preconditions.size(); j++) {
             for (unsigned int i = 0; i < preconditions.at(j)->first->getArgs()->size(); i++) {
                 for (unsigned int z = 0; z < actionParams.size(); z++) {
-                    if (preconditions.at(j)->first->getArgs()->at(i) == actionParams.at(z).first){
+                    if (preconditions.at(j)->first->getArgs()->at(i) == actionParams.at(z).first) {
                         preconditions.at(j)->first->getArgs()->at(i) = actionParams.at(z).second;
                     }
                 }
@@ -168,7 +212,7 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList* state, Action
                     for (unsigned int z = 0; z < preconditions.at(j)->first->getArgs()->size(); z++) {
                         for (unsigned int k = 0; k < preconditions.at(j)->first->getArgs()->size(); k++) {
                             if (z != k && preconditions.at(j)->first->getArgs()->at(z) !=
-                                          preconditions.at(j)->first->getArgs() ->at(k)) {
+                                          preconditions.at(j)->first->getArgs()->at(k)) {
                                 allArgsEq = false;
                             }
                         }
@@ -178,13 +222,12 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList* state, Action
 //                        cout << "not applicable equality true failed" << endl;
                         break; // this breaks outer for
                     }
-                }
-                else { // Equality false
+                } else { // Equality false
                     bool allArgsNotEq = true;
                     for (unsigned int z = 0; z < preconditions.at(j)->first->getArgs()->size(); z++) {
                         for (unsigned int k = 0; k < preconditions.at(j)->first->getArgs()->size(); k++) {
                             if (z != k && preconditions.at(j)->first->getArgs()->at(z) ==
-                                          preconditions.at(j)->first->getArgs() ->at(k)) {
+                                          preconditions.at(j)->first->getArgs()->at(k)) {
                                 allArgsNotEq = false;
                             }
                         }
@@ -204,7 +247,7 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList* state, Action
                     for (unsigned int p = 0; p < state->at(i)->first->getArgs()->size(); p++) {
                         bool foundParam = false;
                         for (unsigned int z = 0; z < preconditions.at(j)->first->getArgs()->size(); z++) {
-                            if (state->at(i)->first->getArgs()->at(p) == preconditions.at(j)->first->getArgs()->at(z)){
+                            if (state->at(i)->first->getArgs()->at(p) == preconditions.at(j)->first->getArgs()->at(z)) {
                                 foundParam = true;
                             }
                         }
@@ -252,14 +295,14 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList* state, Action
         //Now, after you've done your stuff, we need to increment all of the indices correctly.
         i[0]++;
         // p = 0;//Commented out, because it's replaced by a more efficient alternative below.
-        while(i[p]==MAX) { //(or "MAX[p]" if each "for" loop is different. Note that from an English point
-                           // of view, this is more like "if(i[p]==MAX". (Initially i[0]) If this is true, then i[p]
-                           // is reset to 0, and i[p+1] is incremented.
-            i[p]=0;
+        while (i[p] == MAX) { //(or "MAX[p]" if each "for" loop is different. Note that from an English point
+            // of view, this is more like "if(i[p]==MAX". (Initially i[0]) If this is true, then i[p]
+            // is reset to 0, and i[p+1] is incremented.
+            i[p] = 0;
             i[++p]++; //increase p by 1, and increase the next (p+1)th index
-            if(i[p]!=MAX)
-                p=0; //Alternatively, "p=0" can be inserted above (currently commented-out). This one's more
-                     // efficient though, since it only resets p when it actually needs to be reset!
+            if (i[p] != MAX)
+                p = 0; //Alternatively, "p=0" can be inserted above (currently commented-out). This one's more
+            // efficient though, since it only resets p when it actually needs to be reset!
         }
     }
 
@@ -281,6 +324,17 @@ vector<pair<Action*, vector<vector<string>>>> ParserController::ApplicableAction
         if (!applicableActionsParams.second.empty()) applicableActions.push_back(applicableActionsParams);
     }
     return applicableActions;
+}
+
+/**
+ *
+ * @return the new state after the action is applied to the provided state
+ */
+LiteralList* ParserController::NextState(LiteralList *state, Action action, vector<string> param_values) {
+
+
+
+    return state;
 }
 
 
