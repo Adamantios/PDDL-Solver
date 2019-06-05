@@ -74,7 +74,9 @@ LiteralList* ParserController::GetGoal(){
  *
  * @return bool true if the action can be applied to the state, false otherwise
  */
-bool ParserController::IsApplicable(LiteralList* state, Action* action) {
+vector<vector<string>> ParserController::IsApplicable(LiteralList* state, Action* action) {
+
+    vector<vector<string>> parameterList;
 
     // Keep action parameters on a local vector of pair<paramName, value>
     vector<pair<string, string>> actionParams;
@@ -232,6 +234,14 @@ bool ParserController::IsApplicable(LiteralList* state, Action* action) {
 
         }
 
+        if (applicable) {
+            vector<string> params;
+            for(unsigned int lvl = 0; lvl < actionParams.size(); lvl++) {
+                params.push_back(actionParams.at(lvl).second);
+            }
+            parameterList.push_back(params);
+        }
+
         // Reset applied objects to precondition parameters
         for (unsigned int j = 0; j < preconditions.size(); j++) {
             for (unsigned int i = 0; i < preconditions.at(j)->first->getArgs()->size(); i++) {
@@ -251,26 +261,24 @@ bool ParserController::IsApplicable(LiteralList* state, Action* action) {
                 p=0; //Alternatively, "p=0" can be inserted above (currently commented-out). This one's more
                      // efficient though, since it only resets p when it actually needs to be reset!
         }
-
-        if (applicable) return true;
-        else continue;
     }
 
-    return false;
+    return parameterList;
 }
 
 /**
  *
- * @return vector containing applicable actions on the state supplied
+ * @return vector containing pairs of applicable actions and their applicable params values on the state supplied
  */
-vector<Action*> ParserController::ApplicableActions(LiteralList* state) {
+vector<pair<Action*, vector<vector<string>>>> ParserController::ApplicableActions(LiteralList* state) {
 
     vector<Action*> actions = this->GetActions();
-    vector<Action*> applicableActions;
+    vector<pair<Action*, vector<vector<string>>>> applicableActions;
     for (unsigned int i = 0; i < actions.size(); i++) {
-        if (this->IsApplicable(state, actions.at(i))) {
-            applicableActions.push_back(actions.at(i));
-        }
+        pair<Action*, vector<vector<string>>> applicableActionsParams;
+        applicableActionsParams.first = actions.at(i);
+        applicableActionsParams.second = this->IsApplicable(state, actions.at(i));
+        if (!applicableActionsParams.second.empty()) applicableActions.push_back(applicableActionsParams);
     }
     return applicableActions;
 }

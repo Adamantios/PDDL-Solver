@@ -31,12 +31,12 @@ public:
     LiteralList* GetGoal();
 
     // Utilities
-    vector<Action*> ApplicableActions(LiteralList* currentState);
+    vector<pair<Action*, vector<vector<string>>>> ApplicableActions(LiteralList* currentState);
 
 private:
     // FUNCTIONS
     // Utilities
-    bool IsApplicable(LiteralList* state, Action* action);
+    vector<vector<string>> IsApplicable(LiteralList* state, Action* action);
 
 };
 
