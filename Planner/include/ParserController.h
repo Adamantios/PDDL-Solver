@@ -44,7 +44,7 @@ public:
 
     LiteralList *NextState(LiteralList *state, Action action, vector<string> param_values);
 
-    vector<LiteralList *>NextStates(LiteralList *state, Action action, vector<vector<string>> param_values);
+    vector<LiteralList *>NextStates(LiteralList *state, Action* action, vector<vector<string>> param_values);
 
 private:
     // FUNCTIONS

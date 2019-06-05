@@ -431,7 +431,7 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action, vect
             new_literal->first = effect_predicate;
             for (unsigned int i = 0; i < effect_predicate->getArgs()->size(); i++) {
                 for (map<string, string>::iterator action = action_params.begin();
-                     action != action_params.end(); ++action) {
+                     action != action_params.end(); action++) {
 
                     if (!effect_predicate->getArgs()->at(i).compare(action->first))
                         new_literal->first->getArgs()->at(i) = action->second;
@@ -446,16 +446,22 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action, vect
     return new_state;
 }
 
-vector<LiteralList *> ParserController::NextStates(LiteralList *state, Action action, vector<vector<string>> param_values) {
+/**
+ *
+ * @param state current state
+ * @param action action to be performed
+ * @param param_values vector of applicable param variations
+ * @return a vector containing all the resulting states after applying this action
+ */
+vector<LiteralList *> ParserController::NextStates(LiteralList *state, Action* action, vector<vector<string>> param_values) {
 
-    vector<LiteralList *> states;// = vector<LiteralList *>();
-    LiteralList * new_state;
+    vector<LiteralList *> states = vector<LiteralList *>();
 
     for(unsigned int i=0; i<param_values.size(); i++) {
-        states = vector<LiteralList *>();
-        LiteralList * new_state = NextState(state, action, param_values.at(i));
+        LiteralList * new_state = this->NextState(state, *action, param_values.at(i));
         states.emplace_back(new_state);
-        //PrintState(*new_state);
+        cout<<"Next state:"<<endl;
+        PrintState(*new_state);
     }
 
     return states;
