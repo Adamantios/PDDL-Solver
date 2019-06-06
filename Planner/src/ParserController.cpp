@@ -112,14 +112,6 @@ LiteralList *ParserController::GetGoal() {
     return driver->problem->getGoal();
 }
 
-/**
- *
- * @return LiteralList (=vector<Literal*>, Literal=pair<Predicate*,bool>) with the initial state
- */
-LiteralList* ParserController::GetInit(){
-    return driver->problem->getInit();
-}
-
 // UTILITIES
 
 /**
