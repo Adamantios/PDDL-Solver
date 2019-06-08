@@ -477,8 +477,6 @@ ParserController::NextStates(LiteralList *state, Action *action, vector<vector<s
  * @return bool
  */
 bool ParserController::LiteralsEqual(Literal *literal1, Literal *literal2) {
-    // TODO move function to ParserController maybe?
-
     // No need to compare types since identical PDDL objects cannot have different types.
     return literal1->first->getName() == literal2->first->getName() &&
            *literal1->first->getArgs() == *literal2->first->getArgs() &&
@@ -492,8 +490,6 @@ bool ParserController::LiteralsEqual(Literal *literal1, Literal *literal2) {
  * @return iterator.
  */
 LiteralList::iterator ParserController::FindLiteral(LiteralList *state, Literal *literal) {
-    // TODO move function to ParserController maybe?
-
     auto iterator = find_if(state->begin(), state->end(),
                             [&](Literal *state_literal) -> bool {
                                 /*
