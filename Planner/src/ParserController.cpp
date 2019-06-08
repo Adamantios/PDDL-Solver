@@ -313,17 +313,19 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
  *
  * @return vector containing pairs of applicable actions and their applicable params values on the state supplied
  */
-vector<pair<Action *, vector<vector<string>>>> ParserController::ApplicableActions(LiteralList *state) {
+vector<Action *> *ParserController::ApplicableActions(LiteralList *state) {
 
     vector<Action *> actions = this->GetActions();
     vector<pair<Action *, vector<vector<string>>>> applicableActions;
-    for (unsigned int i = 0; i < actions.size(); i++) {
+
+    for (auto &action : actions) {
         pair<Action *, vector<vector<string>>> applicableActionsParams;
-        applicableActionsParams.first = actions.at(i);
-        applicableActionsParams.second = this->IsApplicable(state, actions.at(i));
+        applicableActionsParams.first = action;
+        applicableActionsParams.second = this->IsApplicable(state, action);
         if (!applicableActionsParams.second.empty()) applicableActions.push_back(applicableActionsParams);
     }
-    return applicableActions;
+
+    return UnrollActions(&applicableActions);
 }
 
 /**
@@ -339,8 +341,8 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action, vect
     bool state_predicate_status;
 
     LiteralList *new_state = new LiteralList();
-    for(unsigned int i=0; i<state->size(); i++) {
-        Literal* literal = new Literal();
+    for (unsigned int i = 0; i < state->size(); i++) {
+        Literal *literal = new Literal();
         literal->second = state->at(i)->second;
         literal->first = state->at(i)->first;
         new_state->emplace_back(literal);
@@ -453,20 +455,108 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action, vect
  * @param param_values vector of applicable param variations
  * @return a vector containing all the resulting states after applying this action
  */
-vector<LiteralList *> ParserController::NextStates(LiteralList *state, Action* action, vector<vector<string>> param_values) {
+vector<LiteralList *>
+ParserController::NextStates(LiteralList *state, Action *action, vector<vector<string>> param_values) {
 
     vector<LiteralList *> states = vector<LiteralList *>();
 
-    for(unsigned int i=0; i<param_values.size(); i++) {
-        LiteralList * new_state = this->NextState(state, *action, param_values.at(i));
+    for (unsigned int i = 0; i < param_values.size(); i++) {
+        LiteralList *new_state = this->NextState(state, *action, param_values.at(i));
         states.emplace_back(new_state);
-        cout<<"Next state:"<<endl;
+        cout << "Next state:" << endl;
         PrintState(*new_state);
     }
 
     return states;
 }
 
+/**
+ * Compares two literals.
+ * @param literal1 the first literal.
+ * @param literal2 the second literal.
+ * @return bool
+ */
+bool ParserController::LiteralsEqual(Literal *literal1, Literal *literal2) {
+    // TODO move function to ParserController maybe?
 
+    // No need to compare types since identical PDDL objects cannot have different types.
+    return literal1->first->getName() == literal2->first->getName() &&
+           *literal1->first->getArgs() == *literal2->first->getArgs() &&
+           literal1->second == literal2->second;
+}
 
+/**
+ * Finds a literal in a state.
+ * @param state the state to be searched.
+ * @param literal the literal to search for.
+ * @return iterator.
+ */
+LiteralList::iterator ParserController::FindLiteral(LiteralList *state, Literal *literal) {
+    // TODO move function to ParserController maybe?
 
+    auto iterator = find_if(state->begin(), state->end(),
+                            [&](Literal *state_literal) -> bool {
+                                /*
+                                 * Lambda compares two literals.
+                                 */
+                                return LiteralsEqual(state_literal, literal);
+                            });
+
+    return iterator;
+}
+
+LiteralList *ParserController::UnrollLiteralList(const LiteralList *rolled_list, const StringList *rolled_params,
+                                                 ParameterList *unrolled_params) {
+    auto unrolled_list = new LiteralList();
+
+    // For each literal of the rolled list.
+    for (Literal *literal : *rolled_list) {
+        auto args = new ArgumentList({new StringList(), new TypeDict()});
+
+        // For each literal's argument.
+        for_each(literal->first->getArgs()->begin(), literal->first->getArgs()->end(),
+                /*
+                 * Lambda stores the unrolled parameter which corresponds to the rolled of the literal, as an argument.
+                 */
+                 [&](string arg) -> void {
+                     // Find argument in the rolled parameters.
+                     auto iterator = std::find(rolled_params->begin(), rolled_params->end(), arg);
+                     // Get its index.
+                     int index = std::distance(rolled_params->begin(), iterator);
+                     // Store the unrolled parameter corresponding to the index found as an argument.
+                     args->first->push_back(unrolled_params->first->at(index));
+                 });
+
+        // Create a predicate from the arguments that where found.
+        auto predicate = new Predicate(literal->first->getName(), args);
+        // Store the predicate with its logical part to the unrolled list.
+        unrolled_list->push_back(new Literal({predicate, literal->second}));
+    }
+
+    return unrolled_list;
+}
+
+vector<Action *> *ParserController::UnrollActions(vector<pair<Action *, vector<vector<string>>>> *rolled_actions) {
+    auto *unrolled_actions = new vector<Action *>();
+
+    // Fore each rolled action.
+    for (const pair<Action *, vector<vector<string>>> &rolled_action : *rolled_actions)
+        // For each parameter combination of the action.
+        for (const StringList &assigned_params : rolled_action.second) {
+            // Get rolled parameters.
+            const StringList *rolled_params = rolled_action.first->getParams();
+
+            // Initialize unrolled parameters, preconditions and effects.
+            auto params = new ParameterList(new StringList(assigned_params), nullptr);
+            PreconditionList *preconditions = UnrollLiteralList(rolled_action.first->getPrecond(), rolled_params,
+                                                                params);
+            auto effects = UnrollLiteralList(rolled_action.first->getEffects(), rolled_params, params);
+
+            // Create an action from the unrolled parameters, preconditions and effects.
+            auto *action = new Action(rolled_action.first->getName(), params, preconditions, effects);
+            // Store the action.
+            unrolled_actions->push_back(action);
+        }
+
+    return unrolled_actions;
+}

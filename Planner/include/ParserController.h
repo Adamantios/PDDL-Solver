@@ -10,6 +10,9 @@ using namespace std;
 
 class ParserController {
 
+    // TODO create Hash and Decode methods.
+    //  Move non relative methods to a new class called 'Utils' or something like that.
+
 protected:
     // VARIABLES
     PDDLDriver *driver;
@@ -40,16 +43,25 @@ public:
     LiteralList *GetGoal();
 
     // Utilities
-    vector<pair<Action *, vector<vector<string>>>> ApplicableActions(LiteralList *currentState);
+    vector<Action *> *ApplicableActions(LiteralList *currentState);
 
     LiteralList *NextState(LiteralList *state, Action action, vector<string> param_values);
 
-    vector<LiteralList *>NextStates(LiteralList *state, Action* action, vector<vector<string>> param_values);
+    vector<LiteralList *> NextStates(LiteralList *state, Action *action, vector<vector<string>> param_values);
+
+    static bool LiteralsEqual(Literal *literal1, Literal *literal2);
+
+    static LiteralList::iterator FindLiteral(LiteralList *state, Literal *literal);
 
 private:
     // FUNCTIONS
     // Utilities
     vector<vector<string>> IsApplicable(LiteralList *state, Action *action);
+
+    static LiteralList *UnrollLiteralList(const LiteralList *rolled_list, const StringList *rolled_params,
+                                          ParameterList *unrolled_params);
+
+    static vector<Action *> *UnrollActions(vector<pair<Action *, vector<vector<string>>>> *rolled_actions);
 };
 
 
