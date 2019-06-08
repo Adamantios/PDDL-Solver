@@ -29,6 +29,21 @@ const PreconditionList *Action::getPrecond() const {
     return _precond;
 }
 
+/**
+ * Getter for the preconditions filtered.
+ * Removes the special '='.
+ */
+const PreconditionList *Action::getFilteredPrecond() const {
+    auto *preconditions = new PreconditionList();
+
+    for (auto precondition : *_precond) {
+        if (precondition->first->getName() != "=")
+            preconditions->push_back(precondition);
+    }
+
+    return preconditions;
+}
+
 const EffectList *Action::getEffects() const {
     return _effects;
 }

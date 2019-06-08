@@ -38,6 +38,8 @@ public:
 
     const PreconditionList *getPrecond() const;
 
+    const PreconditionList *getFilteredPrecond() const;
+
     const EffectList *getEffects() const;
 
 private:
