@@ -31,7 +31,7 @@ public:
 
     void PrintPredicates();
 
-    void PrintAction(Action action);
+    void PrintAction(Action *action);
 
     void PrintState(LiteralList state);
 
@@ -45,9 +45,9 @@ public:
     // Utilities
     vector<Action *> *ApplicableActions(LiteralList *currentState);
 
-    LiteralList *NextState(LiteralList *state, Action action, vector<string> param_values);
+    LiteralList *NextState(LiteralList *state, Action action);
 
-    vector<LiteralList *> NextStates(LiteralList *state, Action *action, vector<vector<string>> param_values);
+    vector<LiteralList *> NextStates(LiteralList *state, vector<Action *>* actions);
 
     static bool LiteralsEqual(Literal *literal1, Literal *literal2);
 

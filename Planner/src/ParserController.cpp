@@ -38,27 +38,27 @@ void ParserController::PrintPredicates() {
 /**
  * Print action
  */
-void ParserController::PrintAction(Action action) {
+void ParserController::PrintAction(Action *action) {
     Predicate *predicate;
-    cout << "Action: " << action.getName() << endl;
+    cout << "Action: " << action->getName() << endl;
     cout << "Params: ";
-    for (auto it = action.getParams()->begin(); it != action.getParams()->end(); ++it)
+    for (auto it = action->getParams()->begin(); it != action->getParams()->end(); ++it)
         cout << *it << " ";
     cout << endl << "Effects: " << endl;
-    for (unsigned int i = 0; i < action.getEffects()->size(); i++) {
-        predicate = action.getEffects()->at(i)->first;
+    for (unsigned int i = 0; i < action->getEffects()->size(); i++) {
+        predicate = action->getEffects()->at(i)->first;
         cout << predicate->getName() << " ";
         for (auto it = predicate->getArgs()->begin(); it != predicate->getArgs()->end(); ++it)
             cout << *it << " ";
-        cout << action.getEffects()->at(i)->second << endl;
+        cout << action->getEffects()->at(i)->second << endl;
     }
     cout << "Preconditions: " << endl;
-    for (unsigned int i = 0; i < action.getPrecond()->size(); i++) {
-        predicate = action.getPrecond()->at(i)->first;
+    for (unsigned int i = 0; i < action->getPrecond()->size(); i++) {
+        predicate = action->getPrecond()->at(i)->first;
         cout << predicate->getName() << " ";
         for (auto it = predicate->getArgs()->begin(); it != predicate->getArgs()->end(); ++it)
             cout << *it << " ";
-        cout << action.getPrecond()->at(i)->second << endl;
+        cout << action->getPrecond()->at(i)->second << endl;
     }
     cout << endl;
 }
@@ -332,48 +332,20 @@ vector<Action *> *ParserController::ApplicableActions(LiteralList *state) {
  *
  * @return the new state after the action is applied to the provided state
  */
-LiteralList *ParserController::NextState(LiteralList *state, Action action, vector<string> param_values) {
+LiteralList *ParserController::NextState(LiteralList *state, Action action) {
 
     Predicate *state_predicate;
     Predicate *effect_predicate;
-    Predicate *precondition_predicate;
     bool effect_status;
     bool state_predicate_status;
 
+    // Copy given state to new_state variable
     LiteralList *new_state = new LiteralList();
     for (unsigned int i = 0; i < state->size(); i++) {
         Literal *literal = new Literal();
         literal->second = state->at(i)->second;
         literal->first = state->at(i)->first;
         new_state->emplace_back(literal);
-    }
-
-    // Keep action parameters on a local HashMap
-    map<string, string> action_params;
-    for (unsigned int i = 0; i < action.getParams()->size(); i++) {
-        // Create HashMap entry with key the param name, and value its value
-        action_params[action.getParams()->at(i)] = param_values.at(i);
-    }
-
-    // Keep precondition parameters on a local HashMap
-    map<string, string> precond_params;
-    for (unsigned int precond_index = 0; precond_index < action.getPrecond()->size(); precond_index++) {
-        precondition_predicate = action.getPrecond()->at(precond_index)->first;
-
-        // Search in state for the predicate that satisfies this precondition
-        for (unsigned int state_index = 0; state_index < new_state->size(); state_index++) {
-            Predicate *state_predicate = new_state->at(state_index)->first;
-            // Compare precondition and state predicates names
-            if (!precondition_predicate->getName().compare(state_predicate->getName()))
-                // If their names are the same, check their bool values
-                if (action.getPrecond()->at(precond_index)->second == new_state->at(state_index)->second) {
-                    // Assign to each parameter the value of the state predicate
-                    for (unsigned int index = 0; index < precondition_predicate->getArgs()->size(); index++) {
-                        precond_params[precondition_predicate->getArgs()->at(index)] = state_predicate->getArgs()->at(
-                                index);
-                    }
-                }
-        }
     }
 
     bool applied;
@@ -405,8 +377,7 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action, vect
                     unsigned int correct_args = 0;
                     for (unsigned int arg_index = 0; arg_index < state_predicate->getArgs()->size(); arg_index++) {
                         string param = effect_predicate->getArgs()->at(arg_index);
-
-                        if (!precond_params[param].compare(state_predicate->getArgs()->at(arg_index))) {
+                        if (!param.compare(state_predicate->getArgs()->at(arg_index))) {
                             // State predicate has the correct value for this parameter, increment counter
                             correct_args++;
                         }
@@ -431,14 +402,14 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action, vect
             // The effect adds a new literal to the state
             Literal *new_literal = new Literal();
             new_literal->first = effect_predicate;
+            /*
             for (unsigned int i = 0; i < effect_predicate->getArgs()->size(); i++) {
-                for (map<string, string>::iterator action = action_params.begin();
-                     action != action_params.end(); action++) {
-
-                    if (!effect_predicate->getArgs()->at(i).compare(action->first))
-                        new_literal->first->getArgs()->at(i) = action->second;
+                for (unsigned int j=0; j < action.getParams()->size(); j++) {
+                    if (!effect_predicate->getArgs()->at(i).compare(action.getParams()->at(j)))
+                        new_literal->first->getArgs()->at(i) = action.getParams()->at(j);
                 }
             }
+             */
             new_literal->second = effect_status;
             new_state->emplace_back(new_literal);
             //delete (new_literal);
@@ -456,12 +427,12 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action, vect
  * @return a vector containing all the resulting states after applying this action
  */
 vector<LiteralList *>
-ParserController::NextStates(LiteralList *state, Action *action, vector<vector<string>> param_values) {
+ParserController::NextStates(LiteralList *state, vector<Action *>* actions) {
 
     vector<LiteralList *> states = vector<LiteralList *>();
 
-    for (unsigned int i = 0; i < param_values.size(); i++) {
-        LiteralList *new_state = this->NextState(state, *action, param_values.at(i));
+    for (unsigned int i = 0; i < actions->size(); i++) {
+        LiteralList *new_state = this->NextState(state, *actions->at(i));
         states.emplace_back(new_state);
         cout << "Next state:" << endl;
         PrintState(*new_state);
