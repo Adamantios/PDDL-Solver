@@ -14,31 +14,31 @@ Hashing::~Hashing() {
    if (idDictionary) delete (idDictionary);
 }
 
-map<string, int> *Hashing::GetNameDictionary() {
+map<string*, int, cmpByStringValue> *Hashing::GetNameDictionary() {
     return nameDictionary;
 }
 
 
-map<int, string> *Hashing::GetIDDictionary() {
+map<int, string*> *Hashing::GetIDDictionary() {
     return idDictionary;
 }
 
 void Hashing::PrintNameDictionary() {
-    for ( map<string, int>::iterator it = nameDictionary->begin(); it != nameDictionary->end(); it++ )
+    for ( map<string*, int, cmpByStringValue>::iterator it = nameDictionary->begin(); it != nameDictionary->end(); it++ )
     {
-        std::cout << it->first  // string (key)
+        std::cout <<*(it->first) // string (key)
                   << " : "
-                  << it->second   // string's value
+                  << it->second   // int's value
                   << std::endl ;
     }
 }
 
 void Hashing::PrintIDDictionary() {
-    for ( map<int, string>::iterator it = idDictionary->begin(); it != idDictionary->end(); it++ )
+    for ( map<int, string*>::iterator it = idDictionary->begin(); it != idDictionary->end(); it++ )
     {
-        std::cout << it->first  // string (key)
+        std::cout << it->first  // int (key)
                   << " : "
-                  << it->second   // string's value
+                  << *(it->second)  // string's value
                   << std::endl ;
     }
 }
@@ -59,10 +59,10 @@ bool Hashing::HasZero(int x) {
  * Increment next_id to the next valid integer
  * @param name the string to add to the dictionaries
  */
-void Hashing::AddToDictionary(string name) {
+void Hashing::AddToDictionary(string* name) {
     // Add to dictionary
-    nameDictionary->insert(pair<string, int>(name, next_id));
-    idDictionary->insert(pair<int, string>(next_id, name));
+    nameDictionary->insert(pair<string*, int>(name, next_id));
+    idDictionary->insert(pair<int, string*>(next_id, name));
 
     // Assign next id
     do{
@@ -77,39 +77,42 @@ void Hashing::AddToDictionary(string name) {
  * @param driver PDDLDriver
  */
 void Hashing::CreateDictionaries(PDDLDriver *driver) {
-    nameDictionary = new map<string, int>();
-    idDictionary = new map<int, string>();
+    nameDictionary = new map<string*, int, cmpByStringValue>();
+    idDictionary = new map<int, string*>();
 
     // Action pointer
     Action *action;
     // String variable
-    string object;
+    string* object;
 
     // Actions loop
     for (unsigned int i = 0; i < driver->domain->getActions()->size(); i++) {
         // Assign current action
         action = driver->domain->getActions()->at(i);
-
+        object = new string(action->getName());
         // Add action to dictionary
-        AddToDictionary(action->getName());
+        AddToDictionary(object);
     }
 
     // Problem objects loop
     for (unsigned int i = 0; i < driver->problem->getObjects()->size(); i++) {
         // Add current object to dictionary
-        AddToDictionary(driver->problem->getObjects()->at(i));
+        object = new string(driver->problem->getObjects()->at(i));
+        AddToDictionary(object);
     }
 
     // Problem init state loop
     for (unsigned int i = 0; i < driver->problem->getInit()->size(); i++) {
         // Add current object to dictionary
-        AddToDictionary(driver->problem->getInit()->at(i)->first->getName());
+        object = new string(driver->problem->getInit()->at(i)->first->getName());
+        AddToDictionary(object);
     }
 
     // Problem goal state loop
     for (unsigned int i = 0; i < driver->problem->getGoal()->size(); i++) {
         // Add current object to dictionary
-        AddToDictionary(driver->problem->getGoal()->at(i)->first->getName());
+        object = new string(driver->problem->getGoal()->at(i)->first->getName());
+        AddToDictionary(object);
     }
 }
 
@@ -121,8 +124,9 @@ void Hashing::CreateDictionaries(PDDLDriver *driver) {
 unsigned int Hashing::GetHashID(vector<string> objects) {
     string id = "";
     for (unsigned int i = 0; i < objects.size(); i++) {
-        id += to_string((*nameDictionary)[objects.at(i)]) + "" + delimiter;
+        id += to_string((*nameDictionary)[&(objects.at(i))]) + "" + delimiter;
     }
+    cout<<id<<endl;
     return stoi(id);
 }
 
@@ -148,11 +152,17 @@ vector<string> Hashing::GetObjectsFromHash(unsigned int hash) {
         single_id = stoi(token);
         // Check if id exists in id dictionary
         if (idDictionary->count(single_id)) {
-            objects.push_back((*idDictionary)[single_id]);
+            objects.push_back(*(*idDictionary)[single_id]);
+            cout<<*(*idDictionary)[single_id]<<endl;
         }
     }
 
     return objects;
+}
+
+bool Hashing::operator() (const string* s1, const string* s2) const
+{
+    return *s1 < *s2;
 }
 
 

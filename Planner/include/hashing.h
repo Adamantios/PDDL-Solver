@@ -6,10 +6,17 @@
 
 using namespace std;
 
+
+struct cmpByStringValue {
+    bool operator()(const std::string* a, const std::string* b) const {
+        return *a < *b;
+    }
+};
+
 class Hashing {
 protected:
-    map<string, int>* nameDictionary;
-    map<int, string>* idDictionary;
+    map<string*, int, cmpByStringValue>* nameDictionary;
+    map<int, string*>* idDictionary;
     int next_id;
     string delimiter;
 
@@ -19,13 +26,13 @@ public:
 
     virtual ~Hashing();
 
-    map<string, int>* GetNameDictionary();
+    map<string*, int, cmpByStringValue>* GetNameDictionary();
 
-    map<int, string>* GetIDDictionary();
+    map<int, string*>* GetIDDictionary();
 
     void CreateDictionaries(PDDLDriver *driver);
 
-    void AddToDictionary(string name);
+    void AddToDictionary(string* name);
 
     unsigned int GetHashID(vector<string> objects);
 
@@ -36,7 +43,10 @@ public:
     void PrintNameDictionary();
 
     void PrintIDDictionary();
+
+    bool operator() (const string* s1, const string* s2) const;
 };
+
 
 
 #endif //PDDL_SOLVER_HASHING_H

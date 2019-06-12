@@ -88,8 +88,9 @@ int main(int argc, char *argv[]) {
     //vector<Action *> *applicableActions = parserController.ApplicableActions(currentState);
     //parserController.NextStates(currentState, applicableActions);
 
-    /*
+
     // Hashing tests
+    /*
     Hashing hash = Hashing();
     hash.CreateDictionaries(driver);
     hash.PrintNameDictionary();
@@ -99,7 +100,8 @@ int main(int argc, char *argv[]) {
     objs.push_back("roomb");
     hash.GetHashID(objs);
     hash.GetObjectsFromHash(104050);
-    */
+     */
+
 
 
     // Run heuristics demo.
