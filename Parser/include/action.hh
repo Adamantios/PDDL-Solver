@@ -10,32 +10,44 @@
 #include <iostream>
 
 using StringList       = std::vector<std::string>;
-using TypeDict         = std::map<std::string,std::string>;
+using TypeDict         = std::map<std::string, std::string>;
 
-using PredicateList    = std::vector<Predicate*>;
-using ParameterList    = std::pair<StringList*,TypeDict*>;
-using PreconditionList = std::vector<std::pair<Predicate*,bool>*>;
-using EffectList       = std::vector<std::pair<Predicate*,bool>*>;
+using PredicateList    = std::vector<Predicate *>;
+using ParameterList    = std::pair<StringList *, TypeDict *>;
+using PreconditionList = std::vector<std::pair<Predicate *, bool> *>;
+using EffectList       = std::vector<std::pair<Predicate *, bool> *>;
 
 class Action {
 public:
-	Action(
-		const std::string&      name,
-		const ParameterList    *params,
-		const PreconditionList *precond,
-		const EffectList       *effects
-	);
+    Action(
+            const std::string &name,
+            const ParameterList *params,
+            const PreconditionList *precond,
+            const EffectList *effects
+    );
 
-	virtual ~Action();
+    virtual ~Action();
 
-	friend std::ostream& operator<<(std::ostream& out, const Action& action);
+    friend std::ostream &operator<<(std::ostream &out, const Action &action);
+
+    const std::string &getName() const;
+
+    const StringList *getParams() const;
+
+    const TypeDict *getTypes() const;
+
+    const PreconditionList *getPrecond() const;
+
+    const PreconditionList *getFilteredPrecond() const;
+
+    const EffectList *getEffects() const;
 
 private:
-	std::string             _name;
-	const StringList       *_params;
-	const TypeDict         *_types;
-	const PreconditionList *_precond;
-	const EffectList       *_effects;
+    std::string _name;
+    const StringList *_params;
+    const TypeDict *_types;
+    const PreconditionList *_precond;
+    const EffectList *_effects;
 };
 
 #endif // _ACTION_HH_

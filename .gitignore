@@ -372,3 +372,11 @@ Parser/libPDDLParser.a
 Planner/Planner/CMakeFiles/
 Planner/Planner/cmake_install.cmake
 cmake_install.cmake
+
+# Ignore emacs files
+.clang_complete
+GPATH
+GRTAGS
+cc_args.py
+dir-locals.el
+GTAGS

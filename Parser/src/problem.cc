@@ -36,10 +36,27 @@ Problem::set_init_state(LiteralList *init)
 	_init = init;
 }
 
+LiteralList *
+Problem::getInit()
+{
+    return _init;
+}
+
+LiteralList *
+Problem::getGoal()
+{
+    return _goal;
+}
+
 void
 Problem::set_goal_state(LiteralList *goal)
 {
 	_goal = goal;
+}
+
+StringList *
+Problem::getObjects(){
+    return _objects;
 }
 
 ostream&

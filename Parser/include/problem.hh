@@ -22,6 +22,11 @@ public:
 	void set_init_state(LiteralList *init);
 	void set_goal_state(LiteralList *goal);
 
+	LiteralList* getInit();
+	LiteralList* getGoal();
+
+	StringList * getObjects();
+
 	friend std::ostream &operator<<(std::ostream& out, const Problem& problem);
 
 private:
