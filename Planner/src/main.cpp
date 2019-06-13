@@ -5,7 +5,8 @@
 #include "pddldriver.hh"
 #include "ParserController.h"
 #include "CLI11.hpp"
-
+#include "state_wrapper.h"
+#include "algorithms.h"
 using namespace std;
 
 string APP_DESCRIPTION = "This application implements a pddl solver."; // Write More
@@ -29,13 +30,16 @@ int main(int argc, char *argv[]) {
     auto *driver = new PDDLDriver();
 
     string domain_file, problem_file;
-    bool scanning_trace, parsing_trace;
+
     string algorithm, heuristic;
+    // Init Controller.
+    ParserController *parserController = new ParserController(driver) ;
+    Heuristics *heuristicsController = new Heuristics(parserController);
+    bool scanning_trace = false, parsing_trace = false;
 
     auto app = setUpCLI(domain_file, problem_file,
                         scanning_trace, parsing_trace,
                         algorithm, heuristic);
-
 
     CLI11_PARSE(*app, argc, argv);
 
@@ -59,40 +63,32 @@ int main(int argc, char *argv[]) {
         else cout << "Error!" << endl;
     }
 
-    // Init Controller.
-    ParserController parserController;
-    parserController = ParserController(driver);
+    StateWrapper *currentState = new StateWrapper(driver->problem->getInit(),
+                                                  parserController,
+                                                  heuristicsController,
+                                                  NULL);
+    currentState->setDebug(true);
+    StateWrapper *goalState = new StateWrapper(driver->problem->getGoal(),
+                                               parserController,
+                                               heuristicsController,
+                                               NULL);
 
-    // Test with print function
-    // parserController.Print();
-    // parserController.PrintPredicates();
+    long long mem,examined;
+    // cout << (*currentState) << endl;
 
-    /* Kostas Tsampazis
-     * Demonstration of ParserController functionality of ApplicableActions utility method
-     */
+    auto bsol = Astar(currentState, goalState, examined, mem);
 
-    LiteralList *currentState = driver->problem->getInit();
-    /*
-    vector<Action *> *applicableActions = parserController.ApplicableActions(currentState);
-    if (applicableActions->empty()) cout << "No applicable actions on this state";
-    else {
-        cout << "Applicable action(s): " << endl;
-        for (unsigned int i = 0; i < applicableActions->size(); i++) {
-            cout << applicableActions->at(i)->getName() << endl;
-        }
+
+    auto children = currentState->expand();
+    for(auto child = children.begin(); child != children.end(); ++child){
+      cout << **child << endl;
+      cout << "Press enter to continue!\n";
+      cin.ignore(); 
     }
-     */
 
-    // Get states created by applying all applicable actions
-    //vector<Action *> *applicableActions = parserController.ApplicableActions(currentState);
-    //parserController.NextStates(currentState, applicableActions);
+    // if (driver) delete (driver);
 
-    // Run heuristics demo.
-    HeuristicsDemo(parserController, currentState);
-
-    if (driver) delete (driver);
-
-    return result;
+    return 0;
 }
 
 std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
