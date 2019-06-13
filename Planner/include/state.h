@@ -1,3 +1,6 @@
+#ifndef state_def
+#define state_def
+
 #include <string>
 #include <vector>
 #include <stack>
@@ -6,8 +9,6 @@
 #include <sstream>
 #include <iostream>
 
-#ifndef state_def
-#define state_def
 using namespace std;
 
 class State{
