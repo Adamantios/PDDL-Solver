@@ -27,10 +27,10 @@ X *Astar(X *initial,X *goal, long long &examined, long long &mem){
                mem = agenda.size() + closed.size();
           examined++;
           X *s = agenda.top();
-          cout << *s <<endl;
-          cin.ignore();
+          /* cout << *s <<endl; */
+          /* cin.ignore(); */
           agenda.pop();
-          if (*s==*goal)
+          if (*s >= *goal)
                return s;
           closed[*s]=true;
           vector<X *> children = s->expand();

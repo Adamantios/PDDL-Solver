@@ -14,6 +14,7 @@ using namespace std;
 
 StateWrapper::StateWrapper(LiteralList* literalList, ParserController* parserController,
                            Heuristics* heuristics, StateWrapper* father){
+
      this->_literalList = literalList;
      this->_heuristics = heuristics;
      this->_parserController = parserController;
@@ -26,6 +27,7 @@ StateWrapper::StateWrapper(LiteralList* literalList, ParserController* parserCon
 }
 
 StateWrapper::StateWrapper(StateWrapper* father, LiteralList* newLiteralList, Action* action){
+
      this->_literalList = newLiteralList;
      this->_heuristics = father->getHeuristics();
      this->_parserController = father->getParserController();
@@ -85,7 +87,7 @@ string StateWrapper::getId(){
      }
      return *_id;
 }
-
+ 
 string StateWrapper::getName(){
      if(_name == nullptr){
           _name = new string();
@@ -137,7 +139,8 @@ StateWrapper::expand(){
      return children;
 }
 
-void StateWrapper::printExpandDebug(Action* action, StateWrapper* child, int childrenNum){
+void
+StateWrapper::printExpandDebug(Action* action, StateWrapper* child, int childrenNum){
      if(isDebug()){
           cout << "++++++++++++++++++++ Expand Debug  ++++++++++++++++++++ " << endl;
           cout << "++++++++++++++++++++ Current State  ++++++++++++++++++++ " << endl;
@@ -154,6 +157,22 @@ void StateWrapper::printExpandDebug(Action* action, StateWrapper* child, int chi
 bool
 operator==(const StateWrapper first, const StateWrapper second){
      return *(first._id) == *(second._id);
+}
+
+bool
+operator<=(const StateWrapper first, const StateWrapper second){
+     if(second._name->find(*first._name) != std::string::npos){
+          return true;
+     }
+     return false;
+}
+
+bool
+operator>=(const StateWrapper first, const StateWrapper second){
+     if(first._name->find(*second._name) != std::string::npos){
+          return true;
+     }
+     return false;
 }
 
 ostream &
