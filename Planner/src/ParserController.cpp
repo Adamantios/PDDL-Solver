@@ -332,7 +332,7 @@ vector<Action *> *ParserController::ApplicableActions(LiteralList *state) {
  *
  * @return the new state after the action is applied to the provided state
  */
-LiteralList *ParserController::NextState(LiteralList *state, Action action) {
+LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
 
     Predicate *state_predicate;
     Predicate *effect_predicate;
@@ -352,10 +352,10 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action) {
     unsigned int state_size = state->size();
     // For each action effect, check if it appears in the state predicates
     for (unsigned int effects_index = 0;
-         effects_index < action.getEffects()->size(); effects_index++) { // Loop through action's effects
+         effects_index < action->getEffects()->size(); effects_index++) { // Loop through action's effects
         // Assign current effect predicate value and status to the local variables
-        effect_predicate = action.getEffects()->at(effects_index)->first;
-        effect_status = action.getEffects()->at(effects_index)->second;
+        effect_predicate = action->getEffects()->at(effects_index)->first;
+        effect_status = action->getEffects()->at(effects_index)->second;
 
         // Set applied to false as this effect has not been applied yet
         applied = false;
@@ -387,7 +387,7 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action) {
                     // Check if all the state predicate arguments match the effects arguments
                     if (correct_args == state_predicate->getArgs()->size()) {
                         // Apply effect
-                        new_state->at(state_index)->second = action.getEffects()->at(effects_index)->second;
+                        new_state->at(state_index)->second = action->getEffects()->at(effects_index)->second;
 
                         // Flag applied
                         applied = true;
@@ -432,7 +432,7 @@ ParserController::NextStates(LiteralList *state, vector<Action *>* actions) {
     vector<LiteralList *> states = vector<LiteralList *>();
 
     for (unsigned int i = 0; i < actions->size(); i++) {
-        LiteralList *new_state = this->NextState(state, *actions->at(i));
+        LiteralList *new_state = this->NextState(state, actions->at(i));
         states.emplace_back(new_state);
         cout << "Next state:" << endl;
         PrintState(*new_state);

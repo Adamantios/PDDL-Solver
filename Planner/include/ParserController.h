@@ -45,7 +45,7 @@ public:
     // Utilities
     vector<Action *> *ApplicableActions(LiteralList *currentState);
 
-    LiteralList *NextState(LiteralList *state, Action action);
+    LiteralList *NextState(LiteralList *state, Action *action);
 
     vector<LiteralList *> NextStates(LiteralList *state, vector<Action *>* actions);
 

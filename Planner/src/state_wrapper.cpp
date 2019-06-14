@@ -87,7 +87,7 @@ string StateWrapper::getId(){
      }
      return *_id;
 }
- 
+
 string StateWrapper::getName(){
      if(_name == nullptr){
           _name = new string();
@@ -126,15 +126,15 @@ vector<StateWrapper*>
 StateWrapper::expand(){
      vector<Action*>* availableMoves = this->_parserController->ApplicableActions(this->_literalList);
      vector<StateWrapper*> children;
-     for(auto action = availableMoves->begin(); action != availableMoves->end(); ++action){
+     for(Action *availableMove : *availableMoves){
           // cout << "++++++++++++++++++++     Action     +++++++++++++++++++ " << endl;
           // cout << **action << endl;
           StateWrapper* child = new StateWrapper(this,
-                                                 this->_parserController->NextState(this->_literalList, **action),
-                                                 *action);
+                                                 this->_parserController->NextState(this->_literalList, availableMove),
+                                                 availableMove);
           this->addChild(child);
           children.push_back(child);
-          this->printExpandDebug(*action, child, children.size());
+          this->printExpandDebug(availableMove, child, children.size());
      }
      return children;
 }
@@ -145,8 +145,8 @@ StateWrapper::printExpandDebug(Action* action, StateWrapper* child, int children
           cout << "++++++++++++++++++++ Expand Debug  ++++++++++++++++++++ " << endl;
           cout << "++++++++++++++++++++ Current State  ++++++++++++++++++++ " << endl;
           cout << *this << endl;
-          // cout << "++++++++++++++++++++     Action     +++++++++++++++++++ " << endl;
-          // cout << *action << endl;
+          cout << "++++++++++++++++++++     Action     +++++++++++++++++++ " << endl;
+          cout << *action << endl;
           cout << "++++++++++++++++++++   Next State   ++++++++++++++++++++ " << endl;
           cout << *child << endl;
           cout << "+++++++++++++  Current Children Num = " << childrenNum << " ++++++++++++++" << endl;
