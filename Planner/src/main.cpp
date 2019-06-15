@@ -17,6 +17,7 @@ void usage(char *filename);
 
 std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
                                    bool &scanning_trace, bool &parsing_trace,
+                                   bool &enable_debug,
                                    string &algorithm, string &heuristic);
 
 std::shared_ptr<CLI::App> get_app() {
@@ -35,10 +36,11 @@ int main(int argc, char *argv[]) {
     // Init Controller.
     ParserController *parserController = new ParserController(driver) ;
     Heuristics *heuristicsController = new Heuristics(parserController);
-    bool scanning_trace = false, parsing_trace = false;
+    bool scanning_trace = false, parsing_trace = false, enable_debug = false;
 
     auto app = setUpCLI(domain_file, problem_file,
                         scanning_trace, parsing_trace,
+                        enable_debug,
                         algorithm, heuristic);
 
     CLI11_PARSE(*app, argc, argv);
@@ -67,14 +69,13 @@ int main(int argc, char *argv[]) {
                                                   parserController,
                                                   heuristicsController,
                                                   NULL);
-    currentState->setDebug(true);
+    currentState->setDebug(enable_debug);
     StateWrapper *goalState = new StateWrapper(driver->problem->getGoal(),
                                                parserController,
                                                heuristicsController,
                                                NULL);
 
     long long mem,examined;
-    // cout << (*currentState) << endl;
 
     auto bsol = Astar(currentState, goalState, examined, mem);
 
@@ -83,7 +84,7 @@ int main(int argc, char *argv[]) {
     for(auto child = children.begin(); child != children.end(); ++child){
       cout << **child << endl;
       cout << "Press enter to continue!\n";
-      cin.ignore(); 
+      cin.ignore();
     }
 
     // if (driver) delete (driver);
@@ -93,6 +94,7 @@ int main(int argc, char *argv[]) {
 
 std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
                                    bool &scanning_trace, bool &parsing_trace,
+                                   bool &enable_debug,
                                    string &algorithm, string &heuristic) {
 
     // CLI::App app{APP_DESCRIPTION};
@@ -109,6 +111,8 @@ std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
     app->add_flag("-s", scanning_trace, "Tenable Scanning Trace");
 
     app->add_flag("-p", parsing_trace, "Tenable Parsing Trace");
+
+    app->add_flag("--debug", enable_debug, "Enable verbose debug");
 
     app->add_option("-a", algorithm, AVAILABLE_ALGORITHMS)
             ->required();
