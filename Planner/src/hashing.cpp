@@ -14,17 +14,17 @@ Hashing::~Hashing() {
    if (idDictionary) delete (idDictionary);
 }
 
-map<string*, int, cmpByStringValue> *Hashing::GetNameDictionary() {
+map<string*, unsigned int, cmpByStringValue> *Hashing::GetNameDictionary() {
     return nameDictionary;
 }
 
 
-map<int, string*> *Hashing::GetIDDictionary() {
+map<unsigned int, string*> *Hashing::GetIDDictionary() {
     return idDictionary;
 }
 
 void Hashing::PrintNameDictionary() {
-    for ( map<string*, int, cmpByStringValue>::iterator it = nameDictionary->begin(); it != nameDictionary->end(); it++ )
+    for ( map<string*, unsigned int, cmpByStringValue>::iterator it = nameDictionary->begin(); it != nameDictionary->end(); it++ )
     {
         std::cout <<*(it->first) // string (key)
                   << " : "
@@ -34,7 +34,7 @@ void Hashing::PrintNameDictionary() {
 }
 
 void Hashing::PrintIDDictionary() {
-    for ( map<int, string*>::iterator it = idDictionary->begin(); it != idDictionary->end(); it++ )
+    for ( map<unsigned int, string*>::iterator it = idDictionary->begin(); it != idDictionary->end(); it++ )
     {
         std::cout << it->first  // int (key)
                   << " : "
@@ -48,7 +48,7 @@ void Hashing::PrintIDDictionary() {
  * @param x 0 or positive integer
  * @return true if x contains at least on digit that is a 0
  */
-bool Hashing::HasZero(int x) {
+bool Hashing::HasZero(unsigned int x) {
     if (x == 0) return true;
     if (x < 10) return false;
     return HasZero(x % 10);
@@ -61,8 +61,8 @@ bool Hashing::HasZero(int x) {
  */
 void Hashing::AddToDictionary(string* name) {
     // Add to dictionary
-    nameDictionary->insert(pair<string*, int>(name, next_id));
-    idDictionary->insert(pair<int, string*>(next_id, name));
+    nameDictionary->insert(pair<string*, unsigned int>(name, next_id));
+    idDictionary->insert(pair<unsigned int, string*>(next_id, name));
 
     // Assign next id
     do{
@@ -77,8 +77,8 @@ void Hashing::AddToDictionary(string* name) {
  * @param driver PDDLDriver
  */
 void Hashing::CreateDictionaries(PDDLDriver *driver) {
-    nameDictionary = new map<string*, int, cmpByStringValue>();
-    idDictionary = new map<int, string*>();
+    nameDictionary = new map<string*, unsigned int, cmpByStringValue>();
+    idDictionary = new map<unsigned int, string*>();
 
     // Action pointer
     Action *action;
@@ -142,7 +142,7 @@ vector<string> Hashing::GetObjectsFromHash(unsigned int hash) {
     // Split hash
     size_t pos = 0;
     string token;
-    int single_id;
+    unsigned int single_id;
     while ((pos = id.find(delimiter)) != std::string::npos) {
         // Get single id
         token = id.substr(0, pos);

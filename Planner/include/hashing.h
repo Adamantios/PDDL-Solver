@@ -15,9 +15,9 @@ struct cmpByStringValue {
 
 class Hashing {
 protected:
-    map<string*, int, cmpByStringValue>* nameDictionary;
-    map<int, string*>* idDictionary;
-    int next_id;
+    map<string*, unsigned int, cmpByStringValue>* nameDictionary;
+    map<unsigned int, string*>* idDictionary;
+    unsigned int next_id;
     string delimiter;
 
 public:
@@ -26,9 +26,9 @@ public:
 
     virtual ~Hashing();
 
-    map<string*, int, cmpByStringValue>* GetNameDictionary();
+    map<string*, unsigned int, cmpByStringValue>* GetNameDictionary();
 
-    map<int, string*>* GetIDDictionary();
+    map<unsigned int, string*>* GetIDDictionary();
 
     void CreateDictionaries(PDDLDriver *driver);
 
@@ -38,7 +38,7 @@ public:
 
     vector<string> GetObjectsFromHash(unsigned int hash);
 
-    bool HasZero(int x);
+    bool HasZero(unsigned int x);
 
     void PrintNameDictionary();
 
