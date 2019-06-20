@@ -4,6 +4,7 @@
 #include <heuristics_demo.h>
 #include "pddldriver.hh"
 #include "ParserController.h"
+#include "hashing.h"
 #include "CLI11.hpp"
 
 using namespace std;
@@ -86,6 +87,22 @@ int main(int argc, char *argv[]) {
     // Get states created by applying all applicable actions
     //vector<Action *> *applicableActions = parserController.ApplicableActions(currentState);
     //parserController.NextStates(currentState, applicableActions);
+
+
+    // Hashing tests
+    /*
+    Hashing hash = Hashing();
+    hash.CreateDictionaries(driver);
+    hash.PrintNameDictionary();
+    vector<string> objs = vector<string>();
+    objs.push_back("move");
+    objs.push_back("rooma");
+    objs.push_back("roomb");
+    hash.GetHashID(objs);
+    hash.GetObjectsFromHash(104050);
+     */
+
+
 
     // Run heuristics demo.
     HeuristicsDemo(parserController, currentState);
