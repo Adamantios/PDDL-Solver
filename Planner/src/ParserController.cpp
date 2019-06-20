@@ -332,12 +332,18 @@ vector<Action *> *ParserController::ApplicableActions(LiteralList *state) {
  *
  * @return the new state after the action is applied to the provided state
  */
-LiteralList *ParserController::NextState(LiteralList *state, Action action) {
+LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
+
+    //cout << "ACTION" << endl;
+    //PrintAction(action);
+    //cout << "BEFORE" << endl;
+    //PrintState(*state);
 
     Predicate *state_predicate;
     Predicate *effect_predicate;
     bool effect_status;
-    bool state_predicate_status;
+
+
 
     // Copy given state to new_state variable
     LiteralList *new_state = new LiteralList();
@@ -352,10 +358,10 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action) {
     unsigned int state_size = state->size();
     // For each action effect, check if it appears in the state predicates
     for (unsigned int effects_index = 0;
-         effects_index < action.getEffects()->size(); effects_index++) { // Loop through action's effects
+         effects_index < action->getEffects()->size(); effects_index++) { // Loop through action's effects
         // Assign current effect predicate value and status to the local variables
-        effect_predicate = action.getEffects()->at(effects_index)->first;
-        effect_status = action.getEffects()->at(effects_index)->second;
+        effect_predicate = action->getEffects()->at(effects_index)->first;
+        effect_status = action->getEffects()->at(effects_index)->second;
 
         // Set applied to false as this effect has not been applied yet
         applied = false;
@@ -365,33 +371,28 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action) {
         while (state_index < state_size && !applied) {
             // Assign current state predicate value to state_predicate
             state_predicate = state->at(state_index)->first;
-            state_predicate_status = state->at(state_index)->second;
 
             // Compare effect name with state predicate name
             if (!effect_predicate->getName().compare(state_predicate->getName())) // returns 0 when equal
             {
-                if (state_predicate_status != effect_status) {
-                    // Different status between this state predicate and the effect
 
-                    // Check if the parameters match
-                    unsigned int correct_args = 0;
-                    for (unsigned int arg_index = 0; arg_index < state_predicate->getArgs()->size(); arg_index++) {
-                        string param = effect_predicate->getArgs()->at(arg_index);
-                        if (!param.compare(state_predicate->getArgs()->at(arg_index))) {
-                            // State predicate has the correct value for this parameter, increment counter
-                            correct_args++;
-                        }
+                // Check if the parameters match
+                unsigned int correct_args = 0;
+                for (unsigned int arg_index = 0; arg_index < state_predicate->getArgs()->size(); arg_index++) {
+                    string param = effect_predicate->getArgs()->at(arg_index);
+                    if (!param.compare(state_predicate->getArgs()->at(arg_index))) {
+                        // State predicate has the correct value for this parameter, increment counter
+                        correct_args++;
                     }
+                }
 
+                // Check if all the state predicate arguments match the effects arguments
+                if (correct_args == state_predicate->getArgs()->size()) {
+                    // Apply effect
+                    new_state->at(state_index)->second = action->getEffects()->at(effects_index)->second;
 
-                    // Check if all the state predicate arguments match the effects arguments
-                    if (correct_args == state_predicate->getArgs()->size()) {
-                        // Apply effect
-                        new_state->at(state_index)->second = action.getEffects()->at(effects_index)->second;
-
-                        // Flag applied
-                        applied = true;
-                    }
+                    // Flag applied
+                    applied = true;
                 }
             }
             state_index++;
@@ -416,6 +417,8 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action) {
         }
     }
 
+    //cout << "AFTER" << endl;
+    //PrintState(*new_state);
     return new_state;
 }
 
@@ -427,12 +430,12 @@ LiteralList *ParserController::NextState(LiteralList *state, Action action) {
  * @return a vector containing all the resulting states after applying this action
  */
 vector<LiteralList *>
-ParserController::NextStates(LiteralList *state, vector<Action *>* actions) {
+ParserController::NextStates(LiteralList *state, vector<Action *> *actions) {
 
     vector<LiteralList *> states = vector<LiteralList *>();
 
     for (unsigned int i = 0; i < actions->size(); i++) {
-        LiteralList *new_state = this->NextState(state, *actions->at(i));
+        LiteralList *new_state = this->NextState(state, actions->at(i));
         states.emplace_back(new_state);
         cout << "Next state:" << endl;
         PrintState(*new_state);
