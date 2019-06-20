@@ -34,9 +34,9 @@ public:
 
     void AddToDictionary(string* name);
 
-    unsigned int GetHashID(vector<string> objects);
+    vector<int> GetHashID(vector<string> objects);
 
-    vector<string> GetObjectsFromHash(unsigned int hash);
+    vector<string> GetObjectsFromHash(vector<int> hash);
 
     bool HasZero(unsigned int x);
 

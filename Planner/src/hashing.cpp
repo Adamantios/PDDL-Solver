@@ -121,13 +121,12 @@ void Hashing::CreateDictionaries(PDDLDriver *driver) {
  * @param objects vector with name and params of the state/action
  * @return integer hash
  */
-unsigned int Hashing::GetHashID(vector<string> objects) {
-    string id = "";
+vector<int> Hashing::GetHashID(vector<string> objects) {
+    vector<int> id = vector<int>();
     for (unsigned int i = 0; i < objects.size(); i++) {
-        id += to_string((*nameDictionary)[&(objects.at(i))]) + "" + delimiter;
+        id.push_back((*nameDictionary)[&(objects.at(i))]);
     }
-    cout<<id<<endl;
-    return stoi(id);
+    return id;
 }
 
 /**
@@ -135,8 +134,9 @@ unsigned int Hashing::GetHashID(vector<string> objects) {
  * @param hash of action/state
  * @return vector of strings with the name and params according to the hash order
  */
-vector<string> Hashing::GetObjectsFromHash(unsigned int hash) {
+vector<string> Hashing::GetObjectsFromHash(vector<int> hash) {
     vector<string> objects = vector<string>();
+    /*
     string id = to_string(hash);
 
     // Split hash
@@ -154,6 +154,14 @@ vector<string> Hashing::GetObjectsFromHash(unsigned int hash) {
         if (idDictionary->count(single_id)) {
             objects.push_back(*(*idDictionary)[single_id]);
             cout<<*(*idDictionary)[single_id]<<endl;
+        }
+    }
+     */
+
+    for (unsigned int i=0; i<hash.size(); i++) {
+        if (idDictionary->count(hash[i])) {
+            objects.push_back(*(*idDictionary)[hash[i]]);
+            cout<<*(*idDictionary)[hash[i]]<<endl;
         }
     }
 
