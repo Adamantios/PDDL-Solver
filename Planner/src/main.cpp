@@ -4,6 +4,7 @@
 #include <heuristics_demo.h>
 #include "pddldriver.hh"
 #include "ParserController.h"
+#include "hashing.h"
 #include "CLI11.hpp"
 #include "state_wrapper.h"
 #include "algorithms.h"
@@ -42,6 +43,7 @@ int main(int argc, char *argv[]) {
                         scanning_trace, parsing_trace,
                         enable_debug,
                         algorithm, heuristic);
+
 
     CLI11_PARSE(*app, argc, argv);
 

@@ -324,10 +324,7 @@ vector<Action *> *ParserController::ApplicableActions(LiteralList *state) {
         pair<Action *, vector<vector<string>>> applicableActionsParams;
         applicableActionsParams.first = action;
         applicableActionsParams.second = this->IsApplicable(state, action);
-        if (!applicableActionsParams.second.empty()) {
-            applicableActions.push_back(applicableActionsParams);
-        }
-
+        if (!applicableActionsParams.second.empty()) applicableActions.push_back(applicableActionsParams);
     }
 
     return UnrollActions(&applicableActions);
@@ -338,6 +335,11 @@ vector<Action *> *ParserController::ApplicableActions(LiteralList *state) {
  * @return the new state after the action is applied to the provided state
  */
 LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
+
+    //cout << "ACTION" << endl;
+    //PrintAction(action);
+    //cout << "BEFORE" << endl;
+    //PrintState(*state);
 
     Predicate *state_predicate;
     Predicate *effect_predicate;
@@ -416,6 +418,9 @@ LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
             //delete (new_literal);
         }
     }
+
+    //cout << "AFTER" << endl;
+    //PrintState(*new_state);
     return new_state;
 }
 
