@@ -10,17 +10,16 @@
 
 using namespace std;
 
-class StateWrapper : public State{
+class StateWrapper : public State {
 
  private:
 
   LiteralList* _literalList;
   ParserController* _parserController;
   Heuristics* _heuristics;
-  string *_id = NULL;
-  string *_name = NULL;
+  string *_id = nullptr;
+  string *_name = nullptr;
   unsigned long long _hash = 0;
-  string getId();
   bool _debug;
   vector<Action*> _actions;
 
@@ -31,6 +30,7 @@ class StateWrapper : public State{
   StateWrapper(StateWrapper* father, LiteralList* newLiteralList, Action* action);
 
 
+  string getId();
   //@Override
   vector<StateWrapper*> expand();
 
@@ -46,6 +46,8 @@ class StateWrapper : public State{
   Heuristics* getHeuristics();
   ParserController* getParserController();
   vector<Action*> getActions();
+
+  int estimate();
 
   // Setters
   void setDebug(bool debug);

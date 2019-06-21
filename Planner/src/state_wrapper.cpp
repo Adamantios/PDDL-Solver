@@ -8,6 +8,7 @@
 #include "md5.h"
 
 #include <algorithm>
+#include <functional>
 #include <string>
 #include <math.h>
 using namespace std;
@@ -48,6 +49,7 @@ StateWrapper::getActions(){
      return _actions;
 }
 
+
 bool
 StateWrapper::isDebug(){
      return _debug;
@@ -77,6 +79,10 @@ StateWrapper::getLiteralList(){
 string StateWrapper::getId(){
      if(this->_id == nullptr){
           _id = new string();
+          *_id += this->getName();
+          for(unsigned int i=0; i<this->_literalList->size();i++) {
+            *_id += _literalList->at(i)->first->getName();
+          }
           *_id = md5(this->getName());
      }
      return *_id;
@@ -116,6 +122,10 @@ StateWrapper::getHash() const{
      return this->_hash;
 }
 
+int StateWrapper::estimate() {
+    return _heuristics->Estimate(this->_literalList);
+}
+
 vector<StateWrapper*>
 StateWrapper::expand(){
      vector<Action*>* availableMoves = this->_parserController->ApplicableActions(this->_literalList);
@@ -124,6 +134,7 @@ StateWrapper::expand(){
           StateWrapper* child = new StateWrapper(this,
                                                  this->_parserController->NextState(this->_literalList, availableMove),
                                                  availableMove);
+          child->setDebug(this->_debug);
           this->addChild(child);
           children.push_back(child);
           this->printExpandDebug(availableMove, child, children.size());
@@ -142,7 +153,7 @@ StateWrapper::printExpandDebug(Action* action, StateWrapper* child, int children
           cout << "++++++++++++++++++++   Next State   ++++++++++++++++++++ " << endl;
           cout << *child << endl;
           cout << "+++++++++++++  Current Children Num = " << childrenNum << " ++++++++++++++" << endl;
-          cin.ignore();
+          //cin.ignore();
      }
 }
 
@@ -209,3 +220,5 @@ operator<<(std::ostream &out, const StateWrapper &state){
      out << "\tChildren num: " << state.children.size() << endl;
      cout << "}" << endl;
 }
+
+

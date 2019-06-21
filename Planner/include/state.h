@@ -8,6 +8,7 @@
 #include <set>
 #include <sstream>
 #include <iostream>
+#include <action.hh>
 
 using namespace std;
 
@@ -18,6 +19,7 @@ class State{
   int depth = 0;
   double Hvalue;
   string name;
+  Action *action;
 
  public:
   // CON & DES
@@ -30,6 +32,7 @@ class State{
   State *getFather();
   int getNoChildren();
   string getPath();
+  Action* getAction();
   vector<State *> getChildren(){return children;};
 
   // SETTER
