@@ -38,7 +38,7 @@ private:
     void EstimateDeltaValues(LiteralList *current_state);
 
 public:
-    explicit Heuristics(ParserController *controller, EstimationMethod method = MAX_COST);
+    explicit Heuristics(ParserController *controller, EstimationMethod method = ADDITIVE_COST);
 
     double Estimate(LiteralList *current_state);
 };

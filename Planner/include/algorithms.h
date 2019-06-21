@@ -17,10 +17,12 @@ public:
      }
 };
 
+
+
 template <typename X>
 X *Astar(X *initial,X *goal, long long &examined, long long &mem){
      priority_queue <X*, vector<X *>, Comparator<X> > agenda;
-     unordered_map <X, bool> closed;
+     unordered_map <unsigned long long, bool> closed;
      agenda.push(initial);
      examined =0;
      mem=1;
@@ -32,16 +34,21 @@ X *Astar(X *initial,X *goal, long long &examined, long long &mem){
           /* cout << *s <<endl; */
           /* cin.ignore(); */
           agenda.pop();
-          if (*s >= *goal)
-               return s;
-          closed[*s]=true;
+         if (*s >= *goal) {
+             cout<<"Closed size: "<<closed.size()<<endl;
+             return s;
+         }
+          cout<<s->getHash()<<endl;
+          closed[s->getHash()] = true;
           vector<X *> children = s->expand();
+          cout<<children.size()<<" , ";
           for (unsigned int i=0;i<children.size();i++)
-               if (!closed[*children.at(i)])
+               if (!closed[children.at(i)->getHash()])
                {
-                    children.at(i)->setHvalue(children.at(i)->getDepth()+children.at(i)->heuristic(goal));
+                    children.at(i)->setHvalue(children.at(i)->getDepth()+children.at(i)->estimate());
                     agenda.push(children.at(i));
                }
+          cout<<endl;
      }
      return nullptr;
 }
@@ -49,7 +56,7 @@ X *Astar(X *initial,X *goal, long long &examined, long long &mem){
 template <typename X>
 X *BFS(X *initial,X *goal, long long &examined, long long &mem){
     priority_queue <X*, vector<X *>, Comparator<X> > agenda;
-    unordered_map <X, bool> closed;
+    unordered_map <string, bool> closed;
     agenda.push(initial);
     examined =0;
     mem=1;
@@ -59,14 +66,16 @@ X *BFS(X *initial,X *goal, long long &examined, long long &mem){
         examined++;
         X *s = agenda.top();
         agenda.pop();
-        if (*s >= *goal)
+        if (*s >= *goal) {
+            cout<<"Closed size: "<<closed.size()<<endl;
             return s;
-        closed[*s]=true;
+        }
+        closed[s->getId()]=true;
         vector<X *> children = s->expand();
         for (unsigned int i=0;i<children.size();i++)
-            if (!closed[*children.at(i)])
+            if (!closed[children.at(i)->getId()])
             {
-                children.at(i)->setHvalue(children.at(i)->heuristic(goal));
+                children.at(i)->setHvalue(children.at(i)->estimate());
                 agenda.push(children.at(i));
             }
     }
@@ -104,8 +113,10 @@ X *IDAstar(X *initial,X *goal, long long &examined, long long &mem){
 
             current_cost = s->getHvalue();
 
-            if (*s >= *goal) // Found goal
+            if (*s >= *goal) {
+                cout<<"Closed size: "<<closed.size()<<endl;
                 return s;
+            }
             closed[*s] = true;
 
 
@@ -148,8 +159,10 @@ X *DFS(X *initial,X *goal, long long &examined, long long &mem){
         examined++;
         X *s = frontier.top();
         frontier.pop();
-        if (*s >= *goal)
+        if (*s >= *goal) {
+            cout<<"Closed size: "<<closed.size()<<endl;
             return s;
+        }
         closed[*s]=true;
         vector<X *> children = s->expand();
         for (unsigned int i=0;i<children.size();i++)

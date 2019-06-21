@@ -68,24 +68,19 @@ int main(int argc, char *argv[]) {
     StateWrapper *currentState = new StateWrapper(driver->problem->getInit(),
                                                   parserController,
                                                   heuristicsController,
-                                                  NULL);
+                                                  nullptr);
     currentState->setDebug(enable_debug);
     StateWrapper *goalState = new StateWrapper(driver->problem->getGoal(),
                                                parserController,
                                                heuristicsController,
-                                               NULL);
+                                               nullptr);
 
     long long mem,examined;
 
-    auto bsol = Astar(currentState, goalState, examined, mem);
+    auto bsol = BFS(currentState, goalState, examined, mem);
 
-
-    auto children = currentState->expand();
-    for(auto child = children.begin(); child != children.end(); ++child){
-      cout << **child << endl;
-      cout << "Press enter to continue!\n";
-      cin.ignore();
-    }
+    cout<<"Solution found in "<<bsol->getDepth()<<" moves"<<endl;
+    cout<<bsol->getPath()<<endl;
 
     // if (driver) delete (driver);
 

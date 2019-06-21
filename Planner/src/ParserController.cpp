@@ -241,6 +241,7 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
             }
 
             bool foundThisPrecond = false;
+            bool sameBoolean = false;
             for (unsigned int i = 0; i < state->size(); i++) {
                 if (state->at(i)->first->getName() == preconditions.at(j)->first->getName()) {
                     bool sameParams = true;
@@ -256,6 +257,7 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
                     }
                     if (sameParams) {
                         foundThisPrecond = true;
+                        sameBoolean = state->at(i)->second == preconditions.at(j)->second;
                         break; // Move on to next precondition
                     }
                 }
@@ -268,8 +270,8 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
                 break;
             }
                 // foundThisPrecond turned true, which means we found this precondition in the state with the same arguments.
-                // Action is not applicable because the predicates bool is 0 (false, NOT)
-            else if (foundThisPrecond && preconditions.at(j)->second == 0) {
+                // Action is not applicable if the precondition was found in this state and the boolean parameters do not match
+            else if (foundThisPrecond && !sameBoolean) {
                 applicable = false;
 //                cout << "not applicable found precondition in state for these arguments" << endl;
                 break;
@@ -322,7 +324,10 @@ vector<Action *> *ParserController::ApplicableActions(LiteralList *state) {
         pair<Action *, vector<vector<string>>> applicableActionsParams;
         applicableActionsParams.first = action;
         applicableActionsParams.second = this->IsApplicable(state, action);
-        if (!applicableActionsParams.second.empty()) applicableActions.push_back(applicableActionsParams);
+        if (!applicableActionsParams.second.empty()) {
+            applicableActions.push_back(applicableActionsParams);
+        }
+
     }
 
     return UnrollActions(&applicableActions);
@@ -337,7 +342,8 @@ LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
     Predicate *state_predicate;
     Predicate *effect_predicate;
     bool effect_status;
-    bool state_predicate_status;
+
+
 
     // Copy given state to new_state variable
     LiteralList *new_state = new LiteralList();
@@ -365,33 +371,28 @@ LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
         while (state_index < state_size && !applied) {
             // Assign current state predicate value to state_predicate
             state_predicate = state->at(state_index)->first;
-            state_predicate_status = state->at(state_index)->second;
 
             // Compare effect name with state predicate name
             if (!effect_predicate->getName().compare(state_predicate->getName())) // returns 0 when equal
             {
-                if (state_predicate_status != effect_status) {
-                    // Different status between this state predicate and the effect
 
-                    // Check if the parameters match
-                    unsigned int correct_args = 0;
-                    for (unsigned int arg_index = 0; arg_index < state_predicate->getArgs()->size(); arg_index++) {
-                        string param = effect_predicate->getArgs()->at(arg_index);
-                        if (!param.compare(state_predicate->getArgs()->at(arg_index))) {
-                            // State predicate has the correct value for this parameter, increment counter
-                            correct_args++;
-                        }
+                // Check if the parameters match
+                unsigned int correct_args = 0;
+                for (unsigned int arg_index = 0; arg_index < state_predicate->getArgs()->size(); arg_index++) {
+                    string param = effect_predicate->getArgs()->at(arg_index);
+                    if (!param.compare(state_predicate->getArgs()->at(arg_index))) {
+                        // State predicate has the correct value for this parameter, increment counter
+                        correct_args++;
                     }
+                }
 
+                // Check if all the state predicate arguments match the effects arguments
+                if (correct_args == state_predicate->getArgs()->size()) {
+                    // Apply effect
+                    new_state->at(state_index)->second = action->getEffects()->at(effects_index)->second;
 
-                    // Check if all the state predicate arguments match the effects arguments
-                    if (correct_args == state_predicate->getArgs()->size()) {
-                        // Apply effect
-                        new_state->at(state_index)->second = action->getEffects()->at(effects_index)->second;
-
-                        // Flag applied
-                        applied = true;
-                    }
+                    // Flag applied
+                    applied = true;
                 }
             }
             state_index++;
@@ -415,7 +416,6 @@ LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
             //delete (new_literal);
         }
     }
-
     return new_state;
 }
 
@@ -427,7 +427,7 @@ LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
  * @return a vector containing all the resulting states after applying this action
  */
 vector<LiteralList *>
-ParserController::NextStates(LiteralList *state, vector<Action *>* actions) {
+ParserController::NextStates(LiteralList *state, vector<Action *> *actions) {
 
     vector<LiteralList *> states = vector<LiteralList *>();
 
@@ -522,6 +522,7 @@ vector<Action *> *ParserController::UnrollActions(vector<pair<Action *, vector<v
             // Create an action from the unrolled parameters, preconditions and effects.
             auto *action = new Action(rolled_action.first->getName(), params, preconditions, effects);
             // Store the action.
+
             unrolled_actions->push_back(action);
         }
 
