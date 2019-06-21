@@ -51,12 +51,24 @@ int State::getNoChildren()
 }
 string State::getPath()
 {
-     string s="";
+     string s = "";
+     string a = "";
      State *p = this;
-     while (p!=nullptr)
+     while (p->father != nullptr)
      {
-          s = p->name+", "+s;
-          p=p->father;
+          a = p->action->getName() + " : ";
+          for(unsigned int i=0; i<p->action->getParams()->size(); i++){
+              a += p->action->getParams()->at(i) + " ";
+          }
+          a += " , ";
+          s = a + s;
+          p = p->father;
      }
      return s;
+}
+
+
+Action*
+State::getAction(){
+    return action;
 }
