@@ -6,7 +6,8 @@
 #include "ParserController.h"
 #include "hashing.h"
 #include "CLI11.hpp"
-
+#include "state_wrapper.h"
+#include "algorithms.h"
 using namespace std;
 
 string APP_DESCRIPTION = "This application implements a pddl solver."; // Write More
@@ -17,6 +18,7 @@ void usage(char *filename);
 
 std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
                                    bool &scanning_trace, bool &parsing_trace,
+                                   bool &enable_debug,
                                    string &algorithm, string &heuristic);
 
 std::shared_ptr<CLI::App> get_app() {
@@ -30,11 +32,16 @@ int main(int argc, char *argv[]) {
     auto *driver = new PDDLDriver();
 
     string domain_file, problem_file;
-    bool scanning_trace, parsing_trace;
+
     string algorithm, heuristic;
+    // Init Controller.
+    ParserController *parserController = new ParserController(driver) ;
+    Heuristics *heuristicsController = new Heuristics(parserController);
+    bool scanning_trace = false, parsing_trace = false, enable_debug = false;
 
     auto app = setUpCLI(domain_file, problem_file,
                         scanning_trace, parsing_trace,
+                        enable_debug,
                         algorithm, heuristic);
 
 
@@ -60,60 +67,31 @@ int main(int argc, char *argv[]) {
         else cout << "Error!" << endl;
     }
 
-    // Init Controller.
-    ParserController parserController;
-    parserController = ParserController(driver);
+    StateWrapper *currentState = new StateWrapper(driver->problem->getInit(),
+                                                  parserController,
+                                                  heuristicsController,
+                                                  nullptr);
+    currentState->setDebug(enable_debug);
+    StateWrapper *goalState = new StateWrapper(driver->problem->getGoal(),
+                                               parserController,
+                                               heuristicsController,
+                                               nullptr);
 
-    // Test with print function
-    // parserController.Print();
-    // parserController.PrintPredicates();
+    long long mem,examined;
 
-    /* Kostas Tsampazis
-     * Demonstration of ParserController functionality of ApplicableActions utility method
-     */
+    auto bsol = BFS(currentState, goalState, examined, mem);
 
-    LiteralList *currentState = driver->problem->getInit();
-    /*
-    vector<Action *> *applicableActions = parserController.ApplicableActions(currentState);
-    if (applicableActions->empty()) cout << "No applicable actions on this state";
-    else {
-        cout << "Applicable action(s): " << endl;
-        for (unsigned int i = 0; i < applicableActions->size(); i++) {
-            cout << applicableActions->at(i)->getName() << endl;
-        }
-    }
-     */
+    cout<<"Solution found in "<<bsol->getDepth()<<" moves"<<endl;
+    cout<<bsol->getPath()<<endl;
 
-    // Get states created by applying all applicable actions
-    //vector<Action *> *applicableActions = parserController.ApplicableActions(currentState);
-    //parserController.NextStates(currentState, applicableActions);
+    // if (driver) delete (driver);
 
-
-    // Hashing tests
-    /*
-    Hashing hash = Hashing();
-    hash.CreateDictionaries(driver);
-    hash.PrintNameDictionary();
-    vector<string> objs = vector<string>();
-    objs.push_back("move");
-    objs.push_back("rooma");
-    objs.push_back("roomb");
-    hash.GetHashID(objs);
-    hash.GetObjectsFromHash(104050);
-     */
-
-
-
-    // Run heuristics demo.
-    HeuristicsDemo(parserController, currentState);
-
-    if (driver) delete (driver);
-
-    return result;
+    return 0;
 }
 
 std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
                                    bool &scanning_trace, bool &parsing_trace,
+                                   bool &enable_debug,
                                    string &algorithm, string &heuristic) {
 
     // CLI::App app{APP_DESCRIPTION};
@@ -130,6 +108,8 @@ std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
     app->add_flag("-s", scanning_trace, "Tenable Scanning Trace");
 
     app->add_flag("-p", parsing_trace, "Tenable Parsing Trace");
+
+    app->add_flag("--debug", enable_debug, "Enable verbose debug");
 
     app->add_option("-a", algorithm, AVAILABLE_ALGORITHMS)
             ->required();

@@ -16,6 +16,8 @@ public:
 
     const std::string &getName() const;
 
+    const std::string getId() const;
+
     StringList *getArgs() const;
 
     TypeDict *getTypes() const;
@@ -25,9 +27,12 @@ public:
     friend std::ostream &operator<<(std::ostream &out, const Predicate &predicate);
 
 private:
+    const std::string computeId() const;
+
     std::string _name;
     StringList *_args;
     TypeDict *_types;
+    std::string _id;
 };
 
 #endif

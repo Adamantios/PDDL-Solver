@@ -241,6 +241,7 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
             }
 
             bool foundThisPrecond = false;
+            bool sameBoolean = false;
             for (unsigned int i = 0; i < state->size(); i++) {
                 if (state->at(i)->first->getName() == preconditions.at(j)->first->getName()) {
                     bool sameParams = true;
@@ -256,6 +257,7 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
                     }
                     if (sameParams) {
                         foundThisPrecond = true;
+                        sameBoolean = state->at(i)->second == preconditions.at(j)->second;
                         break; // Move on to next precondition
                     }
                 }
@@ -268,8 +270,8 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
                 break;
             }
                 // foundThisPrecond turned true, which means we found this precondition in the state with the same arguments.
-                // Action is not applicable because the predicates bool is 0 (false, NOT)
-            else if (foundThisPrecond && preconditions.at(j)->second == 0) {
+                // Action is not applicable if the precondition was found in this state and the boolean parameters do not match
+            else if (foundThisPrecond && !sameBoolean) {
                 applicable = false;
 //                cout << "not applicable found precondition in state for these arguments" << endl;
                 break;
@@ -525,6 +527,7 @@ vector<Action *> *ParserController::UnrollActions(vector<pair<Action *, vector<v
             // Create an action from the unrolled parameters, preconditions and effects.
             auto *action = new Action(rolled_action.first->getName(), params, preconditions, effects);
             // Store the action.
+
             unrolled_actions->push_back(action);
         }
 
