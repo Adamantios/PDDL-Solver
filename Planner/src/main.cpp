@@ -17,7 +17,8 @@ void usage(char *filename);
 
 std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
                                    bool &scanning_trace, bool &parsing_trace,
-                                   string &algorithm, string &heuristic);
+                                   string &algorithm, string &heuristic,
+                                   bool &debug_mode);
 
 std::shared_ptr<CLI::App> get_app() {
     auto app = std::make_shared<CLI::App>("CLI App");
@@ -35,11 +36,12 @@ int main(int argc, char *argv[]) {
     // Init Controller.
     ParserController *parserController = new ParserController(driver) ;
     Heuristics *heuristicsController = new Heuristics(parserController);
-    bool scanning_trace = false, parsing_trace = false;
+    bool scanning_trace = false, parsing_trace = false, debug_mode = false;
 
     auto app = setUpCLI(domain_file, problem_file,
                         scanning_trace, parsing_trace,
-                        algorithm, heuristic);
+                        algorithm, heuristic,
+                        debug_mode);
 
     CLI11_PARSE(*app, argc, argv);
 
@@ -67,55 +69,59 @@ int main(int argc, char *argv[]) {
                                                   parserController,
                                                   heuristicsController,
                                                   NULL);
-    currentState->setDebug(true);
+    currentState->setDebug(debug_mode);
     StateWrapper *goalState = new StateWrapper(driver->problem->getGoal(),
                                                parserController,
                                                heuristicsController,
                                                NULL);
 
+    if(*currentState >= *goalState || *goalState <= *currentState){
+         cout << "This Problem is already solved." << endl;
+         return result;
+    }
+
+    cout << "Press a button to start!\n";
+    cin.ignore();
+
     long long mem,examined;
-    // cout << (*currentState) << endl;
+    cout << "================== CURRENT STATE ==================" << endl;
+    cout << *currentState << endl;
 
     auto bsol = Astar(currentState, goalState, examined, mem);
 
-
-    auto children = currentState->expand();
-    for(auto child = children.begin(); child != children.end(); ++child){
-      cout << **child << endl;
-      cout << "Press enter to continue!\n";
-      cin.ignore(); 
-    }
-
-    // if (driver) delete (driver);
+    cout << "================== GOAL FOUND ==================" << endl;
+    cout << *bsol << endl;
 
     return 0;
 }
 
 std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
                                    bool &scanning_trace, bool &parsing_trace,
-                                   string &algorithm, string &heuristic) {
+                                   string &algorithm, string &heuristic,
+                                   bool &debug_mode) {
 
     // CLI::App app{APP_DESCRIPTION};
     std::shared_ptr<CLI::App> app = get_app();
 
-    app->add_option("-d", domain_file, "Require an PDDL domain file")
+    app->add_option("--domain", domain_file, "Require an PDDL domain file")
             ->required()
             ->check(CLI::ExistingFile);
 
-    app->add_option("-f", problem_file, "Require a PDDL problem file")
+    app->add_option("--problem", problem_file, "Require a PDDL problem file")
             ->required()
             ->check(CLI::ExistingFile);
 
-    app->add_flag("-s", scanning_trace, "Tenable Scanning Trace");
+    app->add_flag("--scanning-trace", scanning_trace, "Tenable Scanning Trace");
 
-    app->add_flag("-p", parsing_trace, "Tenable Parsing Trace");
+    app->add_flag("--parsing-trace", parsing_trace, "Tenable Parsing Trace");
+
+    app->add_flag("--debug", debug_mode, "Debug mode, Print in every step");
 
     app->add_option("-a", algorithm, AVAILABLE_ALGORITHMS)
             ->required();
 
-    app->add_option("-r", heuristic, AVAILABLE_HEURISTICS)
+    app->add_option("--heuristic", heuristic, AVAILABLE_HEURISTICS)
             ->required();
-
     return app;
 
 }
