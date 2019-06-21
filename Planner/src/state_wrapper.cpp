@@ -37,22 +37,16 @@ StateWrapper::StateWrapper(StateWrapper* father, LiteralList* newLiteralList, Ac
      this->_hash = this->getHash();
      this->setHvalue(_heuristics->Estimate(newLiteralList));
      this->setDebug(father->isDebug());
-
-     // if(father != nullptr && action != nullptr){
-     //      vector<Action> vect(*(father->getActions()));
-     //      vect.push_back(*action);
-     //      cout << "Add action: " << *action << endl;
-     // }else{
-     //      vector<Action> vect;
-     //      _actions = &vect;
-     // }
-
+     if(father != nullptr && action != nullptr){
+          _actions = father->getActions();
+          _actions.push_back(action);
+     }
 }
 
-// vector<Action>*
-// StateWrapper::getActions(){
-//      return _actions;
-// }
+vector<Action*>
+StateWrapper::getActions(){
+     return _actions;
+}
 
 bool
 StateWrapper::isDebug(){
@@ -127,8 +121,6 @@ StateWrapper::expand(){
      vector<Action*>* availableMoves = this->_parserController->ApplicableActions(this->_literalList);
      vector<StateWrapper*> children;
      for(Action *availableMove : *availableMoves){
-          // cout << "++++++++++++++++++++     Action     +++++++++++++++++++ " << endl;
-          // cout << **action << endl;
           StateWrapper* child = new StateWrapper(this,
                                                  this->_parserController->NextState(this->_literalList, availableMove),
                                                  availableMove);
@@ -151,6 +143,25 @@ StateWrapper::printExpandDebug(Action* action, StateWrapper* child, int children
           cout << *child << endl;
           cout << "+++++++++++++  Current Children Num = " << childrenNum << " ++++++++++++++" << endl;
           cin.ignore();
+     }
+}
+
+void
+StateWrapper::printActionsSequence(){
+     for(Action* action : _actions){
+          cout << action->getName() << "(";
+          const StringList* params = action->getParams();
+          for(vector<string>::const_iterator param = params->begin();
+              param != params->end(); ++param){
+
+               if(param != params->begin()){
+                    cout << "," << *param;
+               }else{
+                    cout << *param;
+               }
+
+          }
+          cout << ")" << endl;
      }
 }
 
@@ -186,11 +197,9 @@ operator<<(std::ostream &out, const StateWrapper &state){
      }
      out << "\t}" << endl;
      out << "\tAction List{" << endl;
-     // if(state._actions != nullptr and state._actions->size()){
-     //   for(auto action = state._actions->begin(); action != state._actions->end(); ++action){
-     //     out << "\t\t" << *action <<endl;
-     //   }
-     // }
+     for(Action *action : state._actions){
+          out << "\t\t" << *action <<endl;
+     }
      out << "\t}" << endl;
      out << "\tHeuristic: " << state.Hvalue << endl;
      out << "\tName: " << *(state._name) << endl;

@@ -22,6 +22,7 @@ class StateWrapper : public State{
   unsigned long long _hash = 0;
   string getId();
   bool _debug;
+  vector<Action*> _actions;
 
  public:
   //Constructors
@@ -44,12 +45,14 @@ class StateWrapper : public State{
   LiteralList* getLiteralList();
   Heuristics* getHeuristics();
   ParserController* getParserController();
+  vector<Action*> getActions();
 
   // Setters
   void setDebug(bool debug);
 
   // Debugging Functionality
   void printExpandDebug(Action* action, StateWrapper* child, int childrenNum);
+  void printActionsSequence();
 };
 
 namespace std {

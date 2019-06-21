@@ -34,9 +34,6 @@ int main(int argc, char *argv[]) {
     string domain_file, problem_file;
 
     string algorithm, heuristic;
-    // Init Controller.
-    ParserController *parserController = new ParserController(driver) ;
-    Heuristics *heuristicsController = new Heuristics(parserController);
     bool scanning_trace = false, parsing_trace = false, debug_mode = false;
 
     auto app = setUpCLI(domain_file, problem_file,
@@ -66,6 +63,10 @@ int main(int argc, char *argv[]) {
         else cout << "Error!" << endl;
     }
 
+    // Init Controller.
+    ParserController *parserController = new ParserController(driver) ;
+    Heuristics *heuristicsController = new Heuristics(parserController);
+
     StateWrapper *currentState = new StateWrapper(driver->problem->getInit(),
                                                   parserController,
                                                   heuristicsController,
@@ -90,7 +91,6 @@ int main(int argc, char *argv[]) {
 
     auto bsol = Astar(currentState, goalState, examined, mem);
 
-
     // Hashing tests
     /*
       Hashing hash = Hashing();
@@ -107,12 +107,14 @@ int main(int argc, char *argv[]) {
 
 
     // Run heuristics demo.
-    HeuristicsDemo(parserController, currentState);
+    // HeuristicsDemo(parserController, currentState);
 
 
     cout << "================== GOAL FOUND ==================" << endl;
     cout << *bsol << endl;
 
+    cout << "================== ACTION SEQUENCE ==================" << endl;
+    bsol->printActionsSequence();
     return 0;
 }
 
