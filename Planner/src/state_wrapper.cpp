@@ -43,10 +43,6 @@ StateWrapper::StateWrapper(StateWrapper* father, LiteralList* newLiteralList, Ac
      }
 }
 
-// StateWrapper*
-// StateWrapper::getWrapperFather(){
-//      return this->_wrapperFather;
-// }
 Action*
 StateWrapper::getLastAction(){
      return _lastAction;
@@ -137,8 +133,6 @@ StateWrapper::expand(){
           StateWrapper* child = new StateWrapper(this,
                                                  this->_parserController->NextState(this->_literalList, availableMove),
                                                  availableMove);
-          child->setDebug(this->_debug);
-          this->addChild(child);
           children.push_back(child);
           this->printExpandDebug(availableMove, child, children.size());
      }
