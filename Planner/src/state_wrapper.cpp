@@ -39,14 +39,17 @@ StateWrapper::StateWrapper(StateWrapper* father, LiteralList* newLiteralList, Ac
      this->setHvalue(_heuristics->Estimate(newLiteralList));
      this->setDebug(father->isDebug());
      if(father != nullptr && action != nullptr){
-          _actions = father->getActions();
-          _actions.push_back(action);
+          _lastAction = action;
      }
 }
 
-vector<Action*>
-StateWrapper::getActions(){
-     return _actions;
+// StateWrapper*
+// StateWrapper::getWrapperFather(){
+//      return this->_wrapperFather;
+// }
+Action*
+StateWrapper::getLastAction(){
+     return _lastAction;
 }
 
 
@@ -159,7 +162,13 @@ StateWrapper::printExpandDebug(Action* action, StateWrapper* child, int children
 
 void
 StateWrapper::printActionsSequence(){
-     for(Action* action : _actions){
+     vector<Action*>* actions = this->getActions(this, new vector<Action*>);
+     this->printActionsSequence(actions);
+}
+
+void
+StateWrapper::printActionsSequence(vector<Action*>* actions){
+     for(Action* action : *actions){
           cout << action->getName() << "(";
           const StringList* params = action->getParams();
           for(vector<string>::const_iterator param = params->begin();
@@ -174,6 +183,17 @@ StateWrapper::printActionsSequence(){
           }
           cout << ")" << endl;
      }
+}
+
+vector<Action*>*
+StateWrapper::getActions(StateWrapper *state, vector<Action*> *actions){
+     if( state->getFather() == nullptr){
+          return actions;
+     }else{
+          actions = getActions((StateWrapper*) state->getFather(), actions);
+          actions->push_back(state->_lastAction);
+     }
+     return actions;
 }
 
 bool
@@ -207,10 +227,10 @@ operator<<(std::ostream &out, const StateWrapper &state){
           }
      }
      out << "\t}" << endl;
-     out << "\tAction List{" << endl;
-     for(Action *action : state._actions){
-          out << "\t\t" << *action <<endl;
-     }
+     // out << "\tAction List{" << endl;
+     // for(Action *action : state.getActions(state, new vector<Action *>)){
+     //      out << "\t\t" << *action <<endl;
+     // }
      out << "\t}" << endl;
      out << "\tHeuristic: " << state.Hvalue << endl;
      out << "\tName: " << *(state._name) << endl;
