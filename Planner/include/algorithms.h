@@ -31,24 +31,18 @@ X *Astar(X *initial,X *goal, long long &examined, long long &mem){
                mem = agenda.size() + closed.size();
           examined++;
           X *s = agenda.top();
-          /* cout << *s <<endl; */
-          /* cin.ignore(); */
           agenda.pop();
          if (*s >= *goal) {
-             cout<<"Closed size: "<<closed.size()<<endl;
              return s;
          }
-          cout<<s->getHash()<<endl;
           closed[s->getHash()] = true;
           vector<X *> children = s->expand();
-          cout<<children.size()<<" , ";
           for (unsigned int i=0;i<children.size();i++)
                if (!closed[children.at(i)->getHash()])
                {
                     children.at(i)->setHvalue(children.at(i)->getDepth()+children.at(i)->estimate());
                     agenda.push(children.at(i));
                }
-          cout<<endl;
      }
      return nullptr;
 }
