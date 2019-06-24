@@ -1,4 +1,4 @@
-#include "state.h"
+#include "state_wrapper.h"
 #include <unordered_map>
 #include <queue>
 
@@ -50,7 +50,7 @@ X *BFS(X *initial, X *goal, long long &examined, long long &mem) {
     examined = 0;
     mem = 1;
     while (agenda.size() > 0) {
-        if (agenda.size() + closed.size() > mem)
+        if ((long long) (agenda.size() + closed.size()) > mem)
             mem = agenda.size() + closed.size();
         examined++;
         X *s = agenda.top();
@@ -63,7 +63,7 @@ X *BFS(X *initial, X *goal, long long &examined, long long &mem) {
         vector<X *> children = s->expand();
         for (unsigned int i = 0; i < children.size(); i++)
             if (!closed[children.at(i)->getId()]) {
-                children.at(i)->setHvalue(children.at(i)->estimate());
+                children.at(i)->SetHvalue(children.at(i)->estimate());
                 agenda.push(children.at(i));
             }
     }
@@ -75,7 +75,7 @@ X *IDAstar(X *initial, X *goal, long long &examined, long long &mem) {
     double current_cost;
     double cost = 0;
 
-    initial->setHvalue(initial->heuristic(goal));
+    initial->SetHvalue(initial->estimate());
 
     while (true) {
 
@@ -92,14 +92,14 @@ X *IDAstar(X *initial, X *goal, long long &examined, long long &mem) {
         while (continue_search && agenda.size() > 0) {
             cout << "Examined: " << examined << endl;
             cout << "Mem: " << mem << endl;
-            if (agenda.size() + closed.size() > mem)
+            if ((long long) (agenda.size() + closed.size()) > mem)
                 mem = agenda.size() + closed.size();
             examined++;
 
             X *s = agenda.front();
             agenda.pop();
 
-            current_cost = s->getHvalue();
+            current_cost = s->GetHvalue();
 
             if (*s >= *goal) {
                 cout << "Closed size: " << closed.size() << endl;
@@ -115,7 +115,7 @@ X *IDAstar(X *initial, X *goal, long long &examined, long long &mem) {
                 vector<X *> children = s->expand();
                 for (unsigned int i = 0; i < children.size(); i++)
                     if (!closed[*children.at(i)]) {
-                        children.at(i)->setHvalue(children.at(i)->heuristic(goal));
+                        children.at(i)->SetHvalue(children.at(i)->estimate());
                         agenda.push(children.at(i));
                     }
             }
@@ -136,7 +136,7 @@ X *DFS(X *initial, X *goal, long long &examined, long long &mem) {
     examined = 0;
     mem = 1;
     while (frontier.size() > 0) {
-        if (frontier.size() + closed.size() > mem)
+        if ((long long) (frontier.size() + closed.size()) > mem)
             mem = frontier.size() + closed.size();
         examined++;
         X *s = frontier.top();
