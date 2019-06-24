@@ -52,7 +52,6 @@ class StateWrapper : public State {
 
   // Setters
   void setDebug(bool debug);
-  StateWrapper* getWrapperFather();
 
   // Debugging Functionality
   void printExpandDebug(Action* action, StateWrapper* child, int childrenNum);
