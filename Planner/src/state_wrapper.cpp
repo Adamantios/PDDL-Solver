@@ -221,10 +221,6 @@ operator<<(std::ostream &out, const StateWrapper &state) {
         }
     }
     out << "\t}" << endl;
-    // out << "\tAction List{" << endl;
-    // for(Action *action : state.getActions(state, new vector<Action *>)){
-    //      out << "\t\t" << *action <<endl;
-    // }
     out << "\t}" << endl;
     out << "\tHeuristic: " << state.hvalue_ << endl;
     out << "\tName: " << *(state._name) << endl;
@@ -233,6 +229,6 @@ operator<<(std::ostream &out, const StateWrapper &state) {
     out << "\tDepth: " << state.depth_ << endl;
     out << "\tChildren num: " << state.children_.size() << endl;
     cout << "}" << endl;
+
+    return out;
 }
-
-
