@@ -5,7 +5,7 @@
 #include "pddldriver.hh"
 #include "predicate.hh"
 #include "domain.hh"
-#include "ParserController.h"
+#include "utils.h"
 #include "heuristics.h"
 
 using namespace std;
@@ -15,7 +15,7 @@ class StateWrapper : public State {
  private:
 
   LiteralList* _literalList;
-  ParserController* _parserController;
+  Utils* utils_;
   Heuristics* _heuristics;
   string *_id = nullptr;
   string *_name = nullptr;
@@ -26,7 +26,7 @@ class StateWrapper : public State {
 
  public:
   //Constructors
-  StateWrapper(LiteralList* literalList, ParserController* parserController,
+  StateWrapper(LiteralList* literalList, Utils* utils,
                Heuristics* heuristics, StateWrapper* father);
   StateWrapper(StateWrapper* father, LiteralList* newLiteralList, Action* action);
 
@@ -45,7 +45,7 @@ class StateWrapper : public State {
   string getName();
   LiteralList* getLiteralList();
   Heuristics* getHeuristics();
-  ParserController* getParserController();
+  Utils* getUtils();
   Action* getLastAction();
 
   int estimate();

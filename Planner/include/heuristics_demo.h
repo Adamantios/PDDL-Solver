@@ -6,7 +6,7 @@
 
 class HeuristicsDemo {
 public:
-    HeuristicsDemo(ParserController parserController, LiteralList *currentState);
+    HeuristicsDemo(Utils utils, LiteralList *currentState);
 };
 
 

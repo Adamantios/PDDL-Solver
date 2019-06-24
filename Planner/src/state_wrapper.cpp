@@ -2,7 +2,7 @@
 #include "pddldriver.hh"
 #include "predicate.hh"
 #include "domain.hh"
-#include "ParserController.h"
+#include "utils.h"
 #include "heuristics.h"
 #include "state_wrapper.h"
 #include "md5.h"
@@ -13,12 +13,12 @@
 #include <math.h>
 using namespace std;
 
-StateWrapper::StateWrapper(LiteralList* literalList, ParserController* parserController,
+StateWrapper::StateWrapper(LiteralList* literalList, Utils* utils,
                            Heuristics* heuristics, StateWrapper* father){
 
      this->_literalList = literalList;
      this->_heuristics = heuristics;
-     this->_parserController = parserController;
+     this->utils_ = utils;
      this->setFather(father);
      this->setDepth(father != nullptr ? father->getDepth() + 1: 0);
      this->getName();
@@ -31,7 +31,7 @@ StateWrapper::StateWrapper(StateWrapper* father, LiteralList* newLiteralList, Ac
 
      this->_literalList = newLiteralList;
      this->_heuristics = father->getHeuristics();
-     this->_parserController = father->getParserController();
+     this->utils_ = father->getUtils();
      this->setFather(father);
      this->setDepth(father->getDepth() + 1);
      this->getId();
@@ -60,9 +60,9 @@ StateWrapper::setDebug(bool debug){
 }
 
 
-ParserController*
-StateWrapper::getParserController(){
-     return _parserController;
+Utils*
+StateWrapper::getUtils(){
+     return utils_;
 }
 
 Heuristics*
@@ -127,11 +127,11 @@ int StateWrapper::estimate() {
 
 vector<StateWrapper*>
 StateWrapper::expand(){
-     vector<Action*>* availableMoves = this->_parserController->ApplicableActions(this->_literalList);
+     vector<Action*>* availableMoves = this->utils_->ApplicableActions(this->_literalList);
      vector<StateWrapper*> children;
      for(Action *availableMove : *availableMoves){
           StateWrapper* child = new StateWrapper(this,
-                                                 this->_parserController->NextState(this->_literalList, availableMove),
+                                                 this->utils_->NextState(this->_literalList, availableMove),
                                                  availableMove);
           children.push_back(child);
           this->printExpandDebug(availableMove, child, children.size());

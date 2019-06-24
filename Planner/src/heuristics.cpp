@@ -1,7 +1,7 @@
 #include "heuristics.h"
 
-Heuristics::Heuristics(ParserController *controller, EstimationMethod method) :
-        _controller(controller),
+Heuristics::Heuristics(Utils *utils, EstimationMethod method) :
+        utils_(utils),
         _estimation_method(method == MAX_COST ? MaxCost : AdditiveCost) {}
 
 /**
@@ -23,7 +23,7 @@ double Heuristics::GetDelta(Literal *literal) {
     // Search delta.
     for (auto const &delta_pair : _delta_map)
         // If found return it.
-        if (ParserController::LiteralsEqual(literal, delta_pair.first))
+        if (Utils::LiteralsEqual(literal, delta_pair.first))
             return delta_pair.second;
 
     // If not found return infinity.
@@ -85,7 +85,7 @@ void Heuristics::EstimateDeltaValues(LiteralList *current_state) {
         // Reset flag.
         leveled_off = true;
         // Get applicable actions.
-        vector<Action *> *applicable_actions = _controller->ApplicableActions(&relaxed_state);
+        vector<Action *> *applicable_actions = utils_->ApplicableActions(&relaxed_state);
 
         // For each unrolled applicable action.
         for (Action *action : *applicable_actions) {
@@ -97,7 +97,7 @@ void Heuristics::EstimateDeltaValues(LiteralList *current_state) {
             // For each action's effect.
             for (Literal *effect : *action->getEffects()) {
                 // If the effect is not in the relaxed state.
-                if (ParserController::FindLiteral(&relaxed_state, effect) == relaxed_state.end()) {
+                if (Utils::FindLiteral(&relaxed_state, effect) == relaxed_state.end()) {
                     // Relaxed state hasn't leveled off since an effect can be added.
                     leveled_off = false;
                     // Add the current effect to the relaxed state.
@@ -126,7 +126,7 @@ double Heuristics::Estimate(LiteralList *current_state) {
     // Estimate the Delta Map.
     EstimateDeltaValues(current_state);
     // Get delta for each goal literal.
-    DeltaValues *goal_deltas = GetDeltas(_controller->GetGoal());
+    DeltaValues *goal_deltas = GetDeltas(utils_->GetGoal());
 
     // Estimate and return the goal's cost, based on the method.
     return _estimation_method(goal_deltas);

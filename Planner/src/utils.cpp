@@ -1,50 +1,23 @@
-#include "ParserController.h"
+#include "utils.h"
 
-ParserController::ParserController() = default;
+Utils::Utils() = default;
 
-ParserController::~ParserController() = default;
+Utils::~Utils() = default;
 
-ParserController::ParserController(PDDLDriver *driver) {
-    this->driver = driver;
-}
-
-/**
- * Print state
- */
-void ParserController::PrintState(LiteralList state) {
-    Predicate *predicate;
-    for (unsigned int i = 0; i < state.size(); i++) {
-        predicate = state.at(i)->first;
-        cout << state.at(i)->first->getName() << " ";
-        for (auto it = predicate->getArgs()->begin(); it != predicate->getArgs()->end(); ++it)
-            cout << *it << " ";
-        cout << state.at(i)->second << endl;
-    }
-    cout << endl;
+Utils::Utils(PDDLDriver *driver) {
+    this->driver_ = driver;
 }
 
 // GET FUNCTIONS
 
 /**
  *
- * @return vector with the domain predicates
- */
-vector<Predicate *> ParserController::GetPredicates() {
-    vector<Predicate *> predicates;
-    for (unsigned int i = 0; i < driver->domain->getPredicates()->size(); i++) {
-        predicates.push_back(driver->domain->getPredicates()->at(i));
-    }
-    return predicates;
-}
-
-/**
- *
  * @return vector with the domain actions
  */
-vector<Action *> ParserController::GetActions() {
+vector<Action *> Utils::GetActions() {
     vector<Action *> actions;
-    for (unsigned int i = 0; i < driver->domain->getActions()->size(); i++) {
-        actions.push_back(driver->domain->getActions()->at(i));
+    for (auto action : *driver_->domain->getActions()) {
+        actions.push_back(action);
     }
     return actions;
 }
@@ -53,8 +26,8 @@ vector<Action *> ParserController::GetActions() {
  *
  * @return LiteralList (=vector<Literal*>, Literal=pair<Predicate*,bool>) with the goal state
  */
-LiteralList *ParserController::GetGoal() {
-    return driver->problem->getGoal();
+LiteralList *Utils::GetGoal() {
+    return driver_->problem->getGoal();
 }
 
 // UTILITIES
@@ -63,42 +36,41 @@ LiteralList *ParserController::GetGoal() {
  *
  * @return bool true if the action can be applied to the state, false otherwise
  */
-vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action *action) {
+vector<vector<string>> Utils::IsApplicable(LiteralList *state, Action *action) {
 
-    vector<vector<string>> parameterList;
+    vector<vector<string>> parameter_list;
 
     // Keep action parameters on a local vector of pair<paramName, value>
-    vector<pair<string, string>> actionParams;
-    for (unsigned int j = 0; j < action->getParams()->size(); j++) {
+    vector<pair<string, string>> action_params;
+    for (const auto &param : *action->getParams()) {
         pair<string, string> n;
-        n.first = action->getParams()->at(j); // parameter name
+        n.first = param; // parameter name
         n.second = ""; // parameter value (not set)
-        actionParams.push_back(n);
+        action_params.push_back(n);
     }
     // Local list of this action's preconditions
     PreconditionList preconditions;
-    for (unsigned int j = 0; j < action->getPrecond()->size(); j++) {
-
+    for (auto action_preconditions : *action->getPrecond()) {
         // Creating a new pair of Predicate*, bool, to perform a deep-copy
-        auto *newPredicatePair = new pair<Predicate *, bool>;
-        auto *newArgList = new ArgumentList;
-        auto *newArgStrList = new StringList;
-//        TypeDict* newTypeDict; // TODO TypeDict is not deep copied over (not needed?)
+        auto *new_predicate_pair = new pair<Predicate *, bool>;
+        auto *new_arg_list = new ArgumentList;
+        auto *new_arg_str_list = new StringList;
+
         // Assign primitive values of this action precondition to arguments string list
-        for (unsigned int i = 0; i < action->getPrecond()->at(j)->first->getArgs()->size(); i++) {
-            newArgStrList->push_back(action->getPrecond()->at(j)->first->getArgs()->at(i));
+        for (const auto &precondition : *action_preconditions->first->getArgs()) {
+            new_arg_str_list->push_back(precondition);
         }
         // Assign arguments string list to ArgumentList which is used in predicates ctor
-        newArgList->first = newArgStrList;
+        new_arg_list->first = new_arg_str_list;
 
         // Call ctor of Predicate on first of predicate pair
-        newPredicatePair->first = new Predicate(action->getPrecond()->at(j)->first->getName(), newArgList);
+        new_predicate_pair->first = new Predicate(action_preconditions->first->getName(), new_arg_list);
 
         // Assign primitive bool value of this action's precondition to the new predicate pair's second
-        newPredicatePair->second = action->getPrecond()->at(j)->second;
+        new_predicate_pair->second = action_preconditions->second;
 
         // Add the new predicate pair that is a deep copy of this action's precondition to the local preconditions list
-        preconditions.push_back(newPredicatePair);
+        preconditions.push_back(new_predicate_pair);
 
     }
 
@@ -109,7 +81,7 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
      * The original comments are left as-they-were to help with readability (readability!? xD).
      * (found on https://stackoverflow.com/questions/9555864/variable-nested-for-loops)
     ------------------------------------------------------------------------------------------------------------------*/
-    const int n = actionParams.size(); // Insert N here: how many loops do you need?
+    const int n = action_params.size(); // Insert N here: how many loops do you need?
     int i[n + 1]; // if "n" is not known before hand, then this array will need to be created dynamically.
     //Note: there is an extra element at the end of the array, in order to keep track of whether to exit the array.
 
@@ -117,7 +89,7 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
         i[a] = 0;
     }
 
-    int MAX = driver->problem->getObjects()->size(); //That's just an example, if all of the loops are
+    int MAX = driver_->problem->getObjects()->size(); //That's just an example, if all of the loops are
     // identical: e.g. "for(int i=0; i<79; i++)". If the value of MAX
     // changes for each loop, then make MAX an array instead: (new)
     // int MAX [n]; MAX[0]=10; MAX[1]=20;...;MAX[n-1]=whatever.
@@ -129,19 +101,16 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
         //DO STUFF HERE. Pretend you're inside your nested for loops.
         // The more usual i,j,k,... have been replaced here with i[0], i[1], ..., i[n-1].
 
-//        cout << "testing params:" << endl;
-        for (unsigned int lvl = 0; lvl < actionParams.size(); lvl++) {
-            actionParams.at(lvl).second = driver->problem->getObjects()->at(i[lvl]);
-//            cout << actionParams.at(lvl).second << ", ";
+        for (unsigned int lvl = 0; lvl < action_params.size(); lvl++) {
+            action_params.at(lvl).second = driver_->problem->getObjects()->at(i[lvl]);
         }
-//        cout << endl;
 
         // Applying parameters to local preconditions
-        for (unsigned int j = 0; j < preconditions.size(); j++) {
-            for (unsigned int i = 0; i < preconditions.at(j)->first->getArgs()->size(); i++) {
-                for (unsigned int z = 0; z < actionParams.size(); z++) {
-                    if (preconditions.at(j)->first->getArgs()->at(i) == actionParams.at(z).first) {
-                        preconditions.at(j)->first->getArgs()->at(i) = actionParams.at(z).second;
+        for (auto &precondition : preconditions) {
+            for (auto &arg : *precondition->first->getArgs()) {
+                for (auto &action_param : action_params) {
+                    if (arg == action_param.first) {
+                        arg = action_param.second;
                     }
                 }
             }
@@ -149,76 +118,72 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
 
         bool applicable = true;
         // Checking state for preconditions
-        for (unsigned int j = 0; j < preconditions.size(); j++) {
+        for (auto &precondition : preconditions) {
             // Check for equality precondition
-            if (preconditions.at(j)->first->getName() == "=") {
-                if (preconditions.at(j)->second == 1) { // Equality true
-                    bool allArgsEq = true;
-                    for (unsigned int z = 0; z < preconditions.at(j)->first->getArgs()->size(); z++) {
-                        for (unsigned int k = 0; k < preconditions.at(j)->first->getArgs()->size(); k++) {
-                            if (z != k && preconditions.at(j)->first->getArgs()->at(z) !=
-                                          preconditions.at(j)->first->getArgs()->at(k)) {
-                                allArgsEq = false;
+            if (precondition->first->getName() == "=") {
+                if (precondition->second == 1) { // Equality true
+                    bool all_args_eq = true;
+                    for (unsigned int z = 0; z < precondition->first->getArgs()->size(); z++) {
+                        for (unsigned int k = 0; k < precondition->first->getArgs()->size(); k++) {
+                            if (z != k && precondition->first->getArgs()->at(z) !=
+                                          precondition->first->getArgs()->at(k)) {
+                                all_args_eq = false;
                             }
                         }
                     }
-                    if (!allArgsEq) {
+                    if (!all_args_eq) {
                         applicable = false;
-//                        cout << "not applicable equality true failed" << endl;
                         break; // this breaks outer for
                     }
                 } else { // Equality false
-                    bool allArgsNotEq = true;
-                    for (unsigned int z = 0; z < preconditions.at(j)->first->getArgs()->size(); z++) {
-                        for (unsigned int k = 0; k < preconditions.at(j)->first->getArgs()->size(); k++) {
-                            if (z != k && preconditions.at(j)->first->getArgs()->at(z) ==
-                                          preconditions.at(j)->first->getArgs()->at(k)) {
-                                allArgsNotEq = false;
+                    bool all_args_not_eq = true;
+                    for (unsigned int z = 0; z < precondition->first->getArgs()->size(); z++) {
+                        for (unsigned int k = 0; k < precondition->first->getArgs()->size(); k++) {
+                            if (z != k && precondition->first->getArgs()->at(z) ==
+                                          precondition->first->getArgs()->at(k)) {
+                                all_args_not_eq = false;
                             }
                         }
                     }
-                    if (!allArgsNotEq) {
+                    if (!all_args_not_eq) {
                         applicable = false;
-//                        cout << "not applicable equality false failed" << endl;
                         break; // this breaks outer for
                     }
                 }
             }
 
-            bool foundThisPrecond = false;
-            bool sameBoolean = false;
-            for (unsigned int i = 0; i < state->size(); i++) {
-                if (state->at(i)->first->getName() == preconditions.at(j)->first->getName()) {
-                    bool sameParams = true;
-                    for (unsigned int p = 0; p < state->at(i)->first->getArgs()->size(); p++) {
-                        bool foundParam = false;
-                        for (unsigned int z = 0; z < preconditions.at(j)->first->getArgs()->size(); z++) {
-                            if (state->at(i)->first->getArgs()->at(p) == preconditions.at(j)->first->getArgs()->at(z)) {
-                                foundParam = true;
+            bool found_this_precondition = false;
+            bool same_boolean = false;
+            for (auto &literal : *state) {
+                if (literal->first->getName() == precondition->first->getName()) {
+                    bool same_params = true;
+                    for (const auto &literal_arguments : *literal->first->getArgs()) {
+                        bool found_param = false;
+                        for (const auto &precondition_arguments : *precondition->first->getArgs()) {
+                            if (literal_arguments == precondition_arguments) {
+                                found_param = true;
                             }
                         }
-                        if (!foundParam) sameParams = false;
+                        if (!found_param) same_params = false;
 
                     }
-                    if (sameParams) {
-                        foundThisPrecond = true;
-                        sameBoolean = state->at(i)->second == preconditions.at(j)->second;
+                    if (same_params) {
+                        found_this_precondition = true;
+                        same_boolean = literal->second == precondition->second;
                         break; // Move on to next precondition
                     }
                 }
             }
-            // foundThisPrecond never turned true, which means we exhausted the state without finding this
+            // found_this_precondition never turned true, which means we exhausted the state without finding this
             // precondition with the same arguments. Action is not applicable because the predicates bool is 1 (true)
-            if (!foundThisPrecond && preconditions.at(j)->second == 1) {
+            if (!found_this_precondition && precondition->second == 1) {
                 applicable = false;
-//                cout << "not applicable didnt find precondition in state for these arguments" << endl;
                 break;
             }
-                // foundThisPrecond turned true, which means we found this precondition in the state with the same arguments.
+                // found_this_precondition turned true, which means we found this precondition in the state with the same arguments.
                 // Action is not applicable if the precondition was found in this state and the boolean parameters do not match
-            else if (foundThisPrecond && !sameBoolean) {
+            else if (found_this_precondition && !same_boolean) {
                 applicable = false;
-//                cout << "not applicable found precondition in state for these arguments" << endl;
                 break;
             }
 
@@ -226,16 +191,17 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
 
         if (applicable) {
             vector<string> params;
-            for (unsigned int lvl = 0; lvl < actionParams.size(); lvl++) {
-                params.push_back(actionParams.at(lvl).second);
+            for (auto &action_param : action_params) {
+                params.push_back(action_param.second);
             }
-            parameterList.push_back(params);
+            parameter_list.push_back(params);
         }
 
         // Reset applied objects to precondition parameters
-        for (unsigned int j = 0; j < preconditions.size(); j++) {
-            for (unsigned int i = 0; i < preconditions.at(j)->first->getArgs()->size(); i++) {
-                preconditions.at(j)->first->getArgs()->at(i) = action->getPrecond()->at(j)->first->getArgs()->at(i);
+        for (unsigned int outer = 0; outer < preconditions.size(); outer++) {
+            for (unsigned int inner = 0; inner < preconditions.at(outer)->first->getArgs()->size(); inner++) {
+                preconditions.at(outer)->first->getArgs()->at(inner) = action->getPrecond()->at(
+                        outer)->first->getArgs()->at(inner);
             }
         }
 
@@ -253,62 +219,53 @@ vector<vector<string>> ParserController::IsApplicable(LiteralList *state, Action
         }
     }
 
-    return parameterList;
+    return parameter_list;
 }
 
 /**
  *
  * @return vector containing pairs of applicable actions and their applicable params values on the state supplied
  */
-vector<Action *> *ParserController::ApplicableActions(LiteralList *state) {
+vector<Action *> *Utils::ApplicableActions(LiteralList *current_state) {
 
     vector<Action *> actions = this->GetActions();
-    vector<pair<Action *, vector<vector<string>>>> applicableActions;
+    vector<pair<Action *, vector<vector<string>>>> applicable_actions;
 
     for (auto &action : actions) {
-        pair<Action *, vector<vector<string>>> applicableActionsParams;
-        applicableActionsParams.first = action;
-        applicableActionsParams.second = this->IsApplicable(state, action);
-        if (!applicableActionsParams.second.empty()) applicableActions.push_back(applicableActionsParams);
+        pair<Action *, vector<vector<string>>> applicable_actions_params;
+        applicable_actions_params.first = action;
+        applicable_actions_params.second = this->IsApplicable(current_state, action);
+        if (!applicable_actions_params.second.empty()) applicable_actions.push_back(applicable_actions_params);
     }
 
-    return UnrollActions(&applicableActions);
+    return UnrollActions(&applicable_actions);
 }
 
 /**
  *
  * @return the new state after the action is applied to the provided state
  */
-LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
-
-    //cout << "ACTION" << endl;
-    //PrintAction(action);
-    //cout << "BEFORE" << endl;
-    //PrintState(*state);
-
+LiteralList *Utils::NextState(LiteralList *state, Action *action) {
     Predicate *state_predicate;
     Predicate *effect_predicate;
     bool effect_status;
 
-
-
     // Copy given state to new_state variable
-    LiteralList *new_state = new LiteralList();
-    for (unsigned int i = 0; i < state->size(); i++) {
-        Literal *literal = new Literal();
-        literal->second = state->at(i)->second;
-        literal->first = state->at(i)->first;
+    auto *new_state = new LiteralList();
+    for (auto &state_literal : *state) {
+        auto *literal = new Literal();
+        literal->second = state_literal->second;
+        literal->first = state_literal->first;
         new_state->emplace_back(literal);
     }
 
     bool applied;
     unsigned int state_size = state->size();
     // For each action effect, check if it appears in the state predicates
-    for (unsigned int effects_index = 0;
-         effects_index < action->getEffects()->size(); effects_index++) { // Loop through action's effects
+    for (auto effects_index : *action->getEffects()) { // Loop through action's effects
         // Assign current effect predicate value and status to the local variables
-        effect_predicate = action->getEffects()->at(effects_index)->first;
-        effect_status = action->getEffects()->at(effects_index)->second;
+        effect_predicate = effects_index->first;
+        effect_status = effects_index->second;
 
         // Set applied to false as this effect has not been applied yet
         applied = false;
@@ -320,14 +277,13 @@ LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
             state_predicate = state->at(state_index)->first;
 
             // Compare effect name with state predicate name
-            if (!effect_predicate->getName().compare(state_predicate->getName())) // returns 0 when equal
-            {
+            if (effect_predicate->getName() != state_predicate->getName()) {
 
                 // Check if the parameters match
                 unsigned int correct_args = 0;
                 for (unsigned int arg_index = 0; arg_index < state_predicate->getArgs()->size(); arg_index++) {
                     string param = effect_predicate->getArgs()->at(arg_index);
-                    if (!param.compare(state_predicate->getArgs()->at(arg_index))) {
+                    if (param != (state_predicate->getArgs()->at(arg_index))) {
                         // State predicate has the correct value for this parameter, increment counter
                         correct_args++;
                     }
@@ -336,7 +292,7 @@ LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
                 // Check if all the state predicate arguments match the effects arguments
                 if (correct_args == state_predicate->getArgs()->size()) {
                     // Apply effect
-                    new_state->at(state_index)->second = action->getEffects()->at(effects_index)->second;
+                    new_state->at(state_index)->second = effects_index->second;
 
                     // Flag applied
                     applied = true;
@@ -348,60 +304,27 @@ LiteralList *ParserController::NextState(LiteralList *state, Action *action) {
         // Check if the effect was applied in this state
         if (!applied) {
             // The effect adds a new literal to the state
-            Literal *new_literal = new Literal();
+            auto *new_literal = new Literal();
             new_literal->first = effect_predicate;
-            /*
-            for (unsigned int i = 0; i < effect_predicate->getArgs()->size(); i++) {
-                for (unsigned int j=0; j < action.getParams()->size(); j++) {
-                    if (!effect_predicate->getArgs()->at(i).compare(action.getParams()->at(j)))
-                        new_literal->first->getArgs()->at(i) = action.getParams()->at(j);
-                }
-            }
-             */
             new_literal->second = effect_status;
             new_state->emplace_back(new_literal);
-            //delete (new_literal);
         }
     }
 
-    //cout << "AFTER" << endl;
-    //PrintState(*new_state);
     return new_state;
 }
 
 /**
- *
- * @param state current state
- * @param action action to be performed
- * @param param_values vector of applicable param variations
- * @return a vector containing all the resulting states after applying this action
- */
-vector<LiteralList *>
-ParserController::NextStates(LiteralList *state, vector<Action *> *actions) {
-
-    vector<LiteralList *> states = vector<LiteralList *>();
-
-    for (unsigned int i = 0; i < actions->size(); i++) {
-        LiteralList *new_state = this->NextState(state, actions->at(i));
-        states.emplace_back(new_state);
-        cout << "Next state:" << endl;
-        PrintState(*new_state);
-    }
-
-    return states;
-}
-
-/**
  * Compares two literals.
- * @param literal1 the first literal.
- * @param literal2 the second literal.
+ * @param literal_1 the first literal.
+ * @param literal_2 the second literal.
  * @return bool
  */
-bool ParserController::LiteralsEqual(Literal *literal1, Literal *literal2) {
+bool Utils::LiteralsEqual(Literal *literal_1, Literal *literal_2) {
     // No need to compare types since identical PDDL objects cannot have different types.
-    return literal1->first->getName() == literal2->first->getName() &&
-           *literal1->first->getArgs() == *literal2->first->getArgs() &&
-           literal1->second == literal2->second;
+    return literal_1->first->getName() == literal_2->first->getName() &&
+           *literal_1->first->getArgs() == *literal_2->first->getArgs() &&
+           literal_1->second == literal_2->second;
 }
 
 /**
@@ -410,7 +333,7 @@ bool ParserController::LiteralsEqual(Literal *literal1, Literal *literal2) {
  * @param literal the literal to search for.
  * @return iterator.
  */
-LiteralList::iterator ParserController::FindLiteral(LiteralList *state, Literal *literal) {
+LiteralList::iterator Utils::FindLiteral(LiteralList *state, Literal *literal) {
     auto iterator = find_if(state->begin(), state->end(),
                             [&](Literal *state_literal) -> bool {
                                 /*
@@ -422,8 +345,8 @@ LiteralList::iterator ParserController::FindLiteral(LiteralList *state, Literal 
     return iterator;
 }
 
-LiteralList *ParserController::UnrollLiteralList(const LiteralList *rolled_list, const StringList *rolled_params,
-                                                 ParameterList *unrolled_params) {
+LiteralList *Utils::UnrollLiteralList(const LiteralList *rolled_list, const StringList *rolled_params,
+                                      ParameterList *unrolled_params) {
     auto unrolled_list = new LiteralList();
 
     // For each literal of the rolled list.
@@ -453,7 +376,7 @@ LiteralList *ParserController::UnrollLiteralList(const LiteralList *rolled_list,
     return unrolled_list;
 }
 
-vector<Action *> *ParserController::UnrollActions(vector<pair<Action *, vector<vector<string>>>> *rolled_actions) {
+vector<Action *> *Utils::UnrollActions(vector<pair<Action *, vector<vector<string>>>> *rolled_actions) {
     auto *unrolled_actions = new vector<Action *>();
 
     // Fore each rolled action.

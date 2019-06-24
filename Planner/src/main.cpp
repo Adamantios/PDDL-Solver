@@ -4,7 +4,7 @@
 #include <ctime>
 #include <heuristics_demo.h>
 #include "pddldriver.hh"
-#include "ParserController.h"
+#include "utils.h"
 #include "hashing.h"
 #include "../../CLI/CLI11.hpp"
 #include "state_wrapper.h"
@@ -35,9 +35,9 @@ int main(int argc, char *argv[]) {
     string domain_file, problem_file;
 
     string algorithm, heuristic;
-    // Init Controller.
-    ParserController *parserController = new ParserController(driver) ;
-    Heuristics *heuristicsController = new Heuristics(parserController);
+    // Init Utils.
+    Utils *utils = new Utils(driver) ;
+    Heuristics *heuristicsController = new Heuristics(utils);
     bool scanning_trace = false, parsing_trace = false, enable_debug = false;
 
     auto app = setUpCLI(domain_file, problem_file,
@@ -67,12 +67,12 @@ int main(int argc, char *argv[]) {
     }
 
     StateWrapper *currentState = new StateWrapper(driver->problem->getInit(),
-                                                  parserController,
+                                                  utils,
                                                   heuristicsController,
                                                   nullptr);
     currentState->setDebug(enable_debug);
     StateWrapper *goalState = new StateWrapper(driver->problem->getGoal(),
-                                               parserController,
+                                               utils,
                                                heuristicsController,
                                                nullptr);
 
