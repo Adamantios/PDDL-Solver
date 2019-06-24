@@ -2,7 +2,7 @@
 
 Heuristics::Heuristics(Utils *utils, EstimationMethod method) :
         utils_(utils),
-        _estimation_method(method == MAX_COST ? MaxCost : AdditiveCost) {}
+        estimation_method_(method == MAX_COST ? MaxCost : AdditiveCost) {}
 
 /**
  * Initializes the Delta Values of the current state.
@@ -11,7 +11,7 @@ Heuristics::Heuristics(Utils *utils, EstimationMethod method) :
 void Heuristics::InitDeltaValues(LiteralList *current_state) {
     // Initialize every state literal with 0.
     for (Literal *state_literal : *current_state)
-        _delta_map.insert({state_literal, 0});
+        delta_map_.insert({state_literal, 0});
 }
 
 /**
@@ -21,7 +21,7 @@ void Heuristics::InitDeltaValues(LiteralList *current_state) {
  */
 double Heuristics::GetDelta(Literal *literal) {
     // Search delta.
-    for (auto const &delta_pair : _delta_map)
+    for (auto const &delta_pair : delta_map_)
         // If found return it.
         if (Utils::LiteralsEqual(literal, delta_pair.first))
             return delta_pair.second;
@@ -107,11 +107,11 @@ void Heuristics::EstimateDeltaValues(LiteralList *current_state) {
                 // Get effect's delta value.
                 double effect_delta = GetDelta(effect);
                 // Estimate the current action's cost, based on the method.
-                double cost = _estimation_method(preconditions_deltas);
+                double cost = estimation_method_(preconditions_deltas);
                 // Calculate the current effect's delta value.
                 double delta_value = min(effect_delta, action_cost + cost);
                 // Store the delta value.
-                _delta_map.insert({effect, delta_value});
+                delta_map_.insert({effect, delta_value});
             }
         }
     } while (!leveled_off);
@@ -129,5 +129,5 @@ double Heuristics::Estimate(LiteralList *current_state) {
     DeltaValues *goal_deltas = GetDeltas(utils_->GetGoal());
 
     // Estimate and return the goal's cost, based on the method.
-    return _estimation_method(goal_deltas);
+    return estimation_method_(goal_deltas);
 }

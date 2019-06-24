@@ -35,7 +35,7 @@ X *Astar(X *initial, X *goal, long long &examined, long long &mem) {
         vector<X *> children = s->expand();
         for (unsigned int i = 0; i < children.size(); i++)
             if (!closed[children.at(i)->getHash()]) {
-                children.at(i)->setHvalue(children.at(i)->getDepth() + children.at(i)->estimate());
+                children.at(i)->SetHvalue(children.at(i)->GetDepth() + children.at(i)->estimate());
                 agenda.push(children.at(i));
             }
     }

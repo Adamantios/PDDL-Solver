@@ -22,8 +22,8 @@ enum EstimationMethod {
 class Heuristics {
 private:
     Utils *utils_;
-    std::function<double(DeltaValues *deltas)> _estimation_method;
-    DeltaMap _delta_map{};
+    std::function<double(DeltaValues *deltas)> estimation_method_;
+    DeltaMap delta_map_{};
 
     void InitDeltaValues(LiteralList *current_state);
 

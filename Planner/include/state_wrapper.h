@@ -1,5 +1,5 @@
-#ifndef STATE_WRAPPER_H
-#define STATE_WRAPPER_H
+#ifndef PDDL_SOLVER_STATE_WRAPPER_H
+#define PDDL_SOLVER_STATE_WRAPPER_H
 
 #include "state.h"
 #include "pddldriver.hh"
@@ -71,4 +71,4 @@ namespace std {
       }
     };
 }
-#endif //STATE_WRAPPER_H
+#endif //PDDL_SOLVER_STATE_WRAPPER_H
