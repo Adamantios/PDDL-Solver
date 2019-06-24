@@ -23,7 +23,7 @@ X *Astar(X *initial, X *goal, long long &examined, long long &mem) {
     examined = 0;
     mem = 1;
     while (agenda.size() > 0) {
-        if (agenda.size() + closed.size() > mem)
+        if ((long long) (agenda.size() + closed.size()) > mem)
             mem = agenda.size() + closed.size();
         examined++;
         X *s = agenda.top();
