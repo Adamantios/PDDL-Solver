@@ -24,7 +24,7 @@ X *Astar(X *initial, X *goal, long long &examined, long long &mem) {
     mem = 1;
     while (agenda.size() > 0) {
         if ((long long) (agenda.size() + closed.size()) > mem)
-            mem = agenda.size() + closed.size();
+            mem = static_cast<long long int>(agenda.size() + closed.size());
         examined++;
         X *s = agenda.top();
         agenda.pop();
@@ -51,7 +51,7 @@ X *BFS(X *initial, X *goal, long long &examined, long long &mem) {
     mem = 1;
     while (agenda.size() > 0) {
         if ((long long) (agenda.size() + closed.size()) > mem)
-            mem = agenda.size() + closed.size();
+            mem = static_cast<long long int>(agenda.size() + closed.size());
         examined++;
         X *s = agenda.top();
         agenda.pop();
@@ -93,7 +93,7 @@ X *IDAstar(X *initial, X *goal, long long &examined, long long &mem) {
             cout << "Examined: " << examined << endl;
             cout << "Mem: " << mem << endl;
             if ((long long) (agenda.size() + closed.size()) > mem)
-                mem = agenda.size() + closed.size();
+                mem = static_cast<long long int>(agenda.size() + closed.size());
             examined++;
 
             X *s = agenda.front();
@@ -137,7 +137,7 @@ X *DFS(X *initial, X *goal, long long &examined, long long &mem) {
     mem = 1;
     while (frontier.size() > 0) {
         if ((long long) (frontier.size() + closed.size()) > mem)
-            mem = frontier.size() + closed.size();
+            mem = static_cast<long long int>(frontier.size() + closed.size());
         examined++;
         X *s = frontier.top();
         frontier.pop();
