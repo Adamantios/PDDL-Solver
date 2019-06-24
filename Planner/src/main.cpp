@@ -60,7 +60,6 @@ int main(int argc, char *argv[]) {
                         enable_debug,
                         algorithm, heuristic);
 
-
     CLI11_PARSE(*app, argc, argv)
 
     if (scanning_trace)
@@ -95,6 +94,7 @@ int main(int argc, char *argv[]) {
     long long mem, examined;
 
     clock_t c_start = clock();
+    // TODO choose algorithm depending on the input.
     auto bsol = Astar(current_state, goal_state, examined, mem);
     clock_t c_end = clock();
 
