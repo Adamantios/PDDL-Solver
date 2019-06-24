@@ -2,7 +2,7 @@
 #include <ctime>
 #include "pddldriver.hh"
 #include "utils.h"
-#include "../../CLI/CLI11.hpp"
+#include "CLI11.hpp"
 #include "state_wrapper.h"
 #include "algorithms.h"
 #include "heuristics.h"
@@ -18,9 +18,12 @@ std::shared_ptr<CLI::App> SetUpCli(string &domain_file, string &problem_file,
                                    bool &scanning_trace, bool &parsing_trace,
                                    bool &enable_debug,
                                    string &algorithm, string &heuristic) {
-    string app_description = "This application implements a pddl solver. Requires domain and problem files in PDDL. Max Cost/Additive Cost heuristics. A*, GBFS, IDA*, DFS search functions.";
-    string available_algorithms = "You can choose an algorithm among the following ones:\nA_STAR | GBFS | IDA_STAR | DFS";
-    string available_heuristics = "You can choose a heuristic among the following ones:\nMAX_COST | ADD_COST";
+    string app_description = "This application implements a pddl solver. Requires domain and problem files in PDDL. "
+                             "Max Cost/Additive Cost heuristics. A*, GBFS, IDA*, DFS search functions.";
+    string available_algorithms = "You can choose an algorithm among the following ones:\n"
+                                  "A_STAR | GBFS | IDA_STAR | DFS";
+    string available_heuristics = "You can choose a heuristic among the following ones:\n"
+                                  "MAX_COST | ADD_COST";
 
     // TODO CLI::App app{app_description};
     std::shared_ptr<CLI::App> app = GetApp();
@@ -79,10 +82,10 @@ int main(int argc, char *argv[]) {
 
     // Init Utils and Heuristics Controller.
     auto *utils = new Utils(driver);
-    Heuristics *heuristics_controller;
-    if (!heuristic.compare("MAX_COST"))
+    Heuristics *heuristics_controller = nullptr;
+    if (heuristic == "MAX_COST")
         heuristics_controller = new Heuristics(utils, MAX_COST);
-    else if (!algorithm.compare("ADD_COST"))
+    else if (algorithm == "ADD_COST")
         heuristics_controller = new Heuristics(utils, ADDITIVE_COST);
 
     // Init current state.
@@ -102,20 +105,26 @@ int main(int argc, char *argv[]) {
     clock_t c_start = clock();
 
     // Choose algorithm depending on the input.
-    StateWrapper* bsol;
-    if (!algorithm.compare("A_STAR"))
+    StateWrapper *bsol;
+    if (algorithm == "A_STAR") {
         bsol = Astar(current_state, goal_state, examined, mem);
-    else if (!algorithm.compare("GBFS"))
+        cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
+        bsol->printActionsSequence();
+    } else if (algorithm == "GBFS") {
         bsol = BFS(current_state, goal_state, examined, mem);
-    else if (!algorithm.compare("IDA_STAR"))
+        cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
+        bsol->printActionsSequence();
+    } else if (algorithm == "IDA_STAR") {
         bsol = IDAstar(current_state, goal_state, examined, mem);
-    else if (!algorithm.compare("DFS"))
+        cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
+        bsol->printActionsSequence();
+    } else if (algorithm == "DFS") {
         bsol = DFS(current_state, goal_state, examined, mem);
+        cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
+        bsol->printActionsSequence();
+    }
 
     clock_t c_end = clock();
-
-    cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
-    bsol->printActionsSequence();
 
     cout << endl;
     double time_elapsed_ms = 1000.0 * (c_end - c_start) / CLOCKS_PER_SEC;
