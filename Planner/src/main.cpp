@@ -4,7 +4,12 @@
 #include "utils.h"
 #include "CLI11.hpp"
 #include "state_wrapper.h"
-#include "algorithms.h"
+#include "comparator.h"
+#include "AStar.h"
+#include "BFS.h"
+#include "DFS.h"
+#include "IDAStar.h"
+
 #include "heuristics.h"
 
 using namespace std;
@@ -19,7 +24,7 @@ std::shared_ptr<CLI::App> SetUpCli(string &domain_file, string &problem_file,
                                    bool &enable_debug,
                                    string &algorithm, string &heuristic) {
     string app_description = "This application implements a pddl solver. Requires domain and problem files in PDDL. "
-                             "Max Cost/Additive Cost heuristics. A*, GBFS, IDA*, DFS search functions.";
+                             "Max Cost/Additive Cost heuristics. A*, GBFS, IDA*, DFS, BestFS search functions.";
     string available_algorithms = "You can choose an algorithm among the following ones:\n"
                                   "A_STAR | GBFS | IDA_STAR | DFS";
     string available_heuristics = "You can choose a heuristic among the following ones:\n"
@@ -110,6 +115,7 @@ int main(int argc, char *argv[]) {
         bsol = Astar(current_state, goal_state, examined, mem);
         cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
         bsol->printActionsSequence();
+
     } else if (algorithm == "GBFS") {
         bsol = BFS(current_state, goal_state, examined, mem);
         cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
