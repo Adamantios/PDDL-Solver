@@ -277,16 +277,14 @@ LiteralList *Utils::NextState(LiteralList *state, Action *action) {
             state_predicate = state->at(state_index)->first;
 
             // Compare effect name with state predicate name
-            if (effect_predicate->getName() != state_predicate->getName()) {
-
+            if (effect_predicate->getName() == state_predicate->getName()) {
                 // Check if the parameters match
                 unsigned int correct_args = 0;
                 for (unsigned int arg_index = 0; arg_index < state_predicate->getArgs()->size(); arg_index++) {
                     string param = effect_predicate->getArgs()->at(arg_index);
-                    if (param != (state_predicate->getArgs()->at(arg_index))) {
+                    if (param == state_predicate->getArgs()->at(arg_index))
                         // State predicate has the correct value for this parameter, increment counter
                         correct_args++;
-                    }
                 }
 
                 // Check if all the state predicate arguments match the effects arguments
