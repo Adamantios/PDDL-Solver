@@ -50,21 +50,12 @@ std::shared_ptr<CLI::App> SetUpCli(string &domain_file, string &problem_file,
     return app;
 }
 
-int main(int argc, char *argv[]) {
-    auto *driver = new PDDLDriver();
-
-    string domain_file, problem_file;
-
-    string algorithm, heuristic;
-    bool scanning_trace = false, parsing_trace = false, enable_debug = false;
-
-    auto app = SetUpCli(domain_file, problem_file,
-                        scanning_trace, parsing_trace,
-                        enable_debug,
-                        algorithm, heuristic);
-
-    CLI11_PARSE(*app, argc, argv)
-
+/**
+ * Parse PDDL.
+ * @param driver the PDDL parser driver.
+ */
+void ParsePddl(PDDLDriver *driver, bool scanning_trace, bool parsing_trace,
+               const string &domain_file, const string &problem_file) {
     if (scanning_trace)
         driver->trace_scanning = true;
 
@@ -78,44 +69,37 @@ int main(int argc, char *argv[]) {
     if (!driver->parse(problem_file))
         cout << "Parsing " << problem_file << "... ";
     cout << "ok!" << endl;
+}
 
-    // Init Utils and Heuristics Controller.
-    auto *utils = new Utils(driver);
-    Heuristics *heuristics_controller;
+Heuristics *ChooseHeuristics(const string &heuristic, Utils *utils) {
+    Heuristics *heuristics;
+
     if (heuristic == "MAX_COST")
-        heuristics_controller = new Heuristics(utils, MAX_COST);
-    else if (algorithm == "ADD_COST")
-        heuristics_controller = new Heuristics(utils, ADDITIVE_COST);
+        heuristics = new Heuristics(utils, MAX_COST);
+    else if (heuristic == "ADD_COST")
+        heuristics = new Heuristics(utils, ADDITIVE_COST);
     else
-        heuristics_controller = new Heuristics(utils, MAX_COST);
+        heuristics = new Heuristics(utils, MAX_COST);
 
-    // Init current state.
-    auto *current_state = new StateWrapper(driver->problem->getInit(), utils, heuristics_controller, nullptr);
-    // Set debug status.
-    current_state->setDebug(enable_debug);
-    // Init Goal.
-    auto *goal_state = new StateWrapper(driver->problem->getGoal(), utils, heuristics_controller, nullptr);
+    return heuristics;
+}
 
+StateWrapper *ChooseAndRunSolver(StateWrapper *current_state, StateWrapper *goal_state, const string &algorithm) {
     long long mem, examined;
 
-    clock_t c_start = clock();
-
-    // Choose algorithm depending on the input.
-    StateWrapper *bsol;
     if (algorithm == "A_STAR")
-        bsol = Astar(current_state, goal_state, examined, mem);
+        return Astar(current_state, goal_state, examined, mem);
     else if (algorithm == "GBFS")
-        bsol = BFS(current_state, goal_state, examined, mem);
+        return BFS(current_state, goal_state, examined, mem);
     else if (algorithm == "IDA_STAR")
-        bsol = IDAstar(current_state, goal_state, examined, mem);
+        return IDAstar(current_state, goal_state, examined, mem);
     else if (algorithm == "DFS")
-        bsol = DFS(current_state, goal_state, examined, mem);
+        return DFS(current_state, goal_state, examined, mem);
     else
-        bsol = Astar(current_state, goal_state, examined, mem);
+        return Astar(current_state, goal_state, examined, mem);
+}
 
-    // Stop timer.
-    clock_t c_end = clock();
-
+void ShowResults(StateWrapper *bsol, clock_t c_start, clock_t c_end) {
     // Print results.
     cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
     bsol->printActionsSequence();
@@ -124,6 +108,38 @@ int main(int argc, char *argv[]) {
     // Print elapsed time.
     double time_elapsed_ms = 1000.0 * (c_end - c_start) / CLOCKS_PER_SEC;
     cout << "CPU time used: " << time_elapsed_ms << " ms\n";
+}
+
+void SolvePddlProblem(PDDLDriver *driver, const string &algorithm, const string &heuristic, bool enable_debug) {
+    // Init Utils and Heuristics Controller.
+    auto *utils = new Utils(driver);
+    Heuristics *heuristics = ChooseHeuristics(heuristic, utils);
+
+    // Init current state.
+    auto *current_state = new StateWrapper(driver->problem->getInit(), utils, heuristics, nullptr);
+    // Set debug status.
+    current_state->setDebug(enable_debug);
+    // Init Goal.
+    auto *goal_state = new StateWrapper(driver->problem->getGoal(), utils, heuristics, nullptr);
+
+    // Run and time solver.
+    clock_t c_start = clock();
+    StateWrapper *bsol = ChooseAndRunSolver(current_state, goal_state, algorithm);
+    clock_t c_end = clock();
+
+    ShowResults(bsol, c_start, c_end);
+}
+
+int main(int argc, char *argv[]) {
+    string domain_file, problem_file;
+    string algorithm, heuristic;
+    bool scanning_trace = false, parsing_trace = false, enable_debug = false;
+
+    auto app = SetUpCli(domain_file, problem_file, scanning_trace, parsing_trace, enable_debug, algorithm, heuristic);
+    CLI11_PARSE(*app, argc, argv)
+    auto *driver = new PDDLDriver();
+    ParsePddl(driver, scanning_trace, parsing_trace, domain_file, problem_file);
+    SolvePddlProblem(driver, algorithm, heuristic, enable_debug);
 
     return 0;
 }
