@@ -16,9 +16,8 @@ Utils::Utils(PDDLDriver *driver) {
  */
 vector<Action *> Utils::GetActions() {
     vector<Action *> actions;
-    for (auto action : *driver_->domain->getActions()) {
+    for (auto action : *driver_->domain->getActions())
         actions.push_back(action);
-    }
     return actions;
 }
 
@@ -42,35 +41,34 @@ vector<vector<string>> Utils::IsApplicable(LiteralList *state, Action *action) {
 
     // Keep action parameters on a local vector of pair<paramName, value>
     vector<pair<string, string>> action_params;
-    for (const auto &param : *action->getParams()) {
+    for (const auto &parameter : *action->getParams()) {
         pair<string, string> n;
-        n.first = param; // parameter name
+        n.first = parameter; // parameter name
         n.second = ""; // parameter value (not set)
         action_params.push_back(n);
     }
     // Local list of this action's preconditions
-    PreconditionList preconditions;
-    for (auto action_preconditions : *action->getPrecond()) {
+    PreconditionList precondition_list;
+    for (auto preconditions : *action->getPrecond()) {
         // Creating a new pair of Predicate*, bool, to perform a deep-copy
         auto *new_predicate_pair = new pair<Predicate *, bool>;
         auto *new_arg_list = new ArgumentList;
         auto *new_arg_str_list = new StringList;
-
         // Assign primitive values of this action precondition to arguments string list
-        for (const auto &precondition : *action_preconditions->first->getArgs()) {
-            new_arg_str_list->push_back(precondition);
+        for (const auto &arguments : *preconditions->first->getArgs()) {
+            new_arg_str_list->push_back(arguments);
         }
         // Assign arguments string list to ArgumentList which is used in predicates ctor
         new_arg_list->first = new_arg_str_list;
 
         // Call ctor of Predicate on first of predicate pair
-        new_predicate_pair->first = new Predicate(action_preconditions->first->getName(), new_arg_list);
+        new_predicate_pair->first = new Predicate(preconditions->first->getName(), new_arg_list);
 
         // Assign primitive bool value of this action's precondition to the new predicate pair's second
-        new_predicate_pair->second = action_preconditions->second;
+        new_predicate_pair->second = preconditions->second;
 
         // Add the new predicate pair that is a deep copy of this action's precondition to the local preconditions list
-        preconditions.push_back(new_predicate_pair);
+        precondition_list.push_back(new_predicate_pair);
 
     }
 
@@ -101,16 +99,15 @@ vector<vector<string>> Utils::IsApplicable(LiteralList *state, Action *action) {
         //DO STUFF HERE. Pretend you're inside your nested for loops.
         // The more usual i,j,k,... have been replaced here with i[0], i[1], ..., i[n-1].
 
-        for (unsigned int lvl = 0; lvl < action_params.size(); lvl++) {
+        for (unsigned int lvl = 0; lvl < action_params.size(); lvl++)
             action_params.at(lvl).second = driver_->problem->getObjects()->at(i[lvl]);
-        }
 
         // Applying parameters to local preconditions
-        for (auto &precondition : preconditions) {
-            for (auto &arg : *precondition->first->getArgs()) {
+        for (auto &local_precondition : precondition_list) {
+            for (auto &argument : *local_precondition->first->getArgs()) {
                 for (auto &action_param : action_params) {
-                    if (arg == action_param.first) {
-                        arg = action_param.second;
+                    if (argument == action_param.first) {
+                        argument = action_param.second;
                     }
                 }
             }
@@ -118,7 +115,7 @@ vector<vector<string>> Utils::IsApplicable(LiteralList *state, Action *action) {
 
         bool applicable = true;
         // Checking state for preconditions
-        for (auto &precondition : preconditions) {
+        for (auto &precondition : precondition_list) {
             // Check for equality precondition
             if (precondition->first->getName() == "=") {
                 if (precondition->second == 1) { // Equality true
@@ -159,11 +156,9 @@ vector<vector<string>> Utils::IsApplicable(LiteralList *state, Action *action) {
                     bool same_params = true;
                     for (const auto &literal_arguments : *literal->first->getArgs()) {
                         bool found_param = false;
-                        for (const auto &precondition_arguments : *precondition->first->getArgs()) {
-                            if (literal_arguments == precondition_arguments) {
+                        for (const auto &precondition_arguments : *precondition->first->getArgs())
+                            if (literal_arguments == precondition_arguments)
                                 found_param = true;
-                            }
-                        }
                         if (!found_param) same_params = false;
 
                     }
@@ -191,19 +186,16 @@ vector<vector<string>> Utils::IsApplicable(LiteralList *state, Action *action) {
 
         if (applicable) {
             vector<string> params;
-            for (auto &action_param : action_params) {
+            for (auto &action_param : action_params)
                 params.push_back(action_param.second);
-            }
             parameter_list.push_back(params);
         }
 
         // Reset applied objects to precondition parameters
-        for (unsigned int outer = 0; outer < preconditions.size(); outer++) {
-            for (unsigned int inner = 0; inner < preconditions.at(outer)->first->getArgs()->size(); inner++) {
-                preconditions.at(outer)->first->getArgs()->at(inner) = action->getPrecond()->at(
-                        outer)->first->getArgs()->at(inner);
-            }
-        }
+        for (unsigned int outer = 0; outer < precondition_list.size(); outer++)
+            for (unsigned int inner = 0; inner < precondition_list.at(outer)->first->getArgs()->size(); inner++)
+                precondition_list.at(outer)->first->getArgs()->at(inner) =
+                        action->getPrecond()->at(outer)->first->getArgs()->at(inner);
 
         //Now, after you've done your stuff, we need to increment all of the indices correctly.
         i[0]++;
@@ -226,7 +218,7 @@ vector<vector<string>> Utils::IsApplicable(LiteralList *state, Action *action) {
  *
  * @return vector containing pairs of applicable actions and their applicable params values on the state supplied
  */
-vector<Action *> *Utils::ApplicableActions(LiteralList *current_state) {
+vector<Action *> *Utils::ApplicableActions(LiteralList *state) {
 
     vector<Action *> actions = this->GetActions();
     vector<pair<Action *, vector<vector<string>>>> applicable_actions;
@@ -234,7 +226,7 @@ vector<Action *> *Utils::ApplicableActions(LiteralList *current_state) {
     for (auto &action : actions) {
         pair<Action *, vector<vector<string>>> applicable_actions_params;
         applicable_actions_params.first = action;
-        applicable_actions_params.second = this->IsApplicable(current_state, action);
+        applicable_actions_params.second = this->IsApplicable(state, action);
         if (!applicable_actions_params.second.empty()) applicable_actions.push_back(applicable_actions_params);
     }
 
