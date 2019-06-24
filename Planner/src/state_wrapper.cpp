@@ -91,16 +91,14 @@ string StateWrapper::getName() {
     if (_name == nullptr) {
         _name = new string();
         vector<string> idsList;
-        for (auto literal = _literalList->begin(); literal != _literalList->end(); ++literal) {
-            if ((*literal)->second) {
-                auto id = (*literal)->first->getId();
+        for (auto &literal : *_literalList)
+            if (literal->second) {
+                auto id = literal->first->getId();
                 idsList.push_back(id);
             }
-        }
         sort(idsList.begin(), idsList.end());
-        for (auto predId = idsList.begin(); predId != idsList.end(); ++predId) {
-            (*_name) += (*predId);
-        }
+        for (auto &predId : idsList)
+            (*_name) += predId;
     }
     return *_name;
 }
@@ -112,11 +110,11 @@ StateWrapper::getHash() const {
         for (unsigned i = 0; i < 5; i++) {
             prefix += pow(10, i) * ((int) _id->at(i));
         }
-        int sufix = 0;
+        int suffix = 0;
         for (unsigned i = 0; i < 3; i++) {
-            sufix += pow(10, i) * ((int) _id->at(_id->length() - i - 1));
+            suffix += pow(10, i) * ((int) _id->at(_id->length() - i - 1));
         }
-        return prefix - sufix;
+        return prefix - suffix;
     }
     return this->_hash;
 }
@@ -130,9 +128,7 @@ StateWrapper::expand() {
     vector<Action *> *availableMoves = this->utils_->ApplicableActions(this->_literalList);
     vector<StateWrapper *> children;
     for (Action *availableMove : *availableMoves) {
-        StateWrapper *child = new StateWrapper(this,
-                                               this->utils_->NextState(this->_literalList, availableMove),
-                                               availableMove);
+        auto *child = new StateWrapper(this, Utils::NextState(this->_literalList, availableMove), availableMove);
         children.push_back(child);
         this->printExpandDebug(availableMove, child, children.size());
     }
@@ -165,25 +161,20 @@ StateWrapper::printActionsSequence(vector<Action *> *actions) {
     for (Action *action : *actions) {
         cout << action->getName() << "(";
         const StringList *params = action->getParams();
-        for (vector<string>::const_iterator param = params->begin();
-             param != params->end(); ++param) {
-
-            if (param != params->begin()) {
+        for (auto param = params->begin(); param != params->end(); ++param)
+            if (param != params->begin())
                 cout << "," << *param;
-            } else {
+            else
                 cout << *param;
-            }
-
-        }
         cout << ")" << endl;
     }
 }
 
 vector<Action *> *
 StateWrapper::getActions(StateWrapper *state, vector<Action *> *actions) {
-    if (state->GetFather() == nullptr) {
+    if (state->GetFather() == nullptr)
         return actions;
-    } else {
+    else {
         actions = getActions((StateWrapper *) state->GetFather(), actions);
         actions->push_back(state->_lastAction);
     }
@@ -191,35 +182,29 @@ StateWrapper::getActions(StateWrapper *state, vector<Action *> *actions) {
 }
 
 bool
-operator==(const StateWrapper first, const StateWrapper second) {
+operator==(const StateWrapper &first, const StateWrapper &second) {
     return *(first._id) == *(second._id);
 }
 
 bool
-operator<=(const StateWrapper first, const StateWrapper second) {
-    if (second._name->find(*first._name) != std::string::npos) {
-        return true;
-    }
-    return false;
+operator<=(const StateWrapper &first, const StateWrapper &second) {
+    return second._name->find(*first._name) != std::string::npos;
 }
 
 bool
-operator>=(const StateWrapper first, const StateWrapper second) {
-    if (first._name->find(*second._name) != std::string::npos) {
-        return true;
-    }
-    return false;
+operator>=(const StateWrapper &first, const StateWrapper &second) {
+    return first._name->find(*second._name) != std::string::npos;
 }
 
 ostream &
 operator<<(std::ostream &out, const StateWrapper &state) {
     out << "State{ " << endl;
     out << "\tPredicate List{" << endl;
-    for (auto literal = state._literalList->begin(); literal != state._literalList->end(); ++literal) {
-        if ((*literal)->second) {
-            out << "\t\t" << *((*literal)->first) << endl;
-        }
-    }
+
+    for (auto &literal : *state._literalList)
+        if (literal->second)
+            out << "\t\t" << *(literal->first) << endl;
+
     out << "\t}" << endl;
     out << "\t}" << endl;
     out << "\tHeuristic: " << state.hvalue_ << endl;
