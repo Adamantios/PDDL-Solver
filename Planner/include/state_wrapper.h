@@ -65,11 +65,11 @@ public:
     // Debugging Functionality
     void printExpandDebug(Action *action, StateWrapper *child, int childrenNum);
 
-    void printActionsSequence(vector<Action *> *actions);
+    static void printActionsSequence(vector<Action *> *actions);
 
     void printActionsSequence();
 
-    vector<Action *> *getActions(StateWrapper *state, vector<Action *> *actions);
+    static vector<Action *> *getActions(StateWrapper *state, vector<Action *> *actions);
 };
 
 namespace std {
