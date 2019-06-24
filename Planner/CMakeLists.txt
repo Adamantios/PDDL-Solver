@@ -7,6 +7,7 @@ set(HEADER_DIR include)
 set(SOURCE_DIR src)
 set(PARSER_HEADER_DIR ../Parser/include)
 set(CLI_DIR ../CLI)
+set(MD5_DIR ../MD5)
 
 file(GLOB SOURCE_FILES ${SOURCE_DIR}/*)
 file(GLOB HEADER_FILES ${HEADER_DIR}/*)
@@ -15,6 +16,7 @@ include_directories(${HEADER_DIR})
 include_directories(${SOURCE_DIR})
 include_directories(${PARSER_HEADER_DIR})
 include_directories(${CLI_DIR})
+include_directories(${MD5_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(
@@ -27,4 +29,5 @@ target_link_libraries(
         ${CMAKE_PROJECT_NAME}
         CLI11
         PDDLParser
+        MD5
 )
