@@ -5,9 +5,9 @@ add_compile_options(-Wall -Wextra)
 
 set(HEADER_DIR include)
 set(SOURCE_DIR src)
-set(PARSER_HEADER_DIR ../Parser/include)
-set(CLI_DIR ../CLI)
-set(MD5_DIR ../MD5)
+set(PARSER_HEADER_DIR ../3rd-Party/Parser/include)
+set(CLI_DIR ../3rd-Party/CLI)
+set(MD5_DIR ../3rd-Party/MD5)
 
 file(GLOB SOURCE_FILES ${SOURCE_DIR}/*)
 file(GLOB HEADER_FILES ${HEADER_DIR}/*)
@@ -27,7 +27,5 @@ add_executable(
 
 target_link_libraries(
         ${CMAKE_PROJECT_NAME}
-        CLI11
-        PDDLParser
-        MD5
+        3RD_PARTY
 )

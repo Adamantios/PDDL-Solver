@@ -8,7 +8,7 @@
 [![Code Coverage][codecov-badge]][codecov]
 [![Codacy Badge][codacy-badge]][codacy-link]
 [![Join the chat at https://gitter.im/CLI11gitter/Lobby][gitter-badge]][gitter]
-[![License: BSD][license-badge]](./LICENSE)
+[![License: BSD][license-badge]](LICENSE)
 [![Latest release][releases-badge]][github releases]
 [![DOI][doi-badge]][doi-link]
 [![Conan.io][conan-badge]][conan-link]
@@ -810,7 +810,7 @@ Significant features and/or improvements to the code were contributed by:
 
 ## License
 
-As of version 1.0, this library is available under a 3-Clause BSD license. See the [LICENSE](./LICENSE) file for details.
+As of version 1.0, this library is available under a 3-Clause BSD license. See the [LICENSE](LICENSE) file for details.
 
 CLI11 was developed at the [University of Cincinnati][] to support of the [GooFit][] library under [NSF Award 1414736][]. Version 0.9 was featured in a [DIANA/HEP][] meeting at CERN ([see the slides][diana slides]). Please give it a try! Feedback is always welcome.
 

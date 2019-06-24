@@ -5,7 +5,7 @@ set(MD5 md5.cpp md5.h)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-#Add CLI library.
+#Add MD5 library.
 add_library(
         MD5
         ${MD5}
