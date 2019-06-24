@@ -1,66 +1,11 @@
 #include "ParserController.h"
 
-ParserController::ParserController() {
-}
+ParserController::ParserController() = default;
 
-ParserController::~ParserController() {
-}
+ParserController::~ParserController() = default;
 
 ParserController::ParserController(PDDLDriver *driver) {
     this->driver = driver;
-}
-
-// PRINT FUNCTIONS
-
-/**
- * Print domain and problem data
- */
-void ParserController::Print() {
-
-    cout << endl;
-    cout << "Domain:" << endl;
-    cout << *(driver->domain) << endl;
-    cout << "Problem:" << endl;
-    cout << *(driver->problem) << endl;
-}
-
-/**
- * Print the domain predicates
- */
-void ParserController::PrintPredicates() {
-    cout << "Predicates:" << endl;
-    vector<Predicate *> *predicates = driver->domain->getPredicates();
-    for (auto it = predicates->begin(); it != predicates->end(); ++it)
-        cout << *(*it) << endl;
-    cout << endl;
-}
-
-/**
- * Print action
- */
-void ParserController::PrintAction(Action *action) {
-    Predicate *predicate;
-    cout << "Action: " << action->getName() << endl;
-    cout << "Params: ";
-    for (auto it = action->getParams()->begin(); it != action->getParams()->end(); ++it)
-        cout << *it << " ";
-    cout << endl << "Effects: " << endl;
-    for (unsigned int i = 0; i < action->getEffects()->size(); i++) {
-        predicate = action->getEffects()->at(i)->first;
-        cout << predicate->getName() << " ";
-        for (auto it = predicate->getArgs()->begin(); it != predicate->getArgs()->end(); ++it)
-            cout << *it << " ";
-        cout << action->getEffects()->at(i)->second << endl;
-    }
-    cout << "Preconditions: " << endl;
-    for (unsigned int i = 0; i < action->getPrecond()->size(); i++) {
-        predicate = action->getPrecond()->at(i)->first;
-        cout << predicate->getName() << " ";
-        for (auto it = predicate->getArgs()->begin(); it != predicate->getArgs()->end(); ++it)
-            cout << *it << " ";
-        cout << action->getPrecond()->at(i)->second << endl;
-    }
-    cout << endl;
 }
 
 /**

@@ -15,13 +15,13 @@ class ParserController {
 
 protected:
     // VARIABLES
-    PDDLDriver *driver;
+    PDDLDriver *driver{};
 
 public:
     // CONSTRUCTORS
     ParserController();
 
-    ParserController(PDDLDriver *driver);
+    explicit ParserController(PDDLDriver *driver);
 
     virtual ~ParserController();
 

@@ -33,12 +33,12 @@ StateWrapper::StateWrapper(StateWrapper* father, LiteralList* newLiteralList, Ac
      this->_heuristics = father->getHeuristics();
      this->_parserController = father->getParserController();
      this->setFather(father);
-     this->setDepth(father != nullptr ? father->getDepth() + 1: 0);
+     this->setDepth(father->getDepth() + 1);
      this->getId();
      this->_hash = this->getHash();
      this->setHvalue(_heuristics->Estimate(newLiteralList));
      this->setDebug(father->isDebug());
-     if(father != nullptr && action != nullptr){
+     if(action != nullptr){
           _lastAction = action;
      }
 }

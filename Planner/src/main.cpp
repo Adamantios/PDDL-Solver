@@ -58,14 +58,12 @@ int main(int argc, char *argv[]) {
 
     if (!driver->parse(domain_file)) {
         cout << "Parsing " << domain_file << "... ";
-        if (!result) cout << "ok!" << endl;
-        else cout << "Error!" << endl;
+        cout << "ok!" << endl;
     }
 
     if (!driver->parse(problem_file)) {
         cout << "Parsing " << problem_file << "... ";
-        if (!result) cout << "ok!" << endl;
-        else cout << "Error!" << endl;
+        cout << "ok!" << endl;
     }
 
     StateWrapper *currentState = new StateWrapper(driver->problem->getInit(),
