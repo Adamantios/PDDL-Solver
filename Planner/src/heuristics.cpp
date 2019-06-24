@@ -9,7 +9,7 @@ Heuristics::Heuristics(Utils *utils, EstimationMethod method) :
  * @param current_state the current state.
  */
 void Heuristics::InitDeltaValues(LiteralList *current_state) {
-    // Initialize every state literal with 0.
+    // Initialize every state literal of the current state with 0.
     for (Literal *state_literal : *current_state)
         delta_map_.insert({state_literal, 0});
 }
