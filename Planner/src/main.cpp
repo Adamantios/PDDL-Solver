@@ -81,23 +81,20 @@ int main(int argc, char *argv[]) {
 
     // Init Utils and Heuristics Controller.
     auto *utils = new Utils(driver);
-    Heuristics *heuristics_controller = nullptr;
+    Heuristics *heuristics_controller;
     if (heuristic == "MAX_COST")
         heuristics_controller = new Heuristics(utils, MAX_COST);
     else if (algorithm == "ADD_COST")
         heuristics_controller = new Heuristics(utils, ADDITIVE_COST);
+    else
+        heuristics_controller = new Heuristics(utils, MAX_COST);
 
     // Init current state.
-    auto *current_state = new StateWrapper(driver->problem->getInit(),
-                                           utils,
-                                           heuristics_controller,
-                                           nullptr);
+    auto *current_state = new StateWrapper(driver->problem->getInit(), utils, heuristics_controller, nullptr);
+    // Set debug status.
     current_state->setDebug(enable_debug);
     // Init Goal.
-    auto *goal_state = new StateWrapper(driver->problem->getGoal(),
-                                        utils,
-                                        heuristics_controller,
-                                        nullptr);
+    auto *goal_state = new StateWrapper(driver->problem->getGoal(), utils, heuristics_controller, nullptr);
 
     long long mem, examined;
 
@@ -105,27 +102,26 @@ int main(int argc, char *argv[]) {
 
     // Choose algorithm depending on the input.
     StateWrapper *bsol;
-    if (algorithm == "A_STAR") {
+    if (algorithm == "A_STAR")
         bsol = Astar(current_state, goal_state, examined, mem);
-        cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
-        bsol->printActionsSequence();
-    } else if (algorithm == "GBFS") {
+    else if (algorithm == "GBFS")
         bsol = BFS(current_state, goal_state, examined, mem);
-        cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
-        bsol->printActionsSequence();
-    } else if (algorithm == "IDA_STAR") {
+    else if (algorithm == "IDA_STAR")
         bsol = IDAstar(current_state, goal_state, examined, mem);
-        cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
-        bsol->printActionsSequence();
-    } else if (algorithm == "DFS") {
+    else if (algorithm == "DFS")
         bsol = DFS(current_state, goal_state, examined, mem);
-        cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
-        bsol->printActionsSequence();
-    }
+    else
+        bsol = Astar(current_state, goal_state, examined, mem);
 
+    // Print results.
+    cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
+    bsol->printActionsSequence();
+    cout << endl;
+
+    // Stop timer.
     clock_t c_end = clock();
 
-    cout << endl;
+    // Print elapsed time.
     double time_elapsed_ms = 1000.0 * (c_end - c_start) / CLOCKS_PER_SEC;
     cout << "CPU time used: " << time_elapsed_ms << " ms\n";
 
