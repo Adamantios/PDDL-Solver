@@ -39,11 +39,11 @@ public:
 
     friend std::ostream &operator<<(std::ostream &out, const StateWrapper &state);
 
-    friend bool operator==(const StateWrapper& first, const StateWrapper& second);
+    friend bool operator==(const StateWrapper &first, const StateWrapper &second);
 
-    friend bool operator<=(const StateWrapper& first, const StateWrapper& second);
+    friend bool operator<=(const StateWrapper &first, const StateWrapper &second);
 
-    friend bool operator>=(const StateWrapper& first, const StateWrapper& second);
+    friend bool operator>=(const StateWrapper &first, const StateWrapper &second);
 
     bool isDebug();
 
