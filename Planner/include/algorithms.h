@@ -130,7 +130,7 @@ X *IDAstar(X *initial, X *goal, long long &examined, long long &mem) {
 
 template<typename X>
 X *DFS(X *initial, X *goal, long long &examined, long long &mem) {
-    queue<X *> frontier;
+    stack<X *> frontier;
     unordered_map<X, bool> closed;
     frontier.push(initial);
     examined = 0;
