@@ -19,8 +19,10 @@ class StateWrapper : public State {
   Heuristics* _heuristics;
   string *_id = nullptr;
   string *_name = nullptr;
+
   unsigned long long _hash = 0;
   bool _debug;
+  Action* _lastAction;
 
  public:
   //Constructors
@@ -44,14 +46,19 @@ class StateWrapper : public State {
   LiteralList* getLiteralList();
   Heuristics* getHeuristics();
   ParserController* getParserController();
+  Action* getLastAction();
 
   int estimate();
 
   // Setters
   void setDebug(bool debug);
+  StateWrapper* getWrapperFather();
 
   // Debugging Functionality
   void printExpandDebug(Action* action, StateWrapper* child, int childrenNum);
+  void printActionsSequence(vector<Action*>* actions);
+  void printActionsSequence();
+  vector<Action*>* getActions(StateWrapper *state, vector<Action*>* actions);
 };
 
 namespace std {

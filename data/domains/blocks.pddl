@@ -1,4 +1,5 @@
 (define (domain blocksworld)
+(:requirements :strips :equality)
 (:predicates (clear ?x)
              (on-table ?x)
              (on ?x ?y))

@@ -1,6 +1,7 @@
 // main.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
 #include <iostream>
+#include <ctime>
 #include <heuristics_demo.h>
 #include "pddldriver.hh"
 #include "ParserController.h"
@@ -79,10 +80,16 @@ int main(int argc, char *argv[]) {
 
     long long mem,examined;
 
-    auto bsol = BFS(currentState, goalState, examined, mem);
+    clock_t c_start = clock();
+    auto bsol = Astar(currentState, goalState, examined, mem);
+    clock_t c_end = clock();
 
-    cout<<"Solution found in "<<bsol->getDepth()<<" moves"<<endl;
-    cout<<bsol->getPath()<<endl;
+    cout<<"== Solution found in "<<bsol->getDepth()<<" moves =="<<endl;
+    bsol->printActionsSequence();
+
+    cout << endl;
+    double time_elapsed_ms = 1000.0 * (c_end-c_start) / CLOCKS_PER_SEC;
+    cout << "CPU time used: " << time_elapsed_ms << " ms\n";
 
     // if (driver) delete (driver);
 
@@ -97,11 +104,11 @@ std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
     // CLI::App app{APP_DESCRIPTION};
     std::shared_ptr<CLI::App> app = get_app();
 
-    app->add_option("-d", domain_file, "Require an PDDL domain file")
+    app->add_option("--domain", domain_file, "Require an PDDL domain file")
             ->required()
             ->check(CLI::ExistingFile);
 
-    app->add_option("-f", problem_file, "Require a PDDL problem file")
+    app->add_option("--problem", problem_file, "Require a PDDL problem file")
             ->required()
             ->check(CLI::ExistingFile);
 
@@ -114,7 +121,7 @@ std::shared_ptr<CLI::App> setUpCLI(string &domain_file, string &problem_file,
     app->add_option("-a", algorithm, AVAILABLE_ALGORITHMS)
             ->required();
 
-    app->add_option("-r", heuristic, AVAILABLE_HEURISTICS)
+    app->add_option("--heuristic", heuristic, AVAILABLE_HEURISTICS)
             ->required();
 
     return app;
