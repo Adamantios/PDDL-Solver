@@ -1,6 +1,7 @@
 // main.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
 #include <iostream>
+#include <ctime>
 #include <heuristics_demo.h>
 #include "pddldriver.hh"
 #include "ParserController.h"
@@ -79,10 +80,16 @@ int main(int argc, char *argv[]) {
 
     long long mem,examined;
 
+    clock_t c_start = clock();
     auto bsol = Astar(currentState, goalState, examined, mem);
+    clock_t c_end = clock();
 
     cout<<"== Solution found in "<<bsol->getDepth()<<" moves =="<<endl;
     bsol->printActionsSequence();
+
+    cout << endl;
+    double time_elapsed_ms = 1000.0 * (c_end-c_start) / CLOCKS_PER_SEC;
+    cout << "CPU time used: " << time_elapsed_ms << " ms\n";
 
     // if (driver) delete (driver);
 
