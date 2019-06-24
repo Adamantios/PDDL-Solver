@@ -113,13 +113,13 @@ int main(int argc, char *argv[]) {
     else
         bsol = Astar(current_state, goal_state, examined, mem);
 
+    // Stop timer.
+    clock_t c_end = clock();
+
     // Print results.
     cout << "== Solution found in " << bsol->GetDepth() << " moves ==" << endl;
     bsol->printActionsSequence();
     cout << endl;
-
-    // Stop timer.
-    clock_t c_end = clock();
 
     // Print elapsed time.
     double time_elapsed_ms = 1000.0 * (c_end - c_start) / CLOCKS_PER_SEC;
