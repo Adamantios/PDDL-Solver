@@ -79,7 +79,7 @@ vector<vector<string>> Utils::IsApplicable(LiteralList *state, Action *action) {
      * The original comments are left as-they-were to help with readability (readability!? xD).
      * (found on https://stackoverflow.com/questions/9555864/variable-nested-for-loops)
     ------------------------------------------------------------------------------------------------------------------*/
-    const int n = action_params.size(); // Insert N here: how many loops do you need?
+    const int n = static_cast<const int>(action_params.size()); // Insert N here: how many loops do you need?
     int i[n + 1]; // if "n" is not known before hand, then this array will need to be created dynamically.
     //Note: there is an extra element at the end of the array, in order to keep track of whether to exit the array.
 
@@ -87,7 +87,7 @@ vector<vector<string>> Utils::IsApplicable(LiteralList *state, Action *action) {
         i[a] = 0;
     }
 
-    int MAX = driver_->problem->getObjects()->size(); //That's just an example, if all of the loops are
+    int MAX = static_cast<int>(driver_->problem->getObjects()->size()); //That's just an example, if all of the loops are
     // identical: e.g. "for(int i=0; i<79; i++)". If the value of MAX
     // changes for each loop, then make MAX an array instead: (new)
     // int MAX [n]; MAX[0]=10; MAX[1]=20;...;MAX[n-1]=whatever.
@@ -100,7 +100,7 @@ vector<vector<string>> Utils::IsApplicable(LiteralList *state, Action *action) {
         // The more usual i,j,k,... have been replaced here with i[0], i[1], ..., i[n-1].
 
         for (unsigned int lvl = 0; lvl < action_params.size(); lvl++)
-            action_params.at(lvl).second = driver_->problem->getObjects()->at(i[lvl]);
+            action_params.at(lvl).second = driver_->problem->getObjects()->at(static_cast<unsigned long>(i[lvl]));
 
         // Applying parameters to local preconditions
         for (auto &local_precondition : precondition_list) {
@@ -252,7 +252,7 @@ LiteralList *Utils::NextState(LiteralList *state, Action *action) {
     }
 
     bool applied;
-    unsigned int state_size = state->size();
+    unsigned int state_size = static_cast<unsigned int>(state->size());
     // For each action effect, check if it appears in the state predicates
     for (auto effects_index : *action->getEffects()) { // Loop through action's effects
         // Assign current effect predicate value and status to the local variables
@@ -352,9 +352,9 @@ LiteralList *Utils::UnrollLiteralList(const LiteralList *rolled_list, const Stri
                      // Find argument in the rolled parameters.
                      auto iterator = std::find(rolled_params->begin(), rolled_params->end(), arg);
                      // Get its index.
-                     int index = std::distance(rolled_params->begin(), iterator);
+                     int index = static_cast<int>(std::distance(rolled_params->begin(), iterator));
                      // Store the unrolled parameter corresponding to the index found as an argument.
-                     args->first->push_back(unrolled_params->first->at(index));
+                     args->first->push_back(unrolled_params->first->at(static_cast<unsigned long>(index)));
                  });
 
         // Create a predicate from the arguments that where found.

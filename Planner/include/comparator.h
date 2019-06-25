@@ -1,9 +1,9 @@
+#ifndef PDDL_SOLVER_COMPARATOR_H
+#define PDDL_SOLVER_COMPARATOR_H
+
 #include "state_wrapper.h"
 #include <unordered_map>
 #include <queue>
-
-#ifndef SEARCH_DEF
-#define SEARCH_DEF
 
 using namespace std;
 
@@ -14,4 +14,5 @@ public:
         return *p_1 > *p_2;
     }
 };
-#endif
+
+#endif //PDDL_SOLVER_COMPARATOR_H

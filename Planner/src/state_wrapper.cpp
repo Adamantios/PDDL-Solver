@@ -1,15 +1,10 @@
 #include "state.h"
 #include "pddldriver.hh"
-#include "predicate.hh"
-#include "domain.hh"
 #include "utils.h"
 #include "heuristics.h"
 #include "state_wrapper.h"
 #include "md5.h"
-#include <algorithm>
-#include <functional>
-#include <string>
-#include <math.h>
+#include <cmath>
 
 using namespace std;
 
@@ -114,13 +109,13 @@ StateWrapper::getHash() const {
         for (unsigned i = 0; i < 3; i++) {
             suffix += pow(10, i) * ((int) _id->at(_id->length() - i - 1));
         }
-        return prefix - suffix;
+        return static_cast<unsigned long long int>(prefix - suffix);
     }
     return this->_hash;
 }
 
 int StateWrapper::estimate() {
-    return _heuristics->Estimate(this->_literalList);
+    return static_cast<int>(_heuristics->Estimate(this->_literalList));
 }
 
 vector<StateWrapper *>
@@ -130,7 +125,7 @@ StateWrapper::expand() {
     for (Action *availableMove : *availableMoves) {
         auto *child = new StateWrapper(this, Utils::NextState(this->_literalList, availableMove), availableMove);
         children.push_back(child);
-        this->printExpandDebug(availableMove, child, children.size());
+        this->printExpandDebug(availableMove, child, static_cast<int>(children.size()));
     }
     return children;
 }

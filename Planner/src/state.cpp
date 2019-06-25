@@ -1,5 +1,4 @@
 #include "state.h"
-#include <iostream>
 #include <algorithm>
 
 State::State() {

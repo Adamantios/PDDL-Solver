@@ -16,7 +16,11 @@ set(SOURCE_FILES
         src/state_wrapper.cpp
         src/utils.cpp
         include/heuristics.h
-        include/algorithms.h
+        include/AStar.h
+        include/BFS.h
+        include/DFS.h
+        include/IDAStar.h
+        include/comparator.h
         include/state.h
         include/state_wrapper.h
         include/utils.h)
