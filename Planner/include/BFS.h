@@ -7,7 +7,8 @@ using namespace std;
 
 template<typename X>
 X *BFS(X *initial, X *goal, long long &examined, long long &mem) {
-    priority_queue < X * , vector < X * >, Comparator < X > > agenda;
+    cout << "BFS is running...." << endl;
+    priority_queue<X *, vector<X *>, Comparator<X> > agenda;
     unordered_map<string, bool> closed;
     agenda.push(initial);
     examined = 0;
@@ -23,7 +24,7 @@ X *BFS(X *initial, X *goal, long long &examined, long long &mem) {
             return s;
         }
         closed[s->getId()] = true;
-        vector < X * > children = s->expand();
+        vector<X *> children = s->expand();
         for (unsigned int i = 0; i < children.size(); i++)
             if (!closed[children.at(i)->getId()]) {
                 children.at(i)->SetHvalue(children.at(i)->estimate());

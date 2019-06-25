@@ -7,6 +7,7 @@ using namespace std;
 
 template<typename X>
 X *IDAstar(X *initial, X *goal, long long &examined, long long &mem) {
+    cout << "IDAstar is running...." << endl;
     double current_cost;
     double cost = 0;
 
@@ -14,7 +15,7 @@ X *IDAstar(X *initial, X *goal, long long &examined, long long &mem) {
 
     while (true) {
 
-        queue < X * > agenda = queue<X *>();
+        queue<X *> agenda = queue<X *>();
         unordered_map<X, bool> closed = unordered_map<X, bool>();
 
         agenda.push(initial);
@@ -47,7 +48,7 @@ X *IDAstar(X *initial, X *goal, long long &examined, long long &mem) {
                 cost = current_cost;
                 continue_search = false;
             } else { // Else add the expanded states in the agenda queue
-                vector < X * > children = s->expand();
+                vector<X *> children = s->expand();
                 for (unsigned int i = 0; i < children.size(); i++)
                     if (!closed[*children.at(i)]) {
                         children.at(i)->SetHvalue(children.at(i)->estimate());
