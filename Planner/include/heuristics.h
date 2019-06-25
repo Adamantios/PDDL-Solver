@@ -25,6 +25,8 @@ private:
     std::function<double(DeltaValues *deltas)> estimation_method_;
     DeltaMap delta_map_{};
 
+    explicit Heuristics(Utils *utils, std::function<double(DeltaValues *deltas)> estimation_method);
+
     void InitDeltaValues(LiteralList *current_state);
 
     static double MaxCost(DeltaValues *deltas);

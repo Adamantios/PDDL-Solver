@@ -4,6 +4,10 @@ Heuristics::Heuristics(Utils *utils, EstimationMethod method) :
         utils_(utils),
         estimation_method_(method == MAX_COST ? MaxCost : AdditiveCost) {}
 
+Heuristics::Heuristics(Utils *utils, std::function<double(DeltaValues *deltas)> estimation_method) :
+        utils_(utils),
+        estimation_method_(std::move(estimation_method)) {}
+
 /**
  * Initializes the Delta Values of the current state.
  * @param current_state the current state.
@@ -108,6 +112,13 @@ void Heuristics::EstimateDeltaValues(LiteralList *current_state) {
                 double effect_delta = GetDelta(effect);
                 // Estimate the current action's cost, based on the method.
                 double cost = estimation_method_(preconditions_deltas);
+
+                // If preconditions are not in the current state, recursively call heuristics.
+                if (cost == std::numeric_limits<double>::infinity()) {
+                    Heuristics heuristics = Heuristics(utils_, estimation_method_);
+                    cost = heuristics.Estimate((LiteralList *) action->getFilteredPrecond());
+                }
+
                 // Calculate the current effect's delta value.
                 double delta_value = min(effect_delta, action_cost + cost);
                 // Store the delta value.
