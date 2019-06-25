@@ -85,7 +85,7 @@ Heuristics *ChooseHeuristics(const string &heuristic, Utils *utils) {
 }
 
 StateWrapper *ChooseAndRunSolver(StateWrapper *current_state, StateWrapper *goal_state, const string &algorithm) {
-    long long mem, examined;
+    long long mem = 0, examined = 0;
 
     if (algorithm == "A_STAR")
         return Astar(current_state, goal_state, examined, mem);
