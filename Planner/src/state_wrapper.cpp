@@ -77,7 +77,7 @@ string StateWrapper::getId() {
         for (unsigned int i = 0; i < this->_literalList->size(); i++) {
             *_id += _literalList->at(i)->first->getName();
         }
-        *_id = md5(this->getName());
+        *_id = md5(*_id);
     }
     return *_id;
 }
