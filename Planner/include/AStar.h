@@ -8,7 +8,7 @@ using namespace std;
 template<typename X>
 X *Astar(X *initial, X *goal, long long &examined, long long &mem) {
     cout << "AStar is runing...." << endl;
-    priority_queue<X *, vector<X *>, Comparator<X> > agenda;
+    priority_queue < X * , vector < X * >, Comparator < X > > agenda;
     unordered_map<unsigned long long, bool> closed;
     agenda.push(initial);
     examined = 0;
@@ -23,7 +23,7 @@ X *Astar(X *initial, X *goal, long long &examined, long long &mem) {
             return s;
         }
         closed[s->getHash()] = true;
-        vector<X *> children = s->expand();
+        vector < X * > children = s->expand();
         for (unsigned int i = 0; i < children.size(); i++)
             if (!closed[children.at(i)->getHash()]) {
                 children.at(i)->SetHvalue(children.at(i)->GetDepth() + children.at(i)->estimate());
