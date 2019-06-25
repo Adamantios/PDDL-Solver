@@ -4,7 +4,13 @@
 #include "utils.h"
 #include "CLI11.hpp"
 #include "state_wrapper.h"
-#include "algorithms.h"
+#include "comparator.h"
+#include "AStar.h"
+#include "BFS.h"
+#include "DFS.h"
+#include "IDAStar.h"
+
+#include "heuristics.h"
 
 using namespace std;
 
