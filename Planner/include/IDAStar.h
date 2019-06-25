@@ -21,13 +21,13 @@ X *IDAstar(X *initial, X *goal, long long &examined, long long &mem) {
         agenda.push(initial);
         examined = 0;
         mem = 1;
-        cout << "Examined: " << examined << endl;
-        cout << "Mem: " << mem << endl;
+//        cout << "Examined: " << examined << endl;
+//        cout << "Mem: " << mem << endl;
 
         bool continue_search = true;
         while (continue_search && agenda.size() > 0) {
-            cout << "Examined: " << examined << endl;
-            cout << "Mem: " << mem << endl;
+//            cout << "Examined: " << examined << endl;
+//            cout << "Mem: " << mem << endl;
             if ((long long) (agenda.size() + closed.size()) > mem)
                 mem = agenda.size() + closed.size();
             examined++;
