@@ -1,5 +1,5 @@
-#ifndef state_def
-#define state_def
+#ifndef PDDL_SOLVER_STATE_H
+#define PDDL_SOLVER_STATE_H
 
 #include <string>
 #include <vector>
@@ -12,50 +12,37 @@
 
 using namespace std;
 
-class State{
- protected:
-  State *father;
-  vector<State *> children;
-  int depth = 0;
-  double Hvalue;
-  string name;
-  Action *action;
+class State {
+protected:
+    State *father_;
+    vector<State *> children_;
+    int depth_ = 0;
+    double hvalue_{};
 
- public:
-  // CON & DES
-  State();
-  ~State();
+public:
+    // CON & DES
+    State();
 
-  // GETTERS
-  int getDepth();
-  double getHvalue();
-  State *getFather();
-  int getNoChildren();
-  string getPath();
-  Action* getAction();
-  vector<State *> getChildren(){return children;};
+    ~State();
 
-  // SETTER
-  void setFather(State* father);
-  void setDepth(int d);
-  void setHvalue(double h);
+    // GETTERS
+    int GetDepth();
 
-  //FUNCTIONS
-  void addChild(State *);
-  void removeChild(State *);
-  virtual int heuristic (State *goal) {return 0;};
+    double GetHvalue();
 
-  // OVERWRITES
-  bool operator>(State b){return getHvalue()>b.getHvalue();};
+    State *GetFather();;
+
+    // SETTER
+    void SetFather(State *father);
+
+    void SetDepth(int d);
+
+    void SetHvalue(double h);
+
+    void RemoveChild(State *child);
+
+    // OVERWRITES
+    bool operator>(State b) { return GetHvalue() > b.GetHvalue(); };
 };
 
-class myComparator
-{
- public:
-  int operator() (State *p1 , State *p2) const
-  {
-    return p1->getHvalue()>p2->getHvalue();
-  }
-};
-
-#endif // state_def
+#endif //PDDL_SOLVER_STATE_H

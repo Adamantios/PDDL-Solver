@@ -9,7 +9,7 @@
 #include <problem.hh>
 #include "predicate.hh"
 #include "action.hh"
-#include "ParserController.h"
+#include "utils.h"
 
 // Literals mapped with their costs.
 typedef std::unordered_map<Literal *, double> DeltaMap;
@@ -21,9 +21,11 @@ enum EstimationMethod {
 
 class Heuristics {
 private:
-    ParserController *_controller;
-    std::function<double(DeltaValues *deltas)> _estimation_method;
-    DeltaMap _delta_map{};
+    Utils *utils_;
+    std::function<double(DeltaValues *deltas)> estimation_method_;
+    DeltaMap delta_map_{};
+
+    explicit Heuristics(Utils *utils, std::function<double(DeltaValues *deltas)> estimation_method);
 
     void InitDeltaValues(LiteralList *current_state);
 
@@ -38,7 +40,7 @@ private:
     void EstimateDeltaValues(LiteralList *current_state);
 
 public:
-    explicit Heuristics(ParserController *controller, EstimationMethod method = ADDITIVE_COST);
+    explicit Heuristics(Utils *utils, EstimationMethod method = ADDITIVE_COST);
 
     double Estimate(LiteralList *current_state);
 };

@@ -1,17 +1,21 @@
 #include "heuristics.h"
 
-Heuristics::Heuristics(ParserController *controller, EstimationMethod method) :
-        _controller(controller),
-        _estimation_method(method == MAX_COST ? MaxCost : AdditiveCost) {}
+Heuristics::Heuristics(Utils *utils, EstimationMethod method) :
+        utils_(utils),
+        estimation_method_(method == MAX_COST ? MaxCost : AdditiveCost) {}
+
+Heuristics::Heuristics(Utils *utils, std::function<double(DeltaValues *deltas)> estimation_method) :
+        utils_(utils),
+        estimation_method_(std::move(estimation_method)) {}
 
 /**
  * Initializes the Delta Values of the current state.
  * @param current_state the current state.
  */
 void Heuristics::InitDeltaValues(LiteralList *current_state) {
-    // Initialize every state literal with 0.
+    // Initialize every state literal of the current state with 0.
     for (Literal *state_literal : *current_state)
-        _delta_map.insert({state_literal, 0});
+        delta_map_.insert({state_literal, 0});
 }
 
 /**
@@ -21,9 +25,9 @@ void Heuristics::InitDeltaValues(LiteralList *current_state) {
  */
 double Heuristics::GetDelta(Literal *literal) {
     // Search delta.
-    for (auto const &delta_pair : _delta_map)
+    for (auto const &delta_pair : delta_map_)
         // If found return it.
-        if (ParserController::LiteralsEqual(literal, delta_pair.first))
+        if (Utils::LiteralsEqual(literal, delta_pair.first))
             return delta_pair.second;
 
     // If not found return infinity.
@@ -85,7 +89,7 @@ void Heuristics::EstimateDeltaValues(LiteralList *current_state) {
         // Reset flag.
         leveled_off = true;
         // Get applicable actions.
-        vector<Action *> *applicable_actions = _controller->ApplicableActions(&relaxed_state);
+        vector<Action *> *applicable_actions = utils_->ApplicableActions(&relaxed_state);
 
         // For each unrolled applicable action.
         for (Action *action : *applicable_actions) {
@@ -97,7 +101,7 @@ void Heuristics::EstimateDeltaValues(LiteralList *current_state) {
             // For each action's effect.
             for (Literal *effect : *action->getEffects()) {
                 // If the effect is not in the relaxed state.
-                if (ParserController::FindLiteral(&relaxed_state, effect) == relaxed_state.end()) {
+                if (Utils::FindLiteral(&relaxed_state, effect) == relaxed_state.end()) {
                     // Relaxed state hasn't leveled off since an effect can be added.
                     leveled_off = false;
                     // Add the current effect to the relaxed state.
@@ -107,11 +111,18 @@ void Heuristics::EstimateDeltaValues(LiteralList *current_state) {
                 // Get effect's delta value.
                 double effect_delta = GetDelta(effect);
                 // Estimate the current action's cost, based on the method.
-                double cost = _estimation_method(preconditions_deltas);
+                double cost = estimation_method_(preconditions_deltas);
+
+                // If preconditions are not in the current state, recursively call heuristics.
+                if (cost == std::numeric_limits<double>::infinity()) {
+                    Heuristics heuristics = Heuristics(utils_, estimation_method_);
+                    cost = heuristics.Estimate((LiteralList *) action->getFilteredPrecond());
+                }
+
                 // Calculate the current effect's delta value.
                 double delta_value = min(effect_delta, action_cost + cost);
                 // Store the delta value.
-                _delta_map.insert({effect, delta_value});
+                delta_map_.insert({effect, delta_value});
             }
         }
     } while (!leveled_off);
@@ -126,8 +137,8 @@ double Heuristics::Estimate(LiteralList *current_state) {
     // Estimate the Delta Map.
     EstimateDeltaValues(current_state);
     // Get delta for each goal literal.
-    DeltaValues *goal_deltas = GetDeltas(_controller->GetGoal());
+    DeltaValues *goal_deltas = GetDeltas(utils_->GetGoal());
 
     // Estimate and return the goal's cost, based on the method.
-    return _estimation_method(goal_deltas);
+    return estimation_method_(goal_deltas);
 }
