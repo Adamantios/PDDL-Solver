@@ -1,30 +1,29 @@
-#include "state_wrapper.h"
-#include <unordered_map>
-#include <queue>
 #include "comparator.h"
+#include "state_wrapper.h"
+#include <queue>
+#include <unordered_map>
 
-using namespace std;
-
-template<typename X>
-X *DFS(X *initial, X *goal, long long &examined, long long &mem) {
-    cout << "DFS is running...." << endl;
-    stack<X *> frontier;
-    unordered_map<X, bool> closed;
+template <typename X>
+X* DFS(X* initial, X* goal, long long& examined, long long& mem)
+{
+    std::cout << "DFS is running...." << std::endl;
+    std::stack<X*> frontier;
+    std::unordered_map<X, bool> closed;
     frontier.push(initial);
     examined = 0;
     mem = 1;
     while (frontier.size() > 0) {
-        if ((long long) (frontier.size() + closed.size()) > mem)
+        if ((long long)(frontier.size() + closed.size()) > mem)
             mem = frontier.size() + closed.size();
         examined++;
-        X *s = frontier.top();
+        X* s = frontier.top();
         frontier.pop();
         if (*s >= *goal) {
-            cout << "Closed size: " << closed.size() << endl;
+            std::cout << "Closed size: " << closed.size() << std::endl;
             return s;
         }
         closed[*s] = true;
-        vector<X *> children = s->expand();
+        std::vector<X*> children = s->expand();
         for (unsigned int i = 0; i < children.size(); i++)
             if (!closed[*children.at(i)]) {
                 frontier.push(children.at(i));

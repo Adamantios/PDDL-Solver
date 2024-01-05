@@ -1,61 +1,58 @@
 #ifndef PDDL_SOLVER_STATE_WRAPPER_H
 #define PDDL_SOLVER_STATE_WRAPPER_H
 
-#include "state.h"
-#include "pddldriver.hh"
-#include "predicate.hh"
 #include "domain.hh"
-#include "utils.h"
 #include "heuristics.h"
-
-using namespace std;
+#include "pddldriver.hh"
+#include "plan_utils.h"
+#include "predicate.hh"
+#include "state.h"
 
 class StateWrapper : public State {
 private:
-    LiteralList *_literalList;
-    Utils *utils_;
-    Heuristics *_heuristics;
-    string *_id = nullptr;
-    string *_name = nullptr;
+    LiteralList* _literalList;
+    Utils* utils_;
+    Heuristics* _heuristics;
+    std::string* _id = nullptr;
+    std::string* _name = nullptr;
 
     unsigned long long _hash = 0;
-    bool _debug{};
-    Action *_lastAction{};
+    bool _debug {};
+    Action* _lastAction {};
 
 public:
-    //Constructors
-    StateWrapper(LiteralList *literalList, Utils *utils, Heuristics *heuristics, StateWrapper *father);
+    // Constructors
+    StateWrapper(LiteralList* literalList, Utils* utils, Heuristics* heuristics, StateWrapper* father);
 
-    StateWrapper(StateWrapper *father, LiteralList *newLiteralList, Action *action);
+    StateWrapper(StateWrapper* father, LiteralList* newLiteralList, Action* action);
 
-
-    string getId();
+    std::string getId();
 
     //@Override
-    vector<StateWrapper *> expand();
+    std::vector<StateWrapper*> expand();
 
-    //Getters
+    // Getters
     unsigned long long getHash() const;
 
-    friend std::ostream &operator<<(std::ostream &out, const StateWrapper &state);
+    friend std::ostream& operator<<(std::ostream& out, const StateWrapper& state);
 
-    friend bool operator==(const StateWrapper &first, const StateWrapper &second);
+    friend bool operator==(const StateWrapper& first, const StateWrapper& second);
 
-    friend bool operator<=(const StateWrapper &first, const StateWrapper &second);
+    friend bool operator<=(const StateWrapper& first, const StateWrapper& second);
 
-    friend bool operator>=(const StateWrapper &first, const StateWrapper &second);
+    friend bool operator>=(const StateWrapper& first, const StateWrapper& second);
 
     bool isDebug();
 
-    string getName();
+    std::string getName();
 
-    LiteralList *getLiteralList();
+    LiteralList* getLiteralList();
 
-    Heuristics *getHeuristics();
+    Heuristics* getHeuristics();
 
-    Utils *getUtils();
+    Utils* getUtils();
 
-    Action *getLastAction();
+    Action* getLastAction();
 
     int estimate();
 
@@ -63,22 +60,23 @@ public:
     void setDebug(bool debug);
 
     // Debugging Functionality
-    void printExpandDebug(Action *action, StateWrapper *child, int childrenNum);
+    void printExpandDebug(Action* action, StateWrapper* child, int childrenNum);
 
-    static void printActionsSequence(vector<Action *> *actions);
+    static void printActionsSequence(std::vector<Action*>* actions);
 
     void printActionsSequence();
 
-    static vector<Action *> *getActions(StateWrapper *state, vector<Action *> *actions);
+    static std::vector<Action*>* getActions(StateWrapper* state, std::vector<Action*>* actions);
 };
 
 namespace std {
-    template<>
-    class hash<StateWrapper> {
-    public:
-        size_t operator()(const StateWrapper &a) const {
-            return a.getHash();
-        }
-    };
+template <>
+class hash<StateWrapper> {
+public:
+    size_t operator()(const StateWrapper& a) const
+    {
+        return a.getHash();
+    }
+};
 }
-#endif //PDDL_SOLVER_STATE_WRAPPER_H
+#endif // PDDL_SOLVER_STATE_WRAPPER_H

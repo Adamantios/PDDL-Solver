@@ -1,31 +1,37 @@
 #include "action.hh"
 
-using namespace std;
+;
 
 Action::Action(
-        const string &name,
-        const ParameterList *params,
-        const PreconditionList *precond,
-        const EffectList *effects) :
-        _name(name),
-        _params(params->first), _types(params->second),
-        _precond(precond), _effects(effects) {
-
+    const std::string& name,
+    const ParameterList* params,
+    const PreconditionList* precond,
+    const EffectList* effects)
+    : _name(name)
+    , _params(params->first)
+    , _types(params->second)
+    , _precond(precond)
+    , _effects(effects)
+{
 }
 
-const std::string &Action::getName() const {
+const std::string& Action::getName() const
+{
     return _name;
 }
 
-const StringList *Action::getParams() const {
+const StringList* Action::getParams() const
+{
     return _params;
 }
 
-const TypeDict *Action::getTypes() const {
+const TypeDict* Action::getTypes() const
+{
     return _types;
 }
 
-const PreconditionList *Action::getPrecond() const {
+const PreconditionList* Action::getPrecond() const
+{
     return _precond;
 }
 
@@ -33,8 +39,9 @@ const PreconditionList *Action::getPrecond() const {
  * Getter for the preconditions filtered.
  * Removes the special '='.
  */
-const PreconditionList *Action::getFilteredPrecond() const {
-    auto *preconditions = new PreconditionList();
+const PreconditionList* Action::getFilteredPrecond() const
+{
+    auto* preconditions = new PreconditionList();
 
     for (auto precondition : *_precond) {
         if (precondition->first->getName() != "=")
@@ -44,18 +51,23 @@ const PreconditionList *Action::getFilteredPrecond() const {
     return preconditions;
 }
 
-const EffectList *Action::getEffects() const {
+const EffectList* Action::getEffects() const
+{
     return _effects;
 }
 
-Action::~Action() {
-    if (_params) delete _params;
-    if (_types) delete _types;
+Action::~Action()
+{
+    if (_params)
+        delete _params;
+    if (_types)
+        delete _types;
 
     for (auto precondition : *_precond) {
         delete precondition;
     }
-    if (_precond) delete _precond;
+    if (_precond)
+        delete _precond;
 
     for (auto effect : *_effects) {
         delete effect;
@@ -63,9 +75,10 @@ Action::~Action() {
     delete _effects;
 }
 
-ostream &
-operator<<(ostream &out, const Action &action) {
-    out << "Action(name:" << action._name << ")" << endl;
+std::ostream&
+operator<<(std::ostream& out, const Action& action)
+{
+    out << "Action(name:" << action._name << ")" << std::endl;
     if (action._params) {
         out << ">> params:[";
         auto size = action._params->size();
@@ -80,7 +93,7 @@ operator<<(ostream &out, const Action &action) {
                 out << " - " << action._types->at(parameter);
             }
         }
-        out << "]" << endl;
+        out << "]" << std::endl;
     }
     out << ">> precond:[";
     auto size = action._precond->size();
@@ -89,15 +102,17 @@ operator<<(ostream &out, const Action &action) {
         auto predicate = literal->first;
         bool positive = literal->second;
         if (i == 0) {
-            if (!positive) out << "NOT ";
+            if (!positive)
+                out << "NOT ";
             out << *predicate;
         } else {
             out << ", ";
-            if (!positive) out << "NOT ";
+            if (!positive)
+                out << "NOT ";
             out << *predicate;
         }
     }
-    out << "]" << endl;
+    out << "]" << std::endl;
     size = action._effects->size();
     out << ">> effects:[";
     for (decltype(size) i = 0; i < size; ++i) {
@@ -105,14 +120,16 @@ operator<<(ostream &out, const Action &action) {
         auto predicate = literal->first;
         bool positive = literal->second;
         if (i == 0) {
-            if (!positive) out << "NOT ";
+            if (!positive)
+                out << "NOT ";
             out << *predicate;
         } else {
             out << ", ";
-            if (!positive) out << "NOT ";
+            if (!positive)
+                out << "NOT ";
             out << *predicate;
         }
     }
-    out << "])" << endl;
+    out << "])" << std::endl;
     return out;
 }
