@@ -1,0 +1,92 @@
+[
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -I/home/dario/repos/PDDL-Solver/build/3rd-Party/CLI -g -std=gnu++11 -Wall -Wextra -Wpedantic -o 3rd-Party/CLI/CMakeFiles/CLI11.dir/CLI11.cpp.o -c /home/dario/repos/PDDL-Solver/3rd-Party/CLI/CLI11.cpp",
+  "file": "/home/dario/repos/PDDL-Solver/3rd-Party/CLI/CLI11.cpp",
+  "output": "3rd-Party/CLI/CMakeFiles/CLI11.dir/CLI11.cpp.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -I/home/dario/repos/PDDL-Solver/build/3rd-Party/MD5 -g -std=gnu++11 -Wall -Wextra -Wpedantic -o 3rd-Party/MD5/CMakeFiles/MD5.dir/md5.cpp.o -c /home/dario/repos/PDDL-Solver/3rd-Party/MD5/md5.cpp",
+  "file": "/home/dario/repos/PDDL-Solver/3rd-Party/MD5/md5.cpp",
+  "output": "3rd-Party/MD5/CMakeFiles/MD5.dir/md5.cpp.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -D_DEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src -I/home/dario/repos/PDDL-Solver/build/3rd-Party/Parser -g -std=gnu++11 -Wall -Wextra -Wpedantic -pedantic -std=c++11 -O2 -Isrc -Iinclude -o 3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/action.cc.o -c /home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/action.cc",
+  "file": "/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/action.cc",
+  "output": "3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/action.cc.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -D_DEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src -I/home/dario/repos/PDDL-Solver/build/3rd-Party/Parser -g -std=gnu++11 -Wall -Wextra -Wpedantic -pedantic -std=c++11 -O2 -Isrc -Iinclude -o 3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/domain.cc.o -c /home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/domain.cc",
+  "file": "/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/domain.cc",
+  "output": "3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/domain.cc.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -D_DEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src -I/home/dario/repos/PDDL-Solver/build/3rd-Party/Parser -g -std=gnu++11 -Wall -Wextra -Wpedantic -pedantic -std=c++11 -O2 -Isrc -Iinclude -o 3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/main.cc.o -c /home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/main.cc",
+  "file": "/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/main.cc",
+  "output": "3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/main.cc.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -D_DEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src -I/home/dario/repos/PDDL-Solver/build/3rd-Party/Parser -g -std=gnu++11 -Wall -Wextra -Wpedantic -pedantic -std=c++11 -O2 -Isrc -Iinclude -o 3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/pddldriver.cc.o -c /home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/pddldriver.cc",
+  "file": "/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/pddldriver.cc",
+  "output": "3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/pddldriver.cc.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -D_DEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src -I/home/dario/repos/PDDL-Solver/build/3rd-Party/Parser -g -std=gnu++11 -Wall -Wextra -Wpedantic -pedantic -std=c++11 -O2 -Isrc -Iinclude -o 3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/pddllex.yy.cc.o -c /home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/pddllex.yy.cc",
+  "file": "/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/pddllex.yy.cc",
+  "output": "3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/pddllex.yy.cc.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -D_DEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src -I/home/dario/repos/PDDL-Solver/build/3rd-Party/Parser -g -std=gnu++11 -Wall -Wextra -Wpedantic -pedantic -std=c++11 -O2 -Isrc -Iinclude -o 3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/pddlparser.tab.cc.o -c /home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/pddlparser.tab.cc",
+  "file": "/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/pddlparser.tab.cc",
+  "output": "3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/pddlparser.tab.cc.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -D_DEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src -I/home/dario/repos/PDDL-Solver/build/3rd-Party/Parser -g -std=gnu++11 -Wall -Wextra -Wpedantic -pedantic -std=c++11 -O2 -Isrc -Iinclude -o 3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/predicate.cc.o -c /home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/predicate.cc",
+  "file": "/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/predicate.cc",
+  "output": "3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/predicate.cc.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -D_DEBUG -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src -I/home/dario/repos/PDDL-Solver/build/3rd-Party/Parser -g -std=gnu++11 -Wall -Wextra -Wpedantic -pedantic -std=c++11 -O2 -Isrc -Iinclude -o 3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/problem.cc.o -c /home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/problem.cc",
+  "file": "/home/dario/repos/PDDL-Solver/3rd-Party/Parser/src/problem.cc",
+  "output": "3rd-Party/Parser/CMakeFiles/PDDLParser.dir/src/problem.cc.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -I/home/dario/repos/PDDL-Solver/Planner/include -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/CLI -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/MD5 -g -std=gnu++11 -Wall -Wextra -Wpedantic -o Planner/CMakeFiles/pddl_solver.dir/src/heuristics.cpp.o -c /home/dario/repos/PDDL-Solver/Planner/src/heuristics.cpp",
+  "file": "/home/dario/repos/PDDL-Solver/Planner/src/heuristics.cpp",
+  "output": "Planner/CMakeFiles/pddl_solver.dir/src/heuristics.cpp.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -I/home/dario/repos/PDDL-Solver/Planner/include -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/CLI -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/MD5 -g -std=gnu++11 -Wall -Wextra -Wpedantic -o Planner/CMakeFiles/pddl_solver.dir/src/main.cpp.o -c /home/dario/repos/PDDL-Solver/Planner/src/main.cpp",
+  "file": "/home/dario/repos/PDDL-Solver/Planner/src/main.cpp",
+  "output": "Planner/CMakeFiles/pddl_solver.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -I/home/dario/repos/PDDL-Solver/Planner/include -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/CLI -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/MD5 -g -std=gnu++11 -Wall -Wextra -Wpedantic -o Planner/CMakeFiles/pddl_solver.dir/src/state.cpp.o -c /home/dario/repos/PDDL-Solver/Planner/src/state.cpp",
+  "file": "/home/dario/repos/PDDL-Solver/Planner/src/state.cpp",
+  "output": "Planner/CMakeFiles/pddl_solver.dir/src/state.cpp.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -I/home/dario/repos/PDDL-Solver/Planner/include -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/CLI -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/MD5 -g -std=gnu++11 -Wall -Wextra -Wpedantic -o Planner/CMakeFiles/pddl_solver.dir/src/state_wrapper.cpp.o -c /home/dario/repos/PDDL-Solver/Planner/src/state_wrapper.cpp",
+  "file": "/home/dario/repos/PDDL-Solver/Planner/src/state_wrapper.cpp",
+  "output": "Planner/CMakeFiles/pddl_solver.dir/src/state_wrapper.cpp.o"
+},
+{
+  "directory": "/home/dario/repos/PDDL-Solver/build",
+  "command": "/usr/lib/ccache/bin/g++ -I/home/dario/repos/PDDL-Solver/Planner/include -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/Parser/include -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/CLI -I/home/dario/repos/PDDL-Solver/Planner/../3rd-Party/MD5 -g -std=gnu++11 -Wall -Wextra -Wpedantic -o Planner/CMakeFiles/pddl_solver.dir/src/utils.cpp.o -c /home/dario/repos/PDDL-Solver/Planner/src/utils.cpp",
+  "file": "/home/dario/repos/PDDL-Solver/Planner/src/utils.cpp",
+  "output": "Planner/CMakeFiles/pddl_solver.dir/src/utils.cpp.o"
+}
+]

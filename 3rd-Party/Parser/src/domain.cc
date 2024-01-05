@@ -1,28 +1,34 @@
 #include "domain.hh"
 
-using namespace std;
+;
 
-Domain::Domain(const string &name) : _name(name) {
-
+Domain::Domain(const std::string& name)
+    : _name(name)
+{
 }
 
-const string &Domain::getName() const {
+const std::string& Domain::getName() const
+{
     return _name;
 }
 
-vector<string> *Domain::getRequirements() const {
+std::vector<std::string>* Domain::getRequirements() const
+{
     return _requirements;
 }
 
-vector<Predicate *> *Domain::getPredicates() const {
+std::vector<Predicate*>* Domain::getPredicates() const
+{
     return _predicates;
 }
 
-vector<Action *> *Domain::getActions() const {
+std::vector<Action*>* Domain::getActions() const
+{
     return _actions;
 }
 
-Domain::~Domain() {
+Domain::~Domain()
+{
     for (auto predicate : *_predicates) {
         delete predicate;
         predicate = nullptr;
@@ -36,39 +42,40 @@ Domain::~Domain() {
     delete _actions;
 }
 
-void
-Domain::set_requirements(std::vector<std::string> *requirements) {
+void Domain::set_requirements(std::vector<std::string>* requirements)
+{
     _requirements = requirements;
 }
 
-void
-Domain::set_predicates(std::vector<Predicate *> *predicates) {
+void Domain::set_predicates(std::vector<Predicate*>* predicates)
+{
     _predicates = predicates;
 }
 
-void
-Domain::set_actions(std::vector<Action *> *actions) {
+void Domain::set_actions(std::vector<Action*>* actions)
+{
     _actions = actions;
 }
 
-std::ostream &
-operator<<(std::ostream &out, const Domain &domain) {
-    out << ">> Domain(name:" << domain._name << ")" << endl;
-    out << endl;
+std::ostream&
+operator<<(std::ostream& out, const Domain& domain)
+{
+    out << ">> Domain(name:" << domain._name << ")" << std::endl;
+    out << std::endl;
     out << "Requirements: [";
-    for (auto const &requirement : *domain._requirements) {
+    for (auto const& requirement : *domain._requirements) {
         out << " " << requirement;
     }
-    out << " ]" << endl;
+    out << " ]" << std::endl;
     out << "Predicates: [";
-    for (auto const &predicate : *domain._predicates) {
+    for (auto const& predicate : *domain._predicates) {
         out << " " << *predicate;
     }
-    out << " ]" << endl;
-    out << endl;
-    for (auto const &action : *domain._actions) {
+    out << " ]" << std::endl;
+    out << std::endl;
+    for (auto const& action : *domain._actions) {
         out << *action;
-        out << endl;
+        out << std::endl;
     }
     return out;
 }

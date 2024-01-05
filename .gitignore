@@ -9,6 +9,8 @@ Parser/position.hh
 Parser/stack.hh
 Parser/src/*.output
 
+build
+
 .idea/
 cmake-build-debug/
 

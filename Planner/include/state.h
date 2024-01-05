@@ -1,23 +1,23 @@
 #ifndef PDDL_SOLVER_STATE_H
 #define PDDL_SOLVER_STATE_H
 
-#include <string>
-#include <vector>
-#include <stack>
+#include <action.hh>
+#include <iostream>
 #include <queue>
 #include <set>
 #include <sstream>
-#include <iostream>
-#include <action.hh>
+#include <stack>
+#include <string>
+#include <vector>
 
-using namespace std;
+;
 
 class State {
 protected:
-    State *father_;
-    vector<State *> children_;
+    State* father_;
+    std::vector<State*> children_;
     int depth_ = 0;
-    double hvalue_{};
+    double hvalue_ {};
 
 public:
     // CON & DES
@@ -30,19 +30,19 @@ public:
 
     double GetHvalue();
 
-    State *GetFather();;
+    State* GetFather();
 
     // SETTER
-    void SetFather(State *father);
+    void SetFather(State* father);
 
     void SetDepth(int d);
 
     void SetHvalue(double h);
 
-    void RemoveChild(State *child);
+    void RemoveChild(State* child);
 
     // OVERWRITES
     bool operator>(State b) { return GetHvalue() > b.GetHvalue(); };
 };
 
-#endif //PDDL_SOLVER_STATE_H
+#endif // PDDL_SOLVER_STATE_H

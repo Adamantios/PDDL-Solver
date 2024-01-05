@@ -2,17 +2,16 @@
 #define PDDL_SOLVER_COMPARATOR_H
 
 #include "state_wrapper.h"
-#include <unordered_map>
 #include <queue>
+#include <unordered_map>
 
-using namespace std;
-
-template<typename X>
+template <typename X>
 class Comparator {
 public:
-    int operator()(X *p_1, X *p_2) const {
+    int operator()(X* p_1, X* p_2) const
+    {
         return *p_1 > *p_2;
     }
 };
 
-#endif //PDDL_SOLVER_COMPARATOR_H
+#endif // PDDL_SOLVER_COMPARATOR_H
